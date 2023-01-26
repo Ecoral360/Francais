@@ -12,7 +12,7 @@ Add:
 
   PLUS: '\+'
 
-  VARIABLE: '[A-Za-z]\w*'
+  VARIABLE: '[A-Z]\w*'
 
 Ignore:
   - '\s+'
