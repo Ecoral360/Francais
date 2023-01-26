@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Mathis Laroche
  */
-public class DeclarerStmt extends Statement {
+public class AffecterStmt extends Statement {
     private final VarExpr variable;
     private final Expression<?> valeur;
 
@@ -26,21 +26,10 @@ public class DeclarerStmt extends Statement {
      * Si le programme n'a pas besoin d'avoir accès à l'exécuteur lorsque la méthode {@link #execute()}
      * est appelée
      */
-    public DeclarerStmt(VarExpr variable, @Nullable Expression<?> valeur, ASCExecutor<CodeMdrExecutorState> executeurInstance) {
+    public AffecterStmt(VarExpr variable, @Nullable Expression<?> valeur, ASCExecutor<CodeMdrExecutorState> executeurInstance) {
         super(executeurInstance);
         this.variable = variable;
         this.valeur = valeur == null ? new ConstValueExpr(CodeMdrObj.AUCUNE_VALEUR) : valeur;
-
-        var scope = executeurInstance.getExecutorState()
-                .getScopeManager()
-                .getCurrentScope();
-
-        if (scope.getVariable(variable.nom()) != null) {
-            throw new ASCErrors.ErreurDeclaration("La variable " + variable.nom() +
-                    " a déjà été déclarée. Utilisez `Maintenant, " + variable.nom() + " vaut <valeur>.`");
-        }
-
-        scope.declareVariable(new ASCVariable<>(variable.nom(), CodeMdrObj.AUCUNE_VALEUR));
     }
 
     /**
@@ -67,6 +56,10 @@ public class DeclarerStmt extends Statement {
         var valeur = this.valeur.eval();
         var variable = (ASCVariable<Object>) executorInstance.getExecutorState().getScopeManager().getCurrentScopeInstance()
                 .getVariable(this.variable.nom());
+
+        if (variable == null) {
+            throw new ASCErrors.ErreurVariableInconnue("La variable " + this.variable.nom() + " n'a pas été définie.");
+        }
 
         variable.setAscObject((ASCObject<Object>) valeur);
 

@@ -4,6 +4,7 @@ package codemdr.parser;
 import codemdr.ast.expressions.AddExpr;
 import codemdr.ast.expressions.ConstValueExpr;
 import codemdr.ast.expressions.VarExpr;
+import codemdr.ast.statements.AffecterStmt;
 import codemdr.ast.statements.DeclarerStmt;
 import codemdr.ast.statements.PrintStmt;
 import codemdr.execution.CodeMdrExecutorState;
@@ -71,6 +72,12 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
 
         addStatement("DECLARER VARIABLE AFFECTER expression", p ->
                 new DeclarerStmt(
+                        new VarExpr(((Token) p.get(1)).value(), executorInstance.getExecutorState()),
+                        (Expression<?>) p.get(3), executorInstance)
+        );
+
+        addStatement("MAINTENANT VARIABLE AFFECTER expression", p ->
+                new AffecterStmt(
                         new VarExpr(((Token) p.get(1)).value(), executorInstance.getExecutorState()),
                         (Expression<?>) p.get(3), executorInstance)
         );

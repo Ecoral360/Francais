@@ -4,6 +4,7 @@ Add:
   IMPRIMER: '(\bi|^I)mprimer\b'
   AFFECTER: '\bvaut\b'
   DECLARER: '(\bp|^P)osons\ que\b'
+  MAINTENANT: '(\bm|^M)aintenant,\ \b'
 
   datatypes:
     DECIMAL: '-?\d+,\d+'

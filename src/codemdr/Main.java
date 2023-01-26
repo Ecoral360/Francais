@@ -15,10 +15,11 @@ public class Main {
      * The CODE lines to execute.
      */
     private static final String CODE = """
-            Posons que a vaut 10,3.
+            Posons que A vaut 10,3.
             Imprimer « Bonjour, Monde! ».
-            Imprimer a.
-            Imprimer 33,8.
+            Imprimer A.
+            Maintenant, A vaut 12.
+            Imprimer A.
             """;
 
     public static void main(String[] args) {
