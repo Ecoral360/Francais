@@ -4,14 +4,17 @@ Add:
   IMPRIMER: '(\bi|^I)mprimer\b'
   AFFECTER: '\bvaut\b'
   DECLARER: '(\bp|^P)osons\ que\b'
-  MAINTENANT: '(\bm|^M)aintenant,\ \b'
+  MAINTENANT: '(\bm|^M)aintenant,\ (\b|$)'
 
+  TABLEAU_CREATION: '\bdans\ un\ tableau(\b|$)'
   datatypes:
     DECIMAL: '-?\d+,\d+'
     ENTIER: '-?\d+'
     TEXTE: '«\ .*?\ »'
 
   PLUS: '\+'
+  ET: 'et'
+  VIRGULE: ','
 
   VARIABLE: '[A-Z]\w*'
 

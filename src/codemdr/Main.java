@@ -19,7 +19,9 @@ public class Main {
             Imprimer « Bonjour, Monde! ».
             Imprimer A.
             Maintenant, A vaut 12.
-            Imprimer A.
+            Imprimer A + 2.
+            Posons que L vaut 1, 2 et 3 dans un tableau.
+            Imprimer L.
             """;
 
     public static void main(String[] args) {

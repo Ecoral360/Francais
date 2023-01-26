@@ -1,7 +1,9 @@
 package codemdr.ast.expressions;
 
 import codemdr.execution.CodeMdrExecutorState;
+import codemdr.objects.CodeMdrObj;
 import org.ascore.ast.buildingBlocs.Expression;
+import org.ascore.lang.objects.ASCObject;
 import org.ascore.lang.objects.ASCVariable;
 
 /**
@@ -10,19 +12,22 @@ import org.ascore.lang.objects.ASCVariable;
  *
  * @author Mathis Laroche
  */
-public record VarExpr(String nom, CodeMdrExecutorState executorState) implements Expression<ASCVariable<?>> {
+public record VarExpr(String nom, CodeMdrExecutorState executorState) implements Expression<CodeMdrObj<?>> {
 
 
+    public ASCVariable<?> getVar() {
+        return executorState
+                .getScopeManager()
+                .getCurrentScopeInstance()
+                .getVariable(nom);
+    }
     /**
      * Appel\u00E9 durant le Runtime, cette m\u00E9thode retourne un objet de type ASObjet
      *
      * @return le r\u00E9sultat de l'expression
      */
     @Override
-    public ASCVariable<?> eval() {
-        return executorState
-                .getScopeManager()
-                .getCurrentScopeInstance()
-                .getVariable(nom);
+    public CodeMdrObj<?> eval() {
+        return (CodeMdrObj<?>) getVar().getAscObject();
     }
 }

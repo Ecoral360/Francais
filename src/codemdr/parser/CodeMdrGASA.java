@@ -1,9 +1,7 @@
 package codemdr.parser;
 
 
-import codemdr.ast.expressions.AddExpr;
-import codemdr.ast.expressions.ConstValueExpr;
-import codemdr.ast.expressions.VarExpr;
+import codemdr.ast.expressions.*;
 import codemdr.ast.statements.AffecterStmt;
 import codemdr.ast.statements.DeclarerStmt;
 import codemdr.ast.statements.PrintStmt;
@@ -103,6 +101,22 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
         });
 
         addExpression("expression PLUS expression", p -> new AddExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2)));
+
+        addExpression("expression VIRGULE expression~expression ET expression", (p, variant) -> {
+            if (p.get(0) instanceof EnumerationExpr enumerationExpr) {
+                enumerationExpr.addElement((Expression<?>) p.get(2));
+                enumerationExpr.setComplete(variant == 1);
+                return enumerationExpr;
+            }
+            var enumeration = new EnumerationExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2));
+            enumeration.setComplete(variant == 1);
+            return enumeration;
+        });
+
+        addExpression("expression TABLEAU_CREATION", p -> {
+            var expr = (EnumerationExpr) p.get(0);
+            return new CreationTableauExpr(expr);
+        });
 
     }
 }
