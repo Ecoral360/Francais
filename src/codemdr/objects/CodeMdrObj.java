@@ -10,4 +10,8 @@ public class CodeMdrObj<T> extends ASCObject<T> {
         super(value);
     }
 
+    @Override
+    public String toString() {
+        return getValue().toString();
+    }
 }

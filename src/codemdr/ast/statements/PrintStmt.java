@@ -40,7 +40,7 @@ public class PrintStmt extends Statement {
      */
     @Override
     public Object execute() {
-        System.out.println(expression.eval().getValue());
+        System.out.println(expression.eval());
         return null;
     }
 }

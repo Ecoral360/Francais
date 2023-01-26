@@ -11,7 +11,11 @@ public class CodeMdrFloat extends CodeMdrNumber {
     }
 
     public CodeMdrFloat(Token token) {
-        this(Double.parseDouble(token.value()));
+        super(Double.parseDouble(token.value().replace(",", ".")));
     }
 
+    @Override
+    public String toString() {
+        return getValue().toString().replace(".", ",");
+    }
 }
