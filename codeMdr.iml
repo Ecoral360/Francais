@@ -9,5 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="ASCore" level="project" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
+    <orderEntry type="library" name="ASCore (2)" level="project" />
+    <orderEntry type="library" name="ASCore (3)" level="project" />
   </component>
 </module>

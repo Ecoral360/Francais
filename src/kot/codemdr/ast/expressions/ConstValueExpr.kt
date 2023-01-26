@@ -1,4 +1,4 @@
-package codemdr.ast.expressions
+package kot.codemdr.ast.expressions
 
 import org.ascore.ast.buildingBlocs.Expression
 import org.ascore.lang.objects.ASCObject

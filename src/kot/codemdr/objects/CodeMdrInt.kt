@@ -1,4 +1,4 @@
-package codemdr.objects
+package kot.codemdr.objects
 
 import org.ascore.tokens.Token
 

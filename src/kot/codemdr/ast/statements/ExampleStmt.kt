@@ -1,4 +1,4 @@
-package codemdr.ast.statements
+package kot.codemdr.ast.statements
 
 import org.ascore.ast.buildingBlocs.Statement
 import org.ascore.executor.ASCExecutor

@@ -1,5 +1,6 @@
-package codemdr.execution
+package kot.codemdr.execution
 
+import org.ascore.errors.ASCErrors.LexingError
 import org.ascore.executor.ASCPrecompiler
 import org.ascore.tokens.Token
 
@@ -24,6 +25,21 @@ class CodeMdrPreCompiler : ASCPrecompiler() {
     }
 
     override fun preCompileAfterStatementSplit(tokens: MutableList<MutableList<Token>>): MutableList<MutableList<Token>> {
+        for (statement in tokens) {
+            if (statement.isEmpty()) continue
+            val firstToken = statement[0]
+            if (firstToken.value[0] != firstToken.value.uppercase()[0]) {
+                throw LexingError("Every statement should start with an uppercase")
+            }
+            // statement[0] = Token(
+            //     firstToken.name,
+            //     firstToken.value.replaceFirstChar { it.lowercase() },
+            //     firstToken.category,
+            //     firstToken.start,
+            //     firstToken.tokenRuleParent,
+            //     firstToken.match
+            // )
+        }
         return tokens
     }
 }

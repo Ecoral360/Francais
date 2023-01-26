@@ -1,13 +1,13 @@
-package codemdr.parser
+package kot.codemdr.parser
 
-import codemdr.ast.expressions.AddExpr
-import codemdr.ast.expressions.ConstValueExpr
-import codemdr.ast.statements.PrintStmt
-import codemdr.execution.CodeMdrExecutorState
-import codemdr.lexer.CodeMdrLexer
-import codemdr.objects.CodeMdrFloat
-import codemdr.objects.CodeMdrInt
-import codemdr.objects.CodeMdrString
+import kot.codemdr.ast.expressions.AddExpr
+import kot.codemdr.ast.expressions.ConstValueExpr
+import kot.codemdr.ast.statements.PrintStmt
+import kot.codemdr.execution.CodeMdrExecutorState
+import kot.codemdr.lexer.CodeMdrLexer
+import kot.codemdr.objects.CodeMdrFloat
+import kot.codemdr.objects.CodeMdrInt
+import kot.codemdr.objects.CodeMdrString
 import org.ascore.ast.buildingBlocs.Expression
 import org.ascore.ast.buildingBlocs.Statement
 import org.ascore.executor.ASCExecutor
@@ -42,6 +42,7 @@ class CodeMdrParser(executorInstance: ASCExecutor<CodeMdrExecutorState>) : AstGe
      */
     private fun addStatements() {
         // add your statements here
+        addStatement("DECLARE VARIABLE ASSIGN expression") { p: List<Any> -> PrintStmt(p[1] as Expression<*>) }
         addStatement("PRINT expression") { p: List<Any> -> PrintStmt(p[1] as Expression<*>) }
         addStatement("expression") { _ -> Statement.EMPTY_STATEMENT }
         addStatement("") { _ -> Statement.EMPTY_STATEMENT }

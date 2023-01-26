@@ -1,21 +1,20 @@
-package codemdr
+package kot.codemdr
 
-import codemdr.execution.CodeMdrExecutorState
-import codemdr.execution.CodeMdrPreCompiler
-import codemdr.lexer.CodeMdrLexer
-import codemdr.parser.CodeMdrParser
+import kot.codemdr.execution.CodeMdrExecutorState
+import kot.codemdr.execution.CodeMdrPreCompiler
+import kot.codemdr.lexer.CodeMdrLexer
+import kot.codemdr.parser.CodeMdrParser
 import org.ascore.executor.ASCExecutor
 import org.ascore.executor.ASCExecutorBuilder
 
 val CODE = """
     
-    imprimer « Bonjour, Monde! »
-    
+    Imprimer 4,3.
     
     """.trimIndent()
 
 fun main() {
-    val lexer = CodeMdrLexer("/codemdr/grammar_rules/Grammar.yaml");
+    val lexer = CodeMdrLexer("/kot/codemdr/grammar_rules/Grammar.yaml");
     val executor = ASCExecutorBuilder<CodeMdrExecutorState>() // create an executor builder
         .withLexer(lexer) // add the lexer to the builder
         .withParser { executorInstance: ASCExecutor<CodeMdrExecutorState> ->

@@ -1,9 +1,9 @@
-package codemdr.ast.expressions
+package kot.codemdr.ast.expressions
 
-import codemdr.objects.CodeMdrFloat
-import codemdr.objects.CodeMdrInt
-import codemdr.objects.CodeMdrNumber
-import codemdr.objects.CodeMdrString
+import kot.codemdr.objects.CodeMdrFloat
+import kot.codemdr.objects.CodeMdrInt
+import kot.codemdr.objects.CodeMdrNumber
+import kot.codemdr.objects.CodeMdrString
 import org.ascore.ast.buildingBlocs.Expression
 import org.ascore.lang.objects.ASCObject
 import org.ascore.lang.objects.containsType

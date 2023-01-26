@@ -1,16 +1,24 @@
 Variables: { }
 
 Add:
-  PRINT: '\bimprimer\b'
+  IMPRIMER: '(\bi|^I)mprimer\b'
+  AFFECTER: '\bvaut\b'
+  DECLARER: '(\bp|^P)osons\ que\b'
 
   datatypes:
-    INT: -?\d+
-    FLOAT: -?\d+\.\d+
-    STRING: '(?u:«\ .*?\ »)'
+    DECIMAL: '-?\d+,\d+'
+    ENTIER: '-?\d+'
+    TEXTE: '«\ .*?\ »'
 
-  PLUS: \+
+  PLUS: '\+'
+
+  VARIABLE: '[A-Za-z]\w*'
 
 Ignore:
-  - '[\t\ ]+'
+  - '\s+'
 
-EndStatement: '\n'
+EndStatement: '[\.\!\?]'
+
+
+# tente - attrape - et puis (try-catch)
+#
