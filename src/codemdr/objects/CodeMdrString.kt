@@ -8,6 +8,6 @@ import org.ascore.tokens.Token
  */
 class CodeMdrString(value: String) : ASCObject<String>(value) {
     constructor(token: Token) : this(
-        token.value().substring(1, token.value().length - 1) // removing the enclosing `"` from the string
+        token.value().substring(2, token.value().length - 2) // removing the enclosing `"` from the string
     )
 }

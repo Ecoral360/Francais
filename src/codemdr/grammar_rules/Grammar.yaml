@@ -1,16 +1,16 @@
 Variables: { }
 
 Add:
-  PRINT: \bprint\b
+  PRINT: '\bimprimer\b'
 
   datatypes:
     INT: -?\d+
     FLOAT: -?\d+\.\d+
-    STRING: '".*?"'
+    STRING: '(?u:«\ .*?\ »)'
 
   PLUS: \+
 
 Ignore:
-  - '[\t ]+'
+  - '[\t\ ]+'
 
-EndStatement: \n
+EndStatement: '\n'

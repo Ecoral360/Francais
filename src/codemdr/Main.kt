@@ -8,9 +8,9 @@ import org.ascore.executor.ASCExecutor
 import org.ascore.executor.ASCExecutorBuilder
 
 val CODE = """
-    print 3 + -2
-    print "hello" + " " + "world!"
-    print "hello " + 3 + 2
+    
+    imprimer « Bonjour, Monde! »
+    
     
     """.trimIndent()
 
@@ -35,6 +35,6 @@ fun main() {
     }
     val executionResult = executor.executerMain(false) // execute the code
 
-    println(executionResult) // print the result
+    // println(executionResult) // print the result
 
 }

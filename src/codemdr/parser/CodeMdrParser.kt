@@ -9,6 +9,7 @@ import codemdr.objects.CodeMdrFloat
 import codemdr.objects.CodeMdrInt
 import codemdr.objects.CodeMdrString
 import org.ascore.ast.buildingBlocs.Expression
+import org.ascore.ast.buildingBlocs.Statement
 import org.ascore.executor.ASCExecutor
 import org.ascore.generators.ast.AstGenerator
 import org.ascore.tokens.Token
@@ -42,6 +43,8 @@ class CodeMdrParser(executorInstance: ASCExecutor<CodeMdrExecutorState>) : AstGe
     private fun addStatements() {
         // add your statements here
         addStatement("PRINT expression") { p: List<Any> -> PrintStmt(p[1] as Expression<*>) }
+        addStatement("expression") { _ -> Statement.EMPTY_STATEMENT }
+        addStatement("") { _ -> Statement.EMPTY_STATEMENT }
     }
 
     /**
