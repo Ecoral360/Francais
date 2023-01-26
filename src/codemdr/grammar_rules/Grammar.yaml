@@ -3,7 +3,7 @@ Variables: { }
 Add:
   IMPRIMER: '(\bi|^I)mprimer\b'
   AFFECTER: '\bvaut\b'
-  DECLARER: '(\bp|^P)osons\ que\b'
+  DECLARER: '(\bp|^P)osons\ que\ '
   MAINTENANT: '(\bm|^M)aintenant,\ (\b|$)'
 
   TABLEAU_CREATION: '\bdans\ un\ tableau(\b|$)'

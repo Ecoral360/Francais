@@ -15,13 +15,13 @@ public class Main {
      * The CODE lines to execute.
      */
     private static final String CODE = """
-            Posons que A vaut 10,3.
-            Imprimer « Bonjour, Monde! ».
-            Imprimer A.
-            Maintenant, A vaut 12.
-            Imprimer A + 2.
-            Posons que L vaut 1, 2 et 3 dans un tableau.
-            Imprimer L.
+            Imprimer « Bonjour! ».
+            Posons que MonNombre vaut « Allo ».
+            Imprimer MonNombre.
+            Maintenant, MonNombre vaut 11,3.
+            Imprimer MonNombre.
+            Posons que Liste vaut 1,2, 2 et 5 dans un tableau.
+            Imprimer Liste.
             """;
 
     public static void main(String[] args) {
@@ -37,6 +37,6 @@ public class Main {
             return;
         }
         JSONArray executionResult = executor.executerMain(false); // execute the code
-        // System.out.println(executionResult); // print the result
+        System.out.println(executionResult); // print the result
     }
 }
