@@ -16,6 +16,8 @@ import org.ascore.executor.ASCExecutor;
 import org.ascore.generators.ast.AstGenerator;
 import org.ascore.tokens.Token;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -67,11 +69,41 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
      */
     protected void addStatements() {
         // add your statements here
+        addStatement("FONCTION_DEF", p -> {
+            return null;
+        });
 
-        addStatement("DECLARER VARIABLE AFFECTER expression", p ->
-                new DeclarerStmt(
-                        new VarExpr(((Token) p.get(1)).value(), executorInstance.getExecutorState()),
-                        (Expression<?>) p.get(3), executorInstance)
+        addStatement("FONCTION_END", p -> {
+            return null;
+        });
+
+        addStatement("DECLARER VARIABLE AFFECTER L_APPEL_A expression AVEC PARAM expression~" +
+                        "DECLARER VARIABLE AFFECTER expression~DECLARER VARIABLE AFFECTER L_APPEL_A expression AVEC PARAMS expression~" +
+                        "DECLARER VARIABLE AFFECTER expression~DECLARER VARIABLE AFFECTER L_APPEL_A expression", (p, variant) -> {
+                    switch (variant) {
+                        case 0 -> {
+                            // TODO: s'assurer qu'il n'y a qu'un seul paramètre: erreur d'accord sinon
+                        }
+                        case 1 -> {
+                            // TODO: s'assurer qu'il y a au moins deux paramètres et que l'énumération est complète (fini par un `et`)
+                        }
+                        case 2 -> {
+                            // TODO: s'assurer que la fonction appelé ne prend pas d'arguments
+                        }
+                    }
+                    throw new UnsupportedOperationException();
+                }
+        );
+
+        addStatement("DECLARER VARIABLE AFFECTER expression", (p, variant) -> {
+                    if (variant == 0) {
+                        return new DeclarerStmt(
+                                new VarExpr(((Token) p.get(1)).value(), executorInstance.getExecutorState()),
+                                (Expression<?>) p.get(3), executorInstance);
+                    } else {
+                        throw new UnsupportedOperationException("TODO: ajouter l'appel de fonction");
+                    }
+                }
         );
 
         addStatement("MAINTENANT VARIABLE AFFECTER expression", p ->
@@ -102,21 +134,40 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
 
         addExpression("expression PLUS expression", p -> new AddExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2)));
 
-        addExpression("expression VIRGULE expression~expression ET expression", (p, variant) -> {
-            if (p.get(0) instanceof EnumerationExpr enumerationExpr) {
-                enumerationExpr.addElement((Expression<?>) p.get(2));
-                enumerationExpr.setComplete(variant == 1);
-                return enumerationExpr;
-            }
-            var enumeration = new EnumerationExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2));
-            enumeration.setComplete(variant == 1);
-            return enumeration;
-        });
+        addExpression("TABLEAU_CREATION #expression ET expression~" +
+                        "TABLEAU_CREATION expression",
+                (p, variant) -> {
+                    System.out.println(p);
+                    if (variant == 1) {
+                        return new CreationTableauExpr(EnumerationExpr.completeEnumeration((Expression<?>) p.get(1)));
+                    }
+                    var contenu = evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 2)), null);
+                    if (contenu instanceof EnumerationExpr enumerationExpr) {
+                        enumerationExpr.addElement((Expression<?>) p.get(p.size() - 1));
+                        enumerationExpr.setComplete(true);
+                        return new CreationTableauExpr(enumerationExpr);
+                    }
+                    return new CreationTableauExpr(EnumerationExpr.completeEnumeration(contenu, (Expression<?>) p.get(p.size() - 1)));
+                });
 
-        addExpression("expression TABLEAU_CREATION", p -> {
-            var expr = (EnumerationExpr) p.get(0);
-            return new CreationTableauExpr(expr);
-        });
+        addExpression("expression VIRGULE expression ET expression~" +
+                        "expression VIRGULE expression~" +
+                        "expression ET expression",
+                (p, variant) -> {
+                    if (p.get(0) instanceof EnumerationExpr enumerationExpr) {
+                        enumerationExpr.addElement((Expression<?>) p.get(2));
+
+                        if (variant == 0) enumerationExpr.addElement((Expression<?>) p.get(4));
+
+                        enumerationExpr.setComplete(variant != 1);
+                        return enumerationExpr;
+                    }
+
+                    var enumeration = new EnumerationExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2));
+                    if (variant == 0) enumeration.addElement((Expression<?>) p.get(4));
+                    enumeration.setComplete(variant != 1);
+                    return enumeration;
+                });
 
     }
 }

@@ -5,8 +5,19 @@ Add:
   AFFECTER: '\bvaut\b'
   DECLARER: '(\bp|^P)osons\ que\ '
   MAINTENANT: '(\bm|^M)aintenant,\ (\b|$)'
+  DEMANDER: '(\bd|^D)emander\ puis\ enregistrer\ dans\ '
+  L_APPEL_A: "l'appel\\ à"
 
-  TABLEAU_CREATION: '\bdans\ un\ tableau(\b|$)'
+  FONCTION_DEF: "(\bd|^D)ébut\ de\ la\ définition\ d'une\ fonction\ nommée\ "
+  FONCTION_END: "(\bf|^F)in\ de\ la\ définition\ de\ la\ fonction\ nommée\ "
+
+  APPELER: '(\ba|^A)ppeler'
+
+  AVEC: 'avec'
+  PARAM: 'le\ paramètre'
+  PARAMS: 'les\ paramètres'
+
+  TABLEAU_CREATION: '\bun\ tableau\ contenant'
   datatypes:
     DECIMAL: '-?\d+,\d+'
     ENTIER: '-?\d+'

@@ -3,6 +3,8 @@ package codemdr;
 import codemdr.execution.CodeMdrExecutorState;
 import codemdr.execution.CodeMdrPreCompiler;
 import codemdr.lexer.CodeMdrJetoniseur;
+import codemdr.module.CodeMdrModule;
+import codemdr.module.CodeMdrModules;
 import codemdr.parser.CodeMdrGASA;
 import org.ascore.executor.ASCExecutorBuilder;
 import org.json.JSONArray;
@@ -20,7 +22,11 @@ public class Main {
             Imprimer MonNombre.
             Maintenant, MonNombre vaut 11,3.
             Imprimer MonNombre.
-            Posons que Liste vaut 1,2, 2 et 5 dans un tableau.
+            Posons que Liste vaut un tableau contenant 1, un tableau contenant 1, 3, « Allo » et 2 et 4.
+            Imprimer Liste.
+            Maintenant, Liste vaut un tableau contenant un tableau contenant 1 et 2.
+            Imprimer Liste.
+            Maintenant, Liste vaut un tableau contenant 1 et un tableau contenant 1, 3 et « Allo ».
             Imprimer Liste.
             """;
 
@@ -36,6 +42,9 @@ public class Main {
             System.out.println(compilationResult);
             return;
         }
+
+        CodeMdrModules.charger(executor.getExecutorState());
+
         JSONArray executionResult = executor.executerMain(false); // execute the code
         System.out.println(executionResult); // print the result
     }

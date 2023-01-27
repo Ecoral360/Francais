@@ -11,5 +11,10 @@
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
     <orderEntry type="library" name="ASCore (2)" level="project" />
     <orderEntry type="library" name="ASCore (3)" level="project" />
+    <orderEntry type="library" name="ASCore (4)" level="project" />
+    <orderEntry type="library" name="ASCore (5)" level="project" />
+    <orderEntry type="library" name="ASCore (6)" level="project" />
+    <orderEntry type="library" name="ASCore (7)" level="project" />
+    <orderEntry type="library" name="ASCore (8)" level="project" />
   </component>
 </module>

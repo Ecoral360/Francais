@@ -37,6 +37,14 @@ public class CodeMdrPreCompiler extends ASCPrecompiler {
             if (firstToken.value().charAt(0) != firstToken.value().toUpperCase().charAt(0)) {
                 throw new ASCErrors.LexingError("Tous les énoncés doivent commencer par une lettre majuscule. Je suis très déçu de toi.");
             }
+
+            statement.set(0, new Token(firstToken.name(),
+                    firstToken.value().toLowerCase().charAt(0) + firstToken.value().substring(1),
+                    firstToken.category(),
+                    firstToken.start(),
+                    firstToken.tokenRuleParent(),
+                    firstToken.match())
+            );
         }
         return tokens;
     }

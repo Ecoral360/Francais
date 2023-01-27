@@ -18,6 +18,12 @@ public class EnumerationExpr implements Expression<CodeMdrTableau> {
         this.elements.addAll(List.of(valeurs));
     }
 
+    public static EnumerationExpr completeEnumeration(Expression<?>... valeurs) {
+        var enumeration = new EnumerationExpr(valeurs);
+        enumeration.setComplete(true);
+        return enumeration;
+    }
+
     public void addElement(Expression<?> valeur) {
         elements.add(valeur);
     }
