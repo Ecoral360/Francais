@@ -8,12 +8,13 @@ Add:
   DEMANDER: '(\bd|^D)emander\ puis\ enregistrer\ dans\ '
   L_APPEL_A: "l'appel\\ à"
 
-  FONCTION_DEF: "(\bd|^D)ébut\ de\ la\ définition\ d'une\ fonction\ nommée\ "
-  FONCTION_END: "(\bf|^F)in\ de\ la\ définition\ de\ la\ fonction\ nommée\ "
+  FONCTION_DEF: "(\bd|^D)ébut\ de\ la\ définition\ d'une\ fonction\ nommée"
+  FONCTION_END: "(\bf|^F)in\ de\ la\ définition\ de\ la\ fonction"
 
-  APPELER: '(\ba|^A)ppeler'
+  APPELER_PROC: '(\ba|^A)ppeler\ la\ procédure'
+  APPELER_FONC: '(\ba|^A)ppeler\ la\ fonction'
 
-  AVEC: 'avec'
+  AVEC: '\bavec\b'
   PARAM: 'le\ paramètre'
   PARAMS: 'les\ paramètres'
 
@@ -27,7 +28,7 @@ Add:
   ET: 'et'
   VIRGULE: ','
 
-  VARIABLE: '[A-Z]\w*'
+  VARIABLE: '\p{L}[0-9_\p{L}]*'
 
 Ignore:
   - '\s+'

@@ -12,6 +12,7 @@ import codemdr.objects.CodeMdrInt;
 import codemdr.objects.CodeMdrString;
 import org.ascore.ast.buildingBlocs.Expression;
 import org.ascore.ast.buildingBlocs.Statement;
+import org.ascore.errors.ASCErrors;
 import org.ascore.executor.ASCExecutor;
 import org.ascore.generators.ast.AstGenerator;
 import org.ascore.tokens.Token;
@@ -78,33 +79,37 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
         });
 
         addStatement("DECLARER VARIABLE AFFECTER L_APPEL_A expression AVEC PARAM expression~" +
-                        "DECLARER VARIABLE AFFECTER expression~DECLARER VARIABLE AFFECTER L_APPEL_A expression AVEC PARAMS expression~" +
-                        "DECLARER VARIABLE AFFECTER expression~DECLARER VARIABLE AFFECTER L_APPEL_A expression", (p, variant) -> {
-                    switch (variant) {
-                        case 0 -> {
-                            // TODO: s'assurer qu'il n'y a qu'un seul paramètre: erreur d'accord sinon
+                        "DECLARER VARIABLE AFFECTER L_APPEL_A expression AVEC PARAMS expression~" +
+                        "DECLARER VARIABLE AFFECTER L_APPEL_A expression", (p, variant) -> {
+
+                    EnumerationExpr args = switch (variant) {
+                        case 0, 1 -> {
+                            var params = (Expression<?>) p.get(7);
+
+                            // s'assure qu'il n'y a qu'un seul paramètre: erreur d'accord sinon
+                            // s'assure qu'il y a au moins deux paramètres et que l'énumération est complète (fini par un `et`)
+                            if ((variant == 0 && params instanceof EnumerationExpr) ||
+                                    (variant == 1 && (!(params instanceof EnumerationExpr)))) {
+                                throw new ASCErrors.ErreurSyntaxe("Mauvais accord du mot `paramètre`");
+                            }
+                            yield EnumerationExpr.getOrWrap(params);
                         }
-                        case 1 -> {
-                            // TODO: s'assurer qu'il y a au moins deux paramètres et que l'énumération est complète (fini par un `et`)
-                        }
-                        case 2 -> {
-                            // TODO: s'assurer que la fonction appelé ne prend pas d'arguments
-                        }
-                    }
-                    throw new UnsupportedOperationException();
+                        case 2 -> EnumerationExpr.completeEnumeration();
+                        default -> throw new UnsupportedOperationException("Unreachable");
+                    };
+                    var appel = new AppelerFoncExpr((VarExpr) p.get(4), args);
+
+                    return new DeclarerStmt(
+                            new VarExpr(((Token) p.get(1)).value(), executorInstance.getExecutorState()),
+                            appel, executorInstance
+                    );
                 }
         );
 
-        addStatement("DECLARER VARIABLE AFFECTER expression", (p, variant) -> {
-                    if (variant == 0) {
-                        return new DeclarerStmt(
-                                new VarExpr(((Token) p.get(1)).value(), executorInstance.getExecutorState()),
-                                (Expression<?>) p.get(3), executorInstance);
-                    } else {
-                        throw new UnsupportedOperationException("TODO: ajouter l'appel de fonction");
-                    }
-                }
-        );
+        addStatement("DECLARER VARIABLE AFFECTER expression", (p, variant) -> new DeclarerStmt(
+                new VarExpr(((Token) p.get(1)).value(), executorInstance.getExecutorState()),
+                (Expression<?>) p.get(3), executorInstance
+        ));
 
         addStatement("MAINTENANT VARIABLE AFFECTER expression", p ->
                 new AffecterStmt(
@@ -113,6 +118,7 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
         );
 
         addStatement("IMPRIMER expression", p -> new PrintStmt((Expression<?>) p.get(1)));
+        addStatement("expression", p -> Statement.evalExpression((Expression<?>) p.get(0)));
         addStatement("", p -> Statement.EMPTY_STATEMENT);
     }
 
@@ -150,24 +156,31 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                     return new CreationTableauExpr(EnumerationExpr.completeEnumeration(contenu, (Expression<?>) p.get(p.size() - 1)));
                 });
 
-        addExpression("expression VIRGULE expression ET expression~" +
-                        "expression VIRGULE expression~" +
+        addExpression("expression VIRGULE expression~" +
                         "expression ET expression",
                 (p, variant) -> {
                     if (p.get(0) instanceof EnumerationExpr enumerationExpr) {
                         enumerationExpr.addElement((Expression<?>) p.get(2));
-
-                        if (variant == 0) enumerationExpr.addElement((Expression<?>) p.get(4));
-
-                        enumerationExpr.setComplete(variant != 1);
+                        enumerationExpr.setComplete(variant == 1);
                         return enumerationExpr;
                     }
 
                     var enumeration = new EnumerationExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2));
-                    if (variant == 0) enumeration.addElement((Expression<?>) p.get(4));
-                    enumeration.setComplete(variant != 1);
+                    enumeration.setComplete(variant == 1);
                     return enumeration;
                 });
 
+        addExpression("APPELER_PROC expression~" +
+                        "APPELER_FONC expression AVEC expression",
+                (p, variant) ->
+                        switch (variant) {
+                            case 0 -> new AppelerFoncExpr((VarExpr) p.get(1));
+                            case 1 -> new AppelerFoncExpr(
+                                    (VarExpr) p.get(1),
+                                    EnumerationExpr.getOrWrap((Expression<?>) p.get(3))
+                            );
+                            default -> throw new UnsupportedOperationException("Ne devrait pas arrivé");
+                        }
+        );
     }
 }

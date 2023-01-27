@@ -14,7 +14,7 @@ public class Builtins implements CodeMdrModule {
     @Override
     public CodeMdrFonctionModule[] chargerFonctions(CodeMdrExecutorState executeurState) {
         return new CodeMdrFonctionModule[]{
-                new CodeMdrFonctionModule("somme", List.of(
+                new CodeMdrFonctionModule("Somme", List.of(
                         new CodeMdrParam("Liste")
                 ), params -> {
                     double sum = 0;

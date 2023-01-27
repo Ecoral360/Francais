@@ -24,12 +24,17 @@ public class EnumerationExpr implements Expression<CodeMdrTableau> {
         return enumeration;
     }
 
+    public static EnumerationExpr getOrWrap(Expression<?> expr) {
+        if (expr instanceof EnumerationExpr enumerationExpr) return enumerationExpr;
+        return EnumerationExpr.completeEnumeration(expr);
+    }
+
     public void addElement(Expression<?> valeur) {
         elements.add(valeur);
     }
 
     public void setComplete(boolean complete) {
-        isComplete = complete;
+        if (!isComplete) isComplete = complete;
     }
 
     public boolean isComplete() {

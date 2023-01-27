@@ -16,7 +16,7 @@ public class Main {
     /**
      * The CODE lines to execute.
      */
-    private static final String CODE = """
+    private static final String CODE_2 = """
             Imprimer « Bonjour! ».
             Posons que MonNombre vaut « Allo ».
             Imprimer MonNombre.
@@ -28,6 +28,12 @@ public class Main {
             Imprimer Liste.
             Maintenant, Liste vaut un tableau contenant 1 et un tableau contenant 1, 3 et « Allo ».
             Imprimer Liste.
+            """;
+
+    private static final String CODE = """
+            Imprimer « Test ».
+            Posons que Résultat vaut l'appel à Somme avec le paramètre 2.
+            Imprimer Résultat.
             """;
 
     public static void main(String[] args) {

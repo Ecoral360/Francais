@@ -1,6 +1,5 @@
 package codemdr.ast.statements;
 
-import codemdr.ast.expressions.ConstValueExpr;
 import codemdr.ast.expressions.VarExpr;
 import codemdr.execution.CodeMdrExecutorState;
 import codemdr.objects.CodeMdrObj;
@@ -11,7 +10,6 @@ import org.ascore.executor.ASCExecutor;
 import org.ascore.lang.objects.ASCObject;
 import org.ascore.lang.objects.ASCVariable;
 import org.ascore.lang.objects.ASScope;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -21,32 +19,14 @@ import java.util.List;
  *
  * @author Mathis Laroche
  */
-public class CreerFonctionStmt extends Statement {
-    private final VarExpr fonction;
-    private final List<VarExpr> args;
-    private final ASScope scope;
-
+public class FinFonctionStmt extends Statement {
     /**
      * Si le programme n'a pas besoin d'avoir accès à l'exécuteur lorsque la méthode {@link #execute()}
      * est appelée
      */
-    public CreerFonctionStmt(VarExpr nom, List<VarExpr> args, ASCExecutor<CodeMdrExecutorState> executeurInstance) {
+    public FinFonctionStmt(ASCExecutor<CodeMdrExecutorState> executeurInstance) {
         super(executeurInstance);
-        this.fonction = nom;
-        this.args = args;
-
-        var scope = executeurInstance.getExecutorState()
-                .getScopeManager()
-                .getCurrentScope();
-
-        if (scope.getVariable(fonction.nom()) != null) {
-            throw new ASCErrors.ErreurDeclaration("La variable " + fonction.nom() +
-                    " a déjà été déclarée. Utilisez `Maintenant, " + fonction.nom() + " vaut <valeur>.`");
-        }
-
-        scope.declareVariable(new ASCVariable<>(fonction.nom(), CodeMdrObj.AUCUNE_VALEUR));
-
-        this.scope = executeurInstance.getExecutorState().getScopeManager().makeNewCurrentScope();
+        executorInstance.getExecutorState().getScopeManager().popCurrentScope();
     }
 
     /**
@@ -68,14 +48,7 @@ public class CreerFonctionStmt extends Statement {
      * </ul>
      */
     @Override
-    @SuppressWarnings("unchecked")
     public Object execute() {
-        var valeur = this.args.stream().map(Expression::eval).toList();
-        var variable = (ASCVariable<Object>) executorInstance.getExecutorState().getScopeManager().getCurrentScopeInstance()
-                .getVariable(this.fonction.nom());
-
-        variable.setAscObject((ASCObject<Object>) valeur);
-
         return null;
     }
 }

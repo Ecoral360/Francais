@@ -30,3 +30,19 @@ Imprimer « Bonjour, Monde! ».
 13. Maintenant, Résultat vaut l'appel à DoublerOuDiviser avec MonNombre.
 14. Imprimer Résultat.
 ```
+
+```
+1.  Début de la définition de la fonction nommée DoublerOuDiviser acceptant le paramètre N.
+2.      Exécuter la ligne 4 si N modulo 2 vaut 0 ; sinon, exécuter les lignes 5 et 6.#
+3.          Retourner N / 2.
+4.          Posons que DoubleN vaut N * 2.
+5.          Retourner DoubleN.
+6.  Fin de la définition de la fonction DoublerOuDiviser.
+7.    
+8.  Posons que MonNombre vaut 10.
+9.  Posons que Résultat vaut l'appel à DoublerOuDiviser avec MonNombre.
+10. Imprimer Résultat.
+11. Maintenant, MonNombre vaut 11.
+12. Maintenant, Résultat vaut l'appel à DoublerOuDiviser avec MonNombre.
+13. Imprimer Résultat.
+```
