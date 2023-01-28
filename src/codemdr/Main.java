@@ -16,17 +16,17 @@ public class Main {
     /**
      * The CODE lines to execute.
      */
-    private static final String CODE_2 = """
+    private static final String CODE = """
             Imprimer « Bonjour! ».
             Posons que MonNombre vaut « Allo ».
             Imprimer MonNombre.
             Maintenant, MonNombre vaut 11,3.
             Imprimer MonNombre.
-            Posons que Liste vaut un tableau contenant 1, un tableau contenant 1, 3, « Allo » et 2 et 4.
+            Posons que Liste vaut un tableau contenant 1, "un tableau contenant 1, 3, « Allo » et 2" et 4.
             Imprimer Liste.
-            Maintenant, Liste vaut un tableau contenant un tableau contenant 1 et 2.
+            Maintenant, Liste vaut un tableau contenant un tableau contenant seulement 1 et 2.
             Imprimer Liste.
-            Maintenant, Liste vaut un tableau contenant 1 et un tableau contenant 1, 3 et « Allo ».
+            Maintenant, Liste vaut un tableau contenant 1 et "un tableau contenant 1, 3 et « Allo »".
             Imprimer Liste.
             """;
 
@@ -39,12 +39,12 @@ public class Main {
             Imprimer Résultat.
             """;
 
-    private static final String CODE = """
+    private static final String CODE_2 = """
             Posons que I vaut 0.
                         
             Exécuter 2 énoncés tant que I < 10.
-            Imprimer I.
-            Maintenant, I vaut I + 1.
+                Imprimer I.
+                Maintenant, I vaut I plus 1.
 
             Imprimer « On a fini! ».
             """;

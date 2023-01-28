@@ -4,7 +4,9 @@ import org.ascore.errors.ASCErrors;
 import org.ascore.executor.ASCPrecompiler;
 import org.ascore.tokens.Token;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class is used to precompile the source code. Edit the {@link #preCompile(String)} method to change the precompilation behavior.
@@ -21,7 +23,7 @@ public class CodeMdrPreCompiler extends ASCPrecompiler {
      */
     @Override
     public String preCompile(String program) {
-        return program;
+        return Arrays.stream(program.split("\n")).map(String::trim).collect(Collectors.joining("\n"));
     }
 
     @Override

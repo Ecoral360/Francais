@@ -22,6 +22,7 @@ Add:
   PARAM: 'le\ paramètre'
   PARAMS: 'les\ paramètres'
 
+  TABLEAU_CREATION_SINGLETON: '\bun\ tableau\ contenant\ seulement'
   TABLEAU_CREATION: '\bun\ tableau\ contenant'
 
   EMPHASE: '"'
@@ -32,15 +33,24 @@ Add:
     TEXTE: '«\ .*?\ »'
     BOOL: '\bVRAI|\bFAUX'
 
-  PLUS: '\+'
+  PLUS: 'plus'
+  MOINS: 'moins'
+  FOIS: 'fois'
+  DIV: 'divisé\ par'
+  MODULO: 'modulo'
+
   PLUS_PETIT: '\<'
+
+
   ET: 'et'
+  OU: 'ou'
+  DE: 'de'
   VIRGULE: ','
 
-  VARIABLE: '\p{L}[0-9_\p{L}]*'
+  VARIABLE: '\p{Lu}[0-9_\p{L}]*'
 
 Ignore:
-  - '^Note\ à\ moi-même\ :\ .*?\.$'
+  - '^Note\ à\ moi-même\ :\ .*?[\.\!\?]$'
   - '\s+'
 
 EndStatement: '[\.\!\?]'

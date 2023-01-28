@@ -1,6 +1,7 @@
 package codemdr.parser;
 
 
+import codemdr.ast.CodeMdrStatement;
 import codemdr.ast.expressions.*;
 import codemdr.ast.statements.AffecterStmt;
 import codemdr.ast.statements.DeclarerStmt;
@@ -126,15 +127,18 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
         );
 
         addStatement("IMPRIMER expression", p -> new PrintStmt((Expression<?>) p.get(1), executorInstance));
-        addStatement("expression", p -> Statement.evalExpression((Expression<?>) p.get(0)));
-        addStatement("", p -> Statement.EMPTY_STATEMENT);
+        addStatement("expression", p -> CodeMdrStatement.evalExpression(executorInstance, (Expression<?>) p.get(0)));
+        addStatement("", p -> CodeMdrStatement.statementVide(executorInstance));
     }
 
     /**
      * Defines the rules of the expressions of the language.
      */
     protected void addExpressions() {
-        addExpression("EMPHASE #epression EMPHASE", p -> evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null));
+        addExpression("EMPHASE #expression EMPHASE", p -> {
+            System.out.println(p);
+            return evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null);
+        });
 
         // add your expressions here
         addExpression("{datatypes}~VARIABLE", p -> {
@@ -153,9 +157,9 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
         addExpression("expression PLUS_PETIT expression", p -> new CompExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2)));
 
         addExpression("TABLEAU_CREATION #expression ET expression~" +
-                        "TABLEAU_CREATION expression",
+                        "TABLEAU_CREATION_SINGLETON expression",
                 (p, variant) -> {
-                    System.out.println(p);
+                    // System.out.println(p);
                     if (variant == 1) {
                         return new CreationTableauExpr(EnumerationExpr.completeEnumeration((Expression<?>) p.get(1)));
                     }
