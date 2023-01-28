@@ -1,5 +1,6 @@
 package codemdr.ast.statements;
 
+import codemdr.ast.CodeMdrStatement;
 import codemdr.ast.expressions.ConstValueExpr;
 import codemdr.ast.expressions.VarExpr;
 import codemdr.execution.CodeMdrExecutorState;
@@ -21,7 +22,7 @@ import java.util.List;
  *
  * @author Mathis Laroche
  */
-public class CreerFonctionStmt extends Statement {
+public class CreerFonctionStmt extends CodeMdrStatement {
     private final VarExpr fonction;
     private final List<VarExpr> args;
     private final ASScope scope;
@@ -76,6 +77,7 @@ public class CreerFonctionStmt extends Statement {
 
         variable.setAscObject((ASCObject<Object>) valeur);
 
+        super.nextCoord();
         return null;
     }
 }

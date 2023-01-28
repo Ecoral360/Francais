@@ -21,6 +21,9 @@ public class CodeMdrJetoniseur extends ASCLexer {
         for (var rule : getTokenRules()) {
             rule.setFlags(Pattern.MULTILINE | Pattern.UNICODE_CHARACTER_CLASS);
         }
+        for (var rule : getIgnoredTokenRules()) {
+            rule.setFlags(Pattern.MULTILINE | Pattern.UNICODE_CHARACTER_CLASS);
+        }
     }
 
     @Override

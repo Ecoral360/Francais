@@ -1,7 +1,10 @@
 package codemdr.ast.statements;
 
+import codemdr.ast.CodeMdrStatement;
+import codemdr.execution.CodeMdrExecutorState;
 import org.ascore.ast.buildingBlocs.Expression;
 import org.ascore.ast.buildingBlocs.Statement;
+import org.ascore.executor.ASCExecutor;
 
 /**
  * Squelette de l'impl\u00E9mentation d'un programme.<br>
@@ -9,14 +12,15 @@ import org.ascore.ast.buildingBlocs.Statement;
  *
  * @author Mathis Laroche
  */
-public class PrintStmt extends Statement {
+public class PrintStmt extends CodeMdrStatement {
     private final Expression<?> expression;
 
     /**
      * Si le programme n'a pas besoin d'avoir acc\u00E8s \u00e0 l'ex\u00E9cuteur lorsque la m\u00E9thode {@link #execute()}
      * est appel\u00E9e
      */
-    public PrintStmt(Expression<?> expression) {
+    public PrintStmt(Expression<?> expression, ASCExecutor<CodeMdrExecutorState> executorInstance) {
+        super(executorInstance);
         this.expression = expression;
     }
 
@@ -41,6 +45,7 @@ public class PrintStmt extends Statement {
     @Override
     public Object execute() {
         System.out.println(expression.eval());
+        super.nextCoord();
         return null;
     }
 }

@@ -1,5 +1,6 @@
 package codemdr.ast.statements;
 
+import codemdr.ast.CodeMdrStatement;
 import codemdr.ast.expressions.VarExpr;
 import codemdr.execution.CodeMdrExecutorState;
 import codemdr.objects.CodeMdrObj;
@@ -19,7 +20,7 @@ import java.util.List;
  *
  * @author Mathis Laroche
  */
-public class FinFonctionStmt extends Statement {
+public class FinFonctionStmt extends CodeMdrStatement {
     /**
      * Si le programme n'a pas besoin d'avoir accès à l'exécuteur lorsque la méthode {@link #execute()}
      * est appelée
@@ -49,6 +50,7 @@ public class FinFonctionStmt extends Statement {
      */
     @Override
     public Object execute() {
+        super.nextCoord();
         return null;
     }
 }

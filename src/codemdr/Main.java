@@ -30,10 +30,23 @@ public class Main {
             Imprimer Liste.
             """;
 
-    private static final String CODE = """
-            Imprimer « Test ».
-            Posons que Résultat vaut l'appel à Somme avec le paramètre 2.
+    private static final String CODE_3 = """
+            Imprimer « Faire la somme de 1, 2 et 4! ».
+            Posons que Résultat vaut l'appel à Somme avec les paramètres 1, 2 et 4.
+                        
+            Note à moi-même : Ce code sera ignoré, il est dans un commentaire :).
+
             Imprimer Résultat.
+            """;
+
+    private static final String CODE = """
+            Posons que I vaut 0.
+                        
+            Exécuter 2 énoncés tant que I < 10.
+            Imprimer I.
+            Maintenant, I vaut I + 1.
+
+            Imprimer « On a fini! ».
             """;
 
     public static void main(String[] args) {

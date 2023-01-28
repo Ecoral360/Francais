@@ -1,17 +1,13 @@
 package codemdr.ast.statements;
 
 import codemdr.ast.CodeMdrStatement;
-import codemdr.ast.expressions.ConstValueExpr;
-import codemdr.ast.expressions.VarExpr;
 import codemdr.execution.CodeMdrExecutorState;
-import codemdr.objects.CodeMdrObj;
+import codemdr.execution.blocdecode.BlocDeCodeNbEnonces;
+import codemdr.objects.CodeMdrBool;
+import codemdr.objects.CodeMdrInt;
 import org.ascore.ast.buildingBlocs.Expression;
 import org.ascore.ast.buildingBlocs.Statement;
-import org.ascore.errors.ASCErrors;
 import org.ascore.executor.ASCExecutor;
-import org.ascore.lang.objects.ASCObject;
-import org.ascore.lang.objects.ASCVariable;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Squelette de l'impl\u00E9mentation d'un programme.<br>
@@ -19,18 +15,17 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Mathis Laroche
  */
-public class AffecterStmt extends CodeMdrStatement {
-    private final VarExpr variable;
-    private final Expression<?> valeur;
+public class ExecuterTantQueStmt extends CodeMdrStatement {
+    private final Expression<?> conditionExpr, nbEnoncesExpr;
 
     /**
      * Si le programme n'a pas besoin d'avoir accès à l'exécuteur lorsque la méthode {@link #execute()}
      * est appelée
      */
-    public AffecterStmt(VarExpr variable, @Nullable Expression<?> valeur, ASCExecutor<CodeMdrExecutorState> executeurInstance) {
+    public ExecuterTantQueStmt(Expression<?> nbEnoncesExpr, Expression<?> conditionExpr, ASCExecutor<CodeMdrExecutorState> executeurInstance) {
         super(executeurInstance);
-        this.variable = variable;
-        this.valeur = valeur == null ? new ConstValueExpr(CodeMdrObj.AUCUNE_VALEUR) : valeur;
+        this.conditionExpr = conditionExpr;
+        this.nbEnoncesExpr = nbEnoncesExpr;
     }
 
     /**
@@ -52,19 +47,21 @@ public class AffecterStmt extends CodeMdrStatement {
      * </ul>
      */
     @Override
-    @SuppressWarnings("unchecked")
     public Object execute() {
-        var valeur = this.valeur.eval();
-        var variable = (ASCVariable<Object>) executorInstance.getExecutorState().getScopeManager().getCurrentScopeInstance()
-                .getVariable(this.variable.nom());
+        var condition = (CodeMdrBool) conditionExpr.eval();
+        var nbEnonces = (CodeMdrInt) nbEnoncesExpr.eval();
+        var state = (CodeMdrExecutorState) executorInstance.getExecutorState();
 
-        if (variable == null) {
-            throw new ASCErrors.ErreurVariableInconnue("La variable " + this.variable.nom() + " n'a pas été définie.");
+        if (condition.getValue()) {
+            var currCoord = executorInstance.obtenirCoordRunTime().copy();
+            state.getGestionnaireDeBlocDeCode().empilerBlocDeCode(
+                    new BlocDeCodeNbEnonces(currCoord, currCoord, nbEnonces.getValue().intValue())
+            );
+        } else {
+            for (int i = 0; i < nbEnonces.getValue().intValue() - 1; i++) {
+                executorInstance.obtenirCoordRunTime().plusUn();
+            }
         }
-
-        variable.setAscObject((ASCObject<Object>) valeur);
-
-
         super.nextCoord();
         return null;
     }

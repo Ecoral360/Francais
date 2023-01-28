@@ -2,35 +2,45 @@ Variables: { }
 
 Add:
   IMPRIMER: '(\bi|^I)mprimer\b'
-  AFFECTER: '\bvaut\b'
+  VAUT: '\bvaut\b'
   DECLARER: '(\bp|^P)osons\ que\ '
   MAINTENANT: '(\bm|^M)aintenant,\ (\b|$)'
   DEMANDER: '(\bd|^D)emander\ puis\ enregistrer\ dans\ '
   L_APPEL_A: "l'appel\\ à"
 
+  EXECUTER: '(\be|^E)xécuter\ '
+  ENONCES: 'énoncé(s?)'
+
+  TANT_QUE: '\btant\ que\b'
+
   FONCTION_DEF: "(\bd|^D)ébut\ de\ la\ définition\ d'une\ fonction\ nommée"
   FONCTION_END: "(\bf|^F)in\ de\ la\ définition\ de\ la\ fonction"
 
-  APPELER_PROC: '(\ba|^A)ppeler\ la\ procédure'
-  APPELER_FONC: '(\ba|^A)ppeler\ la\ fonction'
+  APPELER: '(\ba|^A)ppeler'
 
   AVEC: '\bavec\b'
   PARAM: 'le\ paramètre'
   PARAMS: 'les\ paramètres'
 
   TABLEAU_CREATION: '\bun\ tableau\ contenant'
+
+  EMPHASE: '"'
+
   datatypes:
     DECIMAL: '-?\d+,\d+'
     ENTIER: '-?\d+'
     TEXTE: '«\ .*?\ »'
+    BOOL: '\bVRAI|\bFAUX'
 
   PLUS: '\+'
+  PLUS_PETIT: '\<'
   ET: 'et'
   VIRGULE: ','
 
   VARIABLE: '\p{L}[0-9_\p{L}]*'
 
 Ignore:
+  - '^Note\ à\ moi-même\ :\ .*?\.$'
   - '\s+'
 
 EndStatement: '[\.\!\?]'

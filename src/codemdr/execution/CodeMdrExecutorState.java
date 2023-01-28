@@ -1,5 +1,6 @@
 package codemdr.execution;
 
+import codemdr.execution.blocdecode.CodeMdrGestionnaireDeBlocDeCode;
 import org.ascore.executor.ASCExecutorState;
 
 /**
@@ -7,7 +8,13 @@ import org.ascore.executor.ASCExecutorState;
  * care of the storage of the variables' scope stack.
  */
 public class CodeMdrExecutorState extends ASCExecutorState {
+    private final CodeMdrGestionnaireDeBlocDeCode gestionnaireDeBlocDeCode = new CodeMdrGestionnaireDeBlocDeCode();
+
     public CodeMdrExecutorState() {
         super();
+    }
+
+    public CodeMdrGestionnaireDeBlocDeCode getGestionnaireDeBlocDeCode() {
+        return gestionnaireDeBlocDeCode;
     }
 }

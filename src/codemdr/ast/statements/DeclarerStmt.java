@@ -1,5 +1,6 @@
 package codemdr.ast.statements;
 
+import codemdr.ast.CodeMdrStatement;
 import codemdr.ast.expressions.ConstValueExpr;
 import codemdr.ast.expressions.VarExpr;
 import codemdr.execution.CodeMdrExecutorState;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Mathis Laroche
  */
-public class DeclarerStmt extends Statement {
+public class DeclarerStmt extends CodeMdrStatement {
     private final VarExpr variable;
     private final Expression<?> valeur;
 
@@ -70,6 +71,7 @@ public class DeclarerStmt extends Statement {
 
         variable.setAscObject((ASCObject<Object>) valeur);
 
+        super.nextCoord();
         return null;
     }
 }
