@@ -33,7 +33,7 @@ Imprimer « Bonjour, Monde! ».
 
 ```
 1.  Début de la définition de la fonction nommée DoublerOuDiviser acceptant le paramètre N.
-2.      Exécuter 1 énoncé si N modulo 2 vaut 0 ; sinon, exécuter 2 énoncés.
+2.      Exécuter 1 énoncé si N modulo 2 vaut 0 ; sinon, sauter 1 énoncé puis exécuter 2 énoncés.
 3.          Retourner N / 2.
 4.          Posons que DoubleN vaut N * 2.
 5.          Retourner DoubleN.

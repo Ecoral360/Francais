@@ -2,6 +2,7 @@ package codemdr.module.builtins;
 
 import codemdr.execution.CodeMdrExecutorState;
 import codemdr.module.CodeMdrModule;
+import codemdr.objects.CodeMdrBool;
 import codemdr.objects.CodeMdrFloat;
 import codemdr.objects.CodeMdrObj;
 import codemdr.objects.function.CodeMdrFonctionModule;
@@ -29,6 +30,9 @@ public class Builtins implements CodeMdrModule {
 
     @Override
     public ASCVariable<?>[] chargerVariables(CodeMdrExecutorState executeurState) {
-        return new ASCVariable[0];
+        return new ASCVariable[]{
+                new ASCVariable<>("Vrai", new CodeMdrBool(true)),
+                new ASCVariable<>("Faux", new CodeMdrBool(false))
+        };
     }
 }

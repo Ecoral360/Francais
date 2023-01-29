@@ -33,20 +33,32 @@ public class Main {
     private static final String CODE_3 = """
             Imprimer « Faire la somme de 1, 2 et 4! ».
             Posons que Résultat vaut l'appel à Somme avec les paramètres 1, 2 et 4.
-                        
+
             Note à moi-même : Ce code sera ignoré, il est dans un commentaire :).
 
             Imprimer Résultat.
             """;
 
-    private static final String CODE = """
+    private static final String CODE_4 = """
             Posons que I vaut 0.
 
             Exécuter 2 énoncés tant que I < 10.
                 Imprimer I.
                 Maintenant, I vaut I plus 1.
 
+            Imprimer « On a fini 3! ».
+            Imprimer Vrai.
+            """;
+
+    private static final String CODE = """
+            Posons que I vaut 11.
+
+            Exécuter 2 énoncés si I < 10 ; sinon, sauter 1 énoncé puis exécuter 1 énoncé.
+                Imprimer I.
+                Maintenant, I vaut I plus 1.
+
             Imprimer « On a fini! ».
+            Imprimer I.
             """;
 
     public static void main(String[] args) {

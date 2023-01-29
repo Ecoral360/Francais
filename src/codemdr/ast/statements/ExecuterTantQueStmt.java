@@ -16,16 +16,17 @@ import org.ascore.executor.ASCExecutor;
  * @author Mathis Laroche
  */
 public class ExecuterTantQueStmt extends CodeMdrStatement {
-    private final Expression<?> conditionExpr, nbEnoncesExpr;
+    private final Expression<?> conditionExpr, nbEnoncesExpr, nbEnoncesSautesExpr;
 
     /**
      * Si le programme n'a pas besoin d'avoir accès à l'exécuteur lorsque la méthode {@link #execute()}
      * est appelée
      */
-    public ExecuterTantQueStmt(Expression<?> nbEnoncesExpr, Expression<?> conditionExpr, ASCExecutor<CodeMdrExecutorState> executeurInstance) {
+    public ExecuterTantQueStmt(Expression<?> nbEnoncesExpr, Expression<?> conditionExpr, Expression<?> nbEnoncesSautesExpr, ASCExecutor<CodeMdrExecutorState> executeurInstance) {
         super(executeurInstance);
         this.conditionExpr = conditionExpr;
         this.nbEnoncesExpr = nbEnoncesExpr;
+        this.nbEnoncesSautesExpr = nbEnoncesSautesExpr;
     }
 
     /**
@@ -49,16 +50,17 @@ public class ExecuterTantQueStmt extends CodeMdrStatement {
     @Override
     public Object execute() {
         var condition = (CodeMdrBool) conditionExpr.eval();
-        var nbEnonces = (CodeMdrInt) nbEnoncesExpr.eval();
         var state = (CodeMdrExecutorState) executorInstance.getExecutorState();
 
         if (condition.getValue()) {
+            var nbEnonces = (CodeMdrInt) nbEnoncesExpr.eval();
             var currCoord = executorInstance.obtenirCoordRunTime().copy();
             state.getGestionnaireDeBlocDeCode().empilerBlocDeCode(
-                    new BlocDeCodeNbEnonces(currCoord, currCoord, nbEnonces.getValue().intValue())
+                    new BlocDeCodeNbEnonces(currCoord, c -> currCoord, nbEnonces.getValue().intValue())
             );
         } else {
-            for (int i = 0; i < nbEnonces.getValue().intValue() - 1; i++) {
+            var nbEnoncesSautes = (CodeMdrInt) nbEnoncesSautesExpr.eval();
+            for (int i = 0; i < nbEnoncesSautes.getValue().intValue(); i++) {
                 executorInstance.obtenirCoordRunTime().plusUn();
             }
         }

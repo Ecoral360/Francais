@@ -8,6 +8,7 @@ import codemdr.objects.CodeMdrBool;
 import codemdr.objects.CodeMdrInt;
 import org.ascore.ast.buildingBlocs.Expression;
 import org.ascore.executor.ASCExecutor;
+import org.ascore.executor.Coordinate;
 
 /**
  * Squelette de l'impl\u00E9mentation d'un programme.<br>
@@ -16,21 +17,20 @@ import org.ascore.executor.ASCExecutor;
  * @author Mathis Laroche
  */
 public class ExecuterSiStmt extends CodeMdrStatement {
-    private final Expression<?> conditionExpr, nbEnoncesSiExpr, nbEnoncesSinonExpr;
+    private final Expression<?> conditionExpr, nbEnoncesSiExpr, nbEnoncesSautesApresSiExpr, nbEnoncesSinonExpr, nbEnoncesSautesAvantSinonExpr;
 
-    /**
-     * Si le programme n'a pas besoin d'avoir accès à l'exécuteur lorsque la méthode {@link #execute()}
-     * est appelée
-     */
-    public ExecuterSiStmt(Expression<?> nbEnoncesSiExpr, Expression<?> nbEnoncesSinonExpr, Expression<?> conditionExpr, ASCExecutor<CodeMdrExecutorState> executeurInstance) {
+    public ExecuterSiStmt(Expression<?> nbEnoncesSiExpr,
+                          Expression<?> nbEnoncesSautesApresSiExpr,
+                          Expression<?> nbEnoncesSautesAvantSinonExpr,
+                          Expression<?> nbEnoncesSinonExpr,
+                          Expression<?> conditionExpr,
+                          ASCExecutor<CodeMdrExecutorState> executeurInstance) {
         super(executeurInstance);
         this.conditionExpr = conditionExpr;
         this.nbEnoncesSiExpr = nbEnoncesSiExpr;
-        this.nbEnoncesSinonExpr = nbEnoncesSinonExpr == null ? new ConstValueExpr(new CodeMdrInt(0)) : nbEnoncesSinonExpr;
-    }
-
-    public ExecuterSiStmt(Expression<?> nbEnoncesSiExpr, Expression<?> conditionExpr, ASCExecutor<CodeMdrExecutorState> executeurInstance) {
-        this(nbEnoncesSiExpr, null, conditionExpr, executeurInstance);
+        this.nbEnoncesSinonExpr = nbEnoncesSinonExpr != null ? nbEnoncesSinonExpr : new ConstValueExpr(new CodeMdrInt(0));
+        this.nbEnoncesSautesApresSiExpr = nbEnoncesSautesApresSiExpr != null ? nbEnoncesSautesApresSiExpr : this.nbEnoncesSinonExpr;
+        this.nbEnoncesSautesAvantSinonExpr = nbEnoncesSautesAvantSinonExpr != null ? nbEnoncesSautesAvantSinonExpr : this.nbEnoncesSiExpr;
     }
 
     /**
@@ -54,23 +54,34 @@ public class ExecuterSiStmt extends CodeMdrStatement {
     @Override
     public Object execute() {
         var condition = (CodeMdrBool) conditionExpr.eval();
-        var nbEnoncesSi = (CodeMdrInt) nbEnoncesSiExpr.eval();
-        var nbEnoncesSinon = (CodeMdrInt) nbEnoncesSinonExpr.eval();
+
         var state = (CodeMdrExecutorState) executorInstance.getExecutorState();
 
-        var fin = nbEnoncesSi.getValue().intValue() + nbEnoncesSinon.getValue().intValue();
-
         if (condition.getValue()) {
+            var nbEnoncesSi = (CodeMdrInt) nbEnoncesSiExpr.eval();
+            var nbEnoncesSautesApresSi = ((CodeMdrInt) nbEnoncesSautesApresSiExpr.eval()).getValue().intValue();
             var currCoord = executorInstance.obtenirCoordRunTime().copy();
             var coordFin = currCoord.copy();
 
             state.getGestionnaireDeBlocDeCode().empilerBlocDeCode(
-                    new BlocDeCodeNbEnonces(currCoord, null, nbEnoncesSi.getValue().intValue())
+                    new BlocDeCodeNbEnonces(currCoord, c -> {
+                        for (int i = 0; i < nbEnoncesSautesApresSi + 1; i++) {
+                            c.plusUn();
+                        }
+                        return c;
+                    }, nbEnoncesSi.getValue().intValue())
             );
         } else {
-            for (int i = 0; i < nbEnoncesSi.getValue().intValue() - 1; i++) {
+            var nbEnoncesAvantSinon = (CodeMdrInt) nbEnoncesSautesAvantSinonExpr.eval();
+            for (int i = 0; i < nbEnoncesAvantSinon.getValue().intValue(); i++) {
                 executorInstance.obtenirCoordRunTime().plusUn();
             }
+            var nbEnoncesSinon = (CodeMdrInt) nbEnoncesSinonExpr.eval();
+            var currCoord = executorInstance.obtenirCoordRunTime().copy();
+
+            state.getGestionnaireDeBlocDeCode().empilerBlocDeCode(
+                    new BlocDeCodeNbEnonces(currCoord, Coordinate::plusUn, nbEnoncesSinon.getValue().intValue())
+            );
         }
         super.nextCoord();
         return null;

@@ -3,10 +3,7 @@ package codemdr.parser;
 
 import codemdr.ast.CodeMdrStatement;
 import codemdr.ast.expressions.*;
-import codemdr.ast.statements.AffecterStmt;
-import codemdr.ast.statements.DeclarerStmt;
-import codemdr.ast.statements.ExecuterTantQueStmt;
-import codemdr.ast.statements.PrintStmt;
+import codemdr.ast.statements.*;
 import codemdr.execution.CodeMdrExecutorState;
 import codemdr.lexer.CodeMdrJetoniseur;
 import codemdr.objects.*;
@@ -78,22 +75,64 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
             return null;
         });
 
-        addStatement("EXECUTER expression ENONCES TANT_QUE expression", p -> {
-            var enonces = (Token) p.get(2);
-            var nbEnoncesExpr = (Expression<?>) p.get(1);
-            var conditionExpr = (Expression<?>) p.get(4);
+        addStatement("EXECUTER expression ENONCES TANT_QUE expression~" +
+                        "EXECUTER expression ENONCES TANT_QUE expression PUIS SAUTER expression ENONCES",
+                (p, variant) -> {
+                    var enonces = (Token) p.get(2);
+                    var nbEnoncesExpr = (Expression<?>) p.get(1);
+                    var conditionExpr = (Expression<?>) p.get(4);
 
-            // Si on connait le nombre d'énoncés au compile time, on regarde si l'accord du mot est correct.
-            if (nbEnoncesExpr instanceof ConstValueExpr constValueExpr) {
-                var nbEnonces = ((CodeMdrInt) constValueExpr.value()).getValue().intValue();
-                if ((nbEnonces > 1 && !enonces.value().endsWith("s"))
-                        || (nbEnonces < 1 && enonces.value().endsWith("s"))) {
-                    throw new ASCErrors.ErreurSyntaxe("Tu dois donc accorder le mot \"énoncé\" selon combien il y en a! Je suis très déçu de toi.");
-                }
-            }
+                    var nbEnoncesSauteExpr = variant == 1 ? (Expression<?>) p.get(7) : nbEnoncesExpr;
 
-            return new ExecuterTantQueStmt(nbEnoncesExpr, conditionExpr, executorInstance);
-        });
+                    // Si on connait le nombre d'énoncés au "compile time", on regarde si l'accord du mot est correct.
+                    if (nbEnoncesExpr instanceof ConstValueExpr constValueExpr) {
+                        var nbEnonces = ((CodeMdrInt) constValueExpr.value()).getValue().intValue();
+                        if ((nbEnonces > 1 && !enonces.value().endsWith("s"))
+                                || (nbEnonces < 1 && enonces.value().endsWith("s"))) {
+                            throw new ASCErrors.ErreurSyntaxe("Tu dois donc accorder le mot \"énoncé\" selon combien il y en a! Je suis très déçu de toi.");
+                        }
+                    }
+
+                    // Si on connait le nombre d'énoncés sautés au "compiler time", on regarde si l'accord du mot est correct.
+                    if (variant == 1 && nbEnoncesSauteExpr instanceof ConstValueExpr constValueExpr) {
+                        var nbEnonces = ((CodeMdrInt) constValueExpr.value()).getValue().intValue();
+                        if ((nbEnonces > 1 && !enonces.value().endsWith("s"))
+                                || (nbEnonces < 1 && enonces.value().endsWith("s"))) {
+                            throw new ASCErrors.ErreurSyntaxe("Tu dois donc accorder le mot \"énoncé\" selon combien il y en a! Je suis très déçu de toi.");
+                        }
+                    }
+
+                    return new ExecuterTantQueStmt(nbEnoncesExpr, conditionExpr, nbEnoncesSauteExpr, executorInstance);
+                });
+
+        // Les si
+        addStatement("EXECUTER expression ENONCES SI expression~" +
+                        "EXECUTER expression ENONCES SI expression PUIS SAUTER expression ENONCES~" +
+                        "EXECUTER expression ENONCES SI expression POINT_VIRGULE SINON EXECUTER expression ENONCES~" +
+                        "EXECUTER expression ENONCES SI expression PUIS SAUTER expression ENONCES POINT_VIRGULE SINON EXECUTER expression ENONCES~" +
+                        "EXECUTER expression ENONCES SI expression POINT_VIRGULE SINON SAUTER expression ENONCES PUIS EXECUTER expression ENONCES~" +
+                        "EXECUTER expression ENONCES SI expression PUIS SAUTER expression ENONCES POINT_VIRGULE SINON SAUTER expression ENONCES PUIS EXECUTER expression ENONCES",
+                (p, variant) -> {
+                    var nbEnoncesSiExpr = (Expression<?>) p.get(1);
+                    var conditionExpr = (Expression<?>) p.get(4);
+
+                    var nbEnoncesSauteApresSiExpr = variant == 1 || variant == 3 || variant == 5 ? (Expression<?>) p.get(7) : null;
+
+                    Expression<?> nbEnoncesSinonExpr = switch (variant) {
+                        case 2 -> (Expression<?>) p.get(8);
+                        case 3, 4 -> (Expression<?>) p.get(12);
+                        case 5 -> (Expression<?>) p.get(16);
+                        default -> null;
+                    };
+
+                    var nbEnoncesSauteAvantSinonExpr = switch (variant) {
+                        case 4 -> (Expression<?>) p.get(8);
+                        case 5 -> (Expression<?>) p.get(12);
+                        default -> null;
+                    };
+
+                    return new ExecuterSiStmt(nbEnoncesSiExpr, nbEnoncesSauteApresSiExpr, nbEnoncesSauteAvantSinonExpr, nbEnoncesSinonExpr, conditionExpr, executorInstance);
+                });
 
         addStatement("DECLARER VARIABLE VAUT L_APPEL_A expression AVEC PARAM expression~" +
                         "DECLARER VARIABLE VAUT L_APPEL_A expression AVEC PARAMS expression~" +
@@ -155,7 +194,6 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                 case "ENTIER" -> new ConstValueExpr(new CodeMdrInt(token));
                 case "DECIMAL" -> new ConstValueExpr(new CodeMdrFloat(token));
                 case "TEXTE" -> new ConstValueExpr(new CodeMdrString(token));
-                case "BOOL" -> new ConstValueExpr(new CodeMdrBool(token));
                 case "VARIABLE" -> new VarExpr(token.value(), executorInstance.getExecutorState());
                 default -> throw new NoSuchElementException(token.name());
             };
