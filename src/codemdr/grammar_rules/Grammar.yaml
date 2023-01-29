@@ -10,6 +10,9 @@ Add:
 
   EXECUTER: '(\be|^E)xécuter\ '
   ENONCES: 'énoncé(s?)'
+  PUIS: 'puis'
+  ALLER_A: 'aller\ à'
+  SAUTER: 'sauter'
 
   TANT_QUE: '\btant\ que\b'
 

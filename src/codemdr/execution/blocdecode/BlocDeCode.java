@@ -11,7 +11,9 @@ public abstract sealed class BlocDeCode permits BlocDeCodeNbEnonces {
         this.coordApres = coordApres;
     }
 
-    abstract boolean estTermine();
+    public abstract boolean estTermine();
 
-    abstract Coordinate avancer(Coordinate coordActuelle);
+    public abstract Coordinate avancer(Coordinate coordActuelle);
+
+
 }

@@ -31,4 +31,5 @@ public class CodeMdrGestionnaireDeBlocDeCode {
         if (blocDeCodeCourant().estTermine()) blocDeCodes.pop();
         return Optional.of(prochaine);
     }
+
 }

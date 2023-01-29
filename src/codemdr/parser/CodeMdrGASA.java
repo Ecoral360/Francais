@@ -9,10 +9,7 @@ import codemdr.ast.statements.ExecuterTantQueStmt;
 import codemdr.ast.statements.PrintStmt;
 import codemdr.execution.CodeMdrExecutorState;
 import codemdr.lexer.CodeMdrJetoniseur;
-import codemdr.objects.CodeMdrBool;
-import codemdr.objects.CodeMdrFloat;
-import codemdr.objects.CodeMdrInt;
-import codemdr.objects.CodeMdrString;
+import codemdr.objects.*;
 import org.ascore.ast.buildingBlocs.Expression;
 import org.ascore.ast.buildingBlocs.Statement;
 import org.ascore.errors.ASCErrors;
@@ -82,8 +79,19 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
         });
 
         addStatement("EXECUTER expression ENONCES TANT_QUE expression", p -> {
+            var enonces = (Token) p.get(2);
             var nbEnoncesExpr = (Expression<?>) p.get(1);
             var conditionExpr = (Expression<?>) p.get(4);
+
+            // Si on connait le nombre d'énoncés au compile time, on regarde si l'accord du mot est correct.
+            if (nbEnoncesExpr instanceof ConstValueExpr constValueExpr) {
+                var nbEnonces = ((CodeMdrInt) constValueExpr.value()).getValue().intValue();
+                if ((nbEnonces > 1 && !enonces.value().endsWith("s"))
+                        || (nbEnonces < 1 && enonces.value().endsWith("s"))) {
+                    throw new ASCErrors.ErreurSyntaxe("Tu dois donc accorder le mot \"énoncé\" selon combien il y en a! Je suis très déçu de toi.");
+                }
+            }
+
             return new ExecuterTantQueStmt(nbEnoncesExpr, conditionExpr, executorInstance);
         });
 
@@ -196,7 +204,7 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                                 var params = (Expression<?>) p.get(4);
                                 if ((variant == 1 && params instanceof EnumerationExpr) ||
                                         (variant == 2 && (!(params instanceof EnumerationExpr)))) {
-                                    throw new ASCErrors.ErreurSyntaxe("Mauvais accord du mot `paramètre`");
+                                    throw new ASCErrors.ErreurSyntaxe("Mauvais accord du mot `paramètre`. Je suis très déçu de toi.");
                                 }
 
                                 yield new AppelerFoncExpr(

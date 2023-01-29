@@ -4,7 +4,7 @@ import org.ascore.executor.Coordinate;
 
 public final class BlocDeCodeNbEnonces extends BlocDeCode {
     private final int nbEnoncesMax;
-    private int nbEnoncesCourant = 0;
+    private int nbEnoncesCourant = -1;
 
     public BlocDeCodeNbEnonces(Coordinate coordDepart, Coordinate coordApres, int nbEnoncesMax) {
         super(coordDepart, coordApres);
@@ -12,17 +12,28 @@ public final class BlocDeCodeNbEnonces extends BlocDeCode {
     }
 
     @Override
-    Coordinate avancer(Coordinate coordActuelle) {
-        if (nbEnoncesCourant >= nbEnoncesMax) {
-            nbEnoncesCourant++;
+    public Coordinate avancer(Coordinate coordActuelle) {
+        nbEnoncesCourant++;
+        if (nbEnoncesCourant == nbEnoncesMax) {
+            // On fait moinsUn parce qu'il y a un plusUn automatique de la part de l'exécuteur après l'exécution de chaque ligne de code
             return coordApres.moinsUn();
         }
-        nbEnoncesCourant++;
         return coordActuelle.copy();
     }
 
+    public Coordinate continuer() {
+        nbEnoncesCourant = -1;
+        // On fait moinsUn parce qu'il y a un plusUn automatique de la part de l'exécuteur après l'exécution de chaque ligne de code
+        return coordDepart.moinsUn();
+    }
+
+    public Coordinate sortir() {
+        // On fait moinsUn parce qu'il y a un plusUn automatique de la part de l'exécuteur après l'exécution de chaque ligne de code
+        return coordApres.moinsUn();
+    }
+
     @Override
-    boolean estTermine() {
+    public boolean estTermine() {
         return nbEnoncesCourant > nbEnoncesMax;
     }
 }

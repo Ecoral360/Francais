@@ -16,7 +16,7 @@ public class Main {
     /**
      * The CODE lines to execute.
      */
-    private static final String CODE = """
+    private static final String CODE_2 = """
             Imprimer « Bonjour! ».
             Posons que MonNombre vaut « Allo ».
             Imprimer MonNombre.
@@ -39,9 +39,9 @@ public class Main {
             Imprimer Résultat.
             """;
 
-    private static final String CODE_2 = """
+    private static final String CODE = """
             Posons que I vaut 0.
-                        
+
             Exécuter 2 énoncés tant que I < 10.
                 Imprimer I.
                 Maintenant, I vaut I plus 1.
