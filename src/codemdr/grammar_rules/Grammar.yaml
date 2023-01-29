@@ -24,8 +24,8 @@ Add:
   APPELER: '(\ba|^A)ppeler'
 
   AVEC: '\bavec\b'
-  PARAM: 'le\ paramètre'
-  PARAMS: 'les\ paramètres'
+  ARG: "l'argument"
+  ARGS: 'les\ arguments'
 
   TABLEAU_CREATION_SINGLETON: '\bun\ tableau\ contenant\ seulement'
   TABLEAU_CREATION: '\bun\ tableau\ contenant'

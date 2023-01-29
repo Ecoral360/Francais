@@ -134,8 +134,8 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                     return new ExecuterSiStmt(nbEnoncesSiExpr, nbEnoncesSauteApresSiExpr, nbEnoncesSauteAvantSinonExpr, nbEnoncesSinonExpr, conditionExpr, executorInstance);
                 });
 
-        addStatement("DECLARER VARIABLE VAUT L_APPEL_A expression AVEC PARAM expression~" +
-                        "DECLARER VARIABLE VAUT L_APPEL_A expression AVEC PARAMS expression~" +
+        addStatement("DECLARER VARIABLE VAUT L_APPEL_A expression AVEC ARG expression~" +
+                        "DECLARER VARIABLE VAUT L_APPEL_A expression AVEC ARGS expression~" +
                         "DECLARER VARIABLE VAUT L_APPEL_A expression", (p, variant) -> {
 
                     EnumerationExpr args = switch (variant) {
