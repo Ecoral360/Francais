@@ -40,6 +40,15 @@ Add:
     ENTIER: '-?\d+'
     TEXTE: '«\ .*?\ »'
 
+  datatypes_name:
+    TYPE_BOOL: 'un\ booléen'
+    TYPE_TEXTE: 'du\ texte'
+    TYPE_NOMBRE_DECIMAL: 'un\ nombre\ décimal'
+    TYPE_NOMBRE_ENTIER: 'un\ nombre\ entier'
+    TYPE_NOMBRE: 'un\ nombre'
+    TYPE_TABLEAU: 'un\ tableau'
+    TYPE_FONCTION: 'une\ fonction'
+
   PLUS: 'plus'
   MOINS: 'moins'
   FOIS: 'fois'

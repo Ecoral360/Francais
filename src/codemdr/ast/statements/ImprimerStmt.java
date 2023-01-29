@@ -3,7 +3,6 @@ package codemdr.ast.statements;
 import codemdr.ast.CodeMdrStatement;
 import codemdr.execution.CodeMdrExecutorState;
 import org.ascore.ast.buildingBlocs.Expression;
-import org.ascore.ast.buildingBlocs.Statement;
 import org.ascore.executor.ASCExecutor;
 
 /**
@@ -12,14 +11,14 @@ import org.ascore.executor.ASCExecutor;
  *
  * @author Mathis Laroche
  */
-public class PrintStmt extends CodeMdrStatement {
+public class ImprimerStmt extends CodeMdrStatement {
     private final Expression<?> expression;
 
     /**
      * Si le programme n'a pas besoin d'avoir acc\u00E8s \u00e0 l'ex\u00E9cuteur lorsque la m\u00E9thode {@link #execute()}
      * est appel\u00E9e
      */
-    public PrintStmt(Expression<?> expression, ASCExecutor<CodeMdrExecutorState> executorInstance) {
+    public ImprimerStmt(Expression<?> expression, ASCExecutor<CodeMdrExecutorState> executorInstance) {
         super(executorInstance);
         this.expression = expression;
     }

@@ -8,14 +8,12 @@ import codemdr.execution.CodeMdrExecutorState;
 import codemdr.lexer.CodeMdrJetoniseur;
 import codemdr.objects.*;
 import org.ascore.ast.buildingBlocs.Expression;
-import org.ascore.ast.buildingBlocs.Statement;
 import org.ascore.errors.ASCErrors;
 import org.ascore.executor.ASCExecutor;
 import org.ascore.generators.ast.AstGenerator;
 import org.ascore.tokens.Token;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -170,7 +168,7 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
         addStatement("MAINTENANT expression VAUT expression",
                 p -> new AffecterStmt((Expression<?>) p.get(1), (Expression<?>) p.get(3), executorInstance));
 
-        addStatement("IMPRIMER expression", p -> new PrintStmt((Expression<?>) p.get(1), executorInstance));
+        addStatement("IMPRIMER expression", p -> new ImprimerStmt((Expression<?>) p.get(1), executorInstance));
         addStatement("expression", p -> CodeMdrStatement.evalExpression(executorInstance, (Expression<?>) p.get(0)));
         addStatement("", p -> CodeMdrStatement.statementVide(executorInstance));
     }
@@ -185,14 +183,14 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
         });
 
         // add your expressions here
-        addExpression("{datatypes}~VARIABLE", p -> {
+        addExpression("{datatypes}~VARIABLE~{datatypes_name}", p -> {
             var token = (Token) p.get(0);
             return switch (token.name()) {
                 case "ENTIER" -> new ConstValueExpr(new CodeMdrInt(token));
                 case "DECIMAL" -> new ConstValueExpr(new CodeMdrFloat(token));
                 case "TEXTE" -> new ConstValueExpr(new CodeMdrString(token));
                 case "VARIABLE" -> new VarExpr(token.value(), executorInstance.getExecutorState());
-                default -> throw new NoSuchElementException(token.name());
+                default -> new ConstValueExpr(new CodeMdrType(token));
             };
         });
 
