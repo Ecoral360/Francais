@@ -2,11 +2,11 @@ package codemdr.ast.statements;
 
 import codemdr.ast.CodeMdrStatement;
 import codemdr.ast.expressions.ConstValueExpr;
+import codemdr.ast.expressions.IndexListeExpr;
 import codemdr.ast.expressions.VarExpr;
 import codemdr.execution.CodeMdrExecutorState;
 import codemdr.objects.CodeMdrObj;
 import org.ascore.ast.buildingBlocs.Expression;
-import org.ascore.ast.buildingBlocs.Statement;
 import org.ascore.errors.ASCErrors;
 import org.ascore.executor.ASCExecutor;
 import org.ascore.lang.objects.ASCObject;
@@ -20,17 +20,20 @@ import org.jetbrains.annotations.Nullable;
  * @author Mathis Laroche
  */
 public class AffecterStmt extends CodeMdrStatement {
-    private final VarExpr variable;
-    private final Expression<?> valeur;
+    private final Expression<?> variableExpr;
+    private final Expression<?> valeurExpr;
 
     /**
      * Si le programme n'a pas besoin d'avoir accès à l'exécuteur lorsque la méthode {@link #execute()}
      * est appelée
      */
-    public AffecterStmt(VarExpr variable, @Nullable Expression<?> valeur, ASCExecutor<CodeMdrExecutorState> executeurInstance) {
+    public AffecterStmt(Expression<?> variableExpr, @Nullable Expression<?> valeurExpr, ASCExecutor<CodeMdrExecutorState> executeurInstance) {
         super(executeurInstance);
-        this.variable = variable;
-        this.valeur = valeur == null ? new ConstValueExpr(CodeMdrObj.AUCUNE_VALEUR) : valeur;
+        if (!(variableExpr instanceof VarExpr) && !(variableExpr instanceof IndexListeExpr)) {
+            throw new ASCErrors.ErreurType("On ne peut pas changer la valeur de ce type de donnée. Je suis très déçu de toi.");
+        }
+        this.variableExpr = variableExpr;
+        this.valeurExpr = valeurExpr == null ? new ConstValueExpr(CodeMdrObj.AUCUNE_VALEUR) : valeurExpr;
     }
 
     /**
@@ -54,16 +57,23 @@ public class AffecterStmt extends CodeMdrStatement {
     @Override
     @SuppressWarnings("unchecked")
     public Object execute() {
-        var valeur = this.valeur.eval();
-        var variable = (ASCVariable<Object>) executorInstance.getExecutorState().getScopeManager().getCurrentScopeInstance()
-                .getVariable(this.variable.nom());
+        var valeur = (CodeMdrObj<?>) this.valeurExpr.eval();
+        if (variableExpr instanceof VarExpr varExpr) {
+            var variable = (ASCVariable<Object>) executorInstance.getExecutorState().getScopeManager().getCurrentScopeInstance()
+                    .getVariable(varExpr.nom());
 
-        if (variable == null) {
-            throw new ASCErrors.ErreurVariableInconnue("La variable " + this.variable.nom() + " n'a pas été définie.");
+            if (variable == null) {
+                throw new ASCErrors.ErreurVariableInconnue("La variable " + varExpr.nom() + " n'a pas été définie.");
+            }
+
+            variable.setAscObject((CodeMdrObj<Object>) valeur);
+
+        } else if (variableExpr instanceof IndexListeExpr indexListeExpr) {
+            indexListeExpr.setValeur(valeur);
+
+        } else {
+            throw new UnsupportedOperationException("Unreachable");
         }
-
-        variable.setAscObject((ASCObject<Object>) valeur);
-
 
         super.nextCoord();
         return null;

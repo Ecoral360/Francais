@@ -4,7 +4,6 @@ import codemdr.execution.CodeMdrExecutorState;
 import codemdr.module.CodeMdrModule;
 import codemdr.objects.CodeMdrBool;
 import codemdr.objects.CodeMdrFloat;
-import codemdr.objects.CodeMdrObj;
 import codemdr.objects.function.CodeMdrFonctionModule;
 import codemdr.objects.function.CodeMdrParam;
 import org.ascore.lang.objects.ASCVariable;

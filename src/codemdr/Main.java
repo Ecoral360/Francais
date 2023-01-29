@@ -50,7 +50,7 @@ public class Main {
             Imprimer Vrai.
             """;
 
-    private static final String CODE = """
+    private static final String CODE_5 = """
             Posons que I vaut 11.
 
             Exécuter 2 énoncés si I < 10 ; sinon, sauter 1 énoncé puis exécuter 1 énoncé.
@@ -59,6 +59,13 @@ public class Main {
 
             Imprimer « On a fini! ».
             Imprimer I.
+            """;
+
+    private static final String CODE = """
+            Posons que MaListe vaut un tableau contenant 1, « Bonjour », un tableau contenant seulement 10 et 22.
+            Imprimer élément de MaListe à la position 2.
+            Maintenant, élément de MaListe à la position 2 vaut 23.
+            Imprimer élément de MaListe à la position 2.
             """;
 
     public static void main(String[] args) {

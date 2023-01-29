@@ -167,11 +167,8 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                 (Expression<?>) p.get(3), executorInstance
         ));
 
-        addStatement("MAINTENANT VARIABLE VAUT expression", p ->
-                new AffecterStmt(
-                        new VarExpr(((Token) p.get(1)).value(), executorInstance.getExecutorState()),
-                        (Expression<?>) p.get(3), executorInstance)
-        );
+        addStatement("MAINTENANT expression VAUT expression",
+                p -> new AffecterStmt((Expression<?>) p.get(1), (Expression<?>) p.get(3), executorInstance));
 
         addStatement("IMPRIMER expression", p -> new PrintStmt((Expression<?>) p.get(1), executorInstance));
         addStatement("expression", p -> CodeMdrStatement.evalExpression(executorInstance, (Expression<?>) p.get(0)));
@@ -231,6 +228,9 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                     enumeration.setComplete(variant == 1);
                     return enumeration;
                 });
+
+        addExpression("ELEMENT_DE expression A_LA_POS expression",
+                p -> new IndexListeExpr((Expression<?>) p.get(1), (Expression<?>) p.get(3)));
 
         addExpression("APPELER expression~" +
                         "APPELER expression AVEC PARAM expression~" +

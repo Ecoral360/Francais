@@ -6,7 +6,7 @@ Add:
   DECLARER: '(\bp|^P)osons\ que\ '
   MAINTENANT: '(\bm|^M)aintenant,\ (\b|$)'
   DEMANDER: '(\bd|^D)emander\ puis\ enregistrer\ dans\ '
-  L_APPEL_A: "l'appel\\ à"
+  L_APPEL_A: "le\\ résultat\\ de\\ l'appel\\ à"
 
   EXECUTER: '(\be|^E)xécuter\ '
   ENONCES: 'énoncé(s?)'
@@ -29,6 +29,9 @@ Add:
 
   TABLEAU_CREATION_SINGLETON: '\bun\ tableau\ contenant\ seulement'
   TABLEAU_CREATION: '\bun\ tableau\ contenant'
+
+  ELEMENT_DE: 'élément\ de'
+  A_LA_POS: 'à\ la\ position'
 
   EMPHASE: '"'
 
