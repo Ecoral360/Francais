@@ -23,9 +23,9 @@ Imprimer « Bonjour, Monde! ».
 6.  Fin de la définition de la fonction DoublerOuDiviser.
 7.    
 8.  Posons que MonNombre vaut 10.
-9.  Posons que Résultat vaut l'appel à DoublerOuDiviser avec MonNombre.
+9.  Posons que Résultat vaut le résultat de l'appel à DoublerOuDiviser avec l'argument MonNombre.
 10. Imprimer Résultat.
 11. Maintenant, MonNombre vaut 11.
-12. Maintenant, Résultat vaut l'appel à DoublerOuDiviser avec MonNombre.
+12. Maintenant, Résultat vaut le résultat de l'appel à DoublerOuDiviser avec l'argument MonNombre.
 13. Imprimer Résultat.
 ```
