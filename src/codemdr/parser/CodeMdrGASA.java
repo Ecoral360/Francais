@@ -227,8 +227,11 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                     return enumeration;
                 });
 
-        addExpression("ELEMENT_DE expression A_LA_POS expression",
-                p -> new IndexListeExpr((Expression<?>) p.get(1), (Expression<?>) p.get(3)));
+        addExpression("ELEMENT_DE expression A_LA_POS expression~" +
+                        "ELEMENT_DE expression A_INDEX expression",
+                (p, variant) -> new IndexListeExpr(
+                        (Expression<?>) p.get(1), (Expression<?>) p.get(3), variant == 0 ? 1 : 0)
+        );
 
         addExpression("APPELER expression~" +
                         "APPELER expression AVEC PARAM expression~" +

@@ -15,15 +15,16 @@ import java.util.ArrayList;
  *
  * @author Mathis Laroche
  */
-public record IndexListeExpr(Expression<?> listeExpr, Expression<?> indexExpr) implements Expression<CodeMdrObj<?>> {
+public record IndexListeExpr(Expression<?> listeExpr, Expression<?> indexExpr,
+                             int indexDepart) implements Expression<CodeMdrObj<?>> {
 
     private int getIndex(ArrayList<CodeMdrObj<?>> liste) {
         var index = ((CodeMdrInt) indexExpr.eval()).getValue().intValue();
-        if (index < 1 || index > liste.size()) {
+        if (index < indexDepart || index >= liste.size() + indexDepart) {
             throw new ASCErrors.ErreurIndex("La position " + index + " n'est pas contenu dans la liste. " +
                     "Les positions doivent être entre 1 et " + liste.size() + ". Je suis très déçu de toi.");
         }
-        return index - 1;
+        return index - indexDepart;
     }
 
     public void setValeur(CodeMdrObj<?> valeur) {

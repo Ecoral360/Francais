@@ -70,15 +70,15 @@ public class Main {
             Imprimer X.
             """;
 
-    private static final String CODE_5 = """
+    private static final String CODE_7 = """
+            Demander un nombre entier
+            """;
+
+    private static final String CODE = """
             Posons que MaListe vaut un tableau contenant 1, « Bonjour », un tableau contenant seulement 10 et 22.
             Imprimer élément de MaListe à la position 2.
             Maintenant, élément de MaListe à la position 2 vaut 23.
             Imprimer élément de MaListe à la position 2.
-            """;
-
-    private static final String CODE = """
-            Demander un nombre entier
             """;
 
     public static void main(String[] args) {
