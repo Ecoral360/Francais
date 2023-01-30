@@ -28,6 +28,7 @@ Imprimer « Bonjour, Monde! ».
 11. Maintenant, MonNombre vaut 11.
 12. Maintenant, Résultat vaut le résultat de l'appel à DoublerOuDiviser avec l'argument MonNombre.
 13. Imprimer Résultat.
+
 ```
 
 - `à la position`: commence à un.

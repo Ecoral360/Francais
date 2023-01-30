@@ -213,6 +213,28 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                     return new CreationTableauExpr(EnumerationExpr.completeEnumeration(contenu, (Expression<?>) p.get(p.size() - 1)));
                 });
 
+        addExpression("L_APPEL_A expression AVEC ARG expression~" +
+                        "L_APPEL_A expression AVEC ARGS expression~" +
+                        "L_APPEL_A expression",
+                (p, variant) ->
+                        switch (variant) {
+                            case 2 -> new AppelerFoncExpr((VarExpr) p.get(1));
+                            case 0, 1 -> {
+                                var params = (Expression<?>) p.get(4);
+                                if ((variant == 0 && params instanceof EnumerationExpr) ||
+                                        (variant == 1 && (!(params instanceof EnumerationExpr)))) {
+                                    throw new ASCErrors.ErreurSyntaxe("Mauvais accord du mot `paramètre`. Je suis très déçu de toi.");
+                                }
+
+                                yield new AppelerFoncExpr(
+                                        (VarExpr) p.get(1),
+                                        EnumerationExpr.getOrWrap(params)
+                                );
+                            }
+                            default -> throw new UnsupportedOperationException("Ne devrait pas arrivé");
+                        }
+        );
+
         addExpression("expression VIRGULE expression~" +
                         "expression ET expression",
                 (p, variant) -> {
@@ -227,32 +249,14 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                     return enumeration;
                 });
 
+        addExpression("expression DE expression",
+                p -> new GetProprieteExpr((Expression<?>) p.get(2), (VarExpr) p.get(0))
+        );
+
         addExpression("ELEMENT_DE expression A_LA_POS expression~" +
                         "ELEMENT_DE expression A_INDEX expression",
                 (p, variant) -> new IndexListeExpr(
                         (Expression<?>) p.get(1), (Expression<?>) p.get(3), variant == 0 ? 1 : 0)
-        );
-
-        addExpression("APPELER expression~" +
-                        "APPELER expression AVEC PARAM expression~" +
-                        "APPELER expression AVEC PARAMS expression~",
-                (p, variant) ->
-                        switch (variant) {
-                            case 0 -> new AppelerFoncExpr((VarExpr) p.get(1));
-                            case 1, 2 -> {
-                                var params = (Expression<?>) p.get(4);
-                                if ((variant == 1 && params instanceof EnumerationExpr) ||
-                                        (variant == 2 && (!(params instanceof EnumerationExpr)))) {
-                                    throw new ASCErrors.ErreurSyntaxe("Mauvais accord du mot `paramètre`. Je suis très déçu de toi.");
-                                }
-
-                                yield new AppelerFoncExpr(
-                                        (VarExpr) p.get(1),
-                                        EnumerationExpr.getOrWrap(params)
-                                );
-                            }
-                            default -> throw new UnsupportedOperationException("Ne devrait pas arrivé");
-                        }
         );
     }
 }

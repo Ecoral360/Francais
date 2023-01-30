@@ -18,19 +18,18 @@ import java.util.ArrayList;
 public record IndexListeExpr(Expression<?> listeExpr, Expression<?> indexExpr,
                              int indexDepart) implements Expression<CodeMdrObj<?>> {
 
-    private int getIndex(ArrayList<CodeMdrObj<?>> liste) {
+    private int getIndex(CodeMdrTableau liste) {
         var index = ((CodeMdrInt) indexExpr.eval()).getValue().intValue();
-        if (index < indexDepart || index >= liste.size() + indexDepart) {
+        if (index < indexDepart || index >= liste.taille() + indexDepart) {
             throw new ASCErrors.ErreurIndex("La position " + index + " n'est pas contenu dans la liste. " +
-                    "Les positions doivent être entre 1 et " + liste.size() + ". Je suis très déçu de toi.");
+                    "Les positions doivent être entre 1 et " + liste.taille() + ". Je suis très déçu de toi.");
         }
         return index - indexDepart;
     }
 
     public void setValeur(CodeMdrObj<?> valeur) {
-        var liste = ((CodeMdrTableau) listeExpr.eval()).getValue();
-        int index = getIndex(liste);
-        liste.set(index, valeur);
+        var liste = ((CodeMdrTableau) listeExpr.eval());
+        liste.setValeur(getIndex(liste), valeur);
     }
 
 
@@ -41,8 +40,8 @@ public record IndexListeExpr(Expression<?> listeExpr, Expression<?> indexExpr,
      */
     @Override
     public CodeMdrObj<?> eval() {
-        var liste = ((CodeMdrTableau) listeExpr.eval()).getValue();
+        var liste = ((CodeMdrTableau) listeExpr.eval());
         int index = getIndex(liste);
-        return liste.get(index);
+        return liste.getValeur(index);
     }
 }

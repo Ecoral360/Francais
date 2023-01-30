@@ -2,6 +2,7 @@ package codemdr.ast.statements;
 
 import codemdr.ast.CodeMdrStatement;
 import codemdr.ast.expressions.ConstValueExpr;
+import codemdr.ast.expressions.GetProprieteExpr;
 import codemdr.ast.expressions.IndexListeExpr;
 import codemdr.ast.expressions.VarExpr;
 import codemdr.execution.CodeMdrExecutorState;
@@ -29,7 +30,7 @@ public class AffecterStmt extends CodeMdrStatement {
      */
     public AffecterStmt(Expression<?> variableExpr, @Nullable Expression<?> valeurExpr, ASCExecutor<CodeMdrExecutorState> executeurInstance) {
         super(executeurInstance);
-        if (!(variableExpr instanceof VarExpr) && !(variableExpr instanceof IndexListeExpr)) {
+        if (!(variableExpr instanceof VarExpr) && !(variableExpr instanceof IndexListeExpr) && !(variableExpr instanceof GetProprieteExpr)) {
             throw new ASCErrors.ErreurType("On ne peut pas changer la valeur de ce type de donnée. Je suis très déçu de toi.");
         }
         this.variableExpr = variableExpr;
@@ -70,6 +71,9 @@ public class AffecterStmt extends CodeMdrStatement {
 
         } else if (variableExpr instanceof IndexListeExpr indexListeExpr) {
             indexListeExpr.setValeur(valeur);
+
+        } else if (variableExpr instanceof GetProprieteExpr getProprieteExpr) {
+            getProprieteExpr.setValeur(valeur);
 
         } else {
             throw new UnsupportedOperationException("Unreachable");

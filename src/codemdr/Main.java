@@ -70,11 +70,16 @@ public class Main {
             Imprimer X.
             """;
 
-    private static final String CODE_7 = """
-            Demander un nombre entier
+    private static final String CODE = """
+            Posons que MaListe vaut un tableau contenant 1, 2 et 5.
+            Imprimer le résultat de l'appel à TailleDe avec l'argument MaListe.
+            Posons que Nom vaut « Abc def ».
+            Imprimer Taille de Nom.
+            Maintenant, Taille de Nom vaut 13.
+            Imprimer Taille de Nom.
             """;
 
-    private static final String CODE = """
+    private static final String CODE_7 = """
             Posons que MaListe vaut un tableau contenant 1, « Bonjour », un tableau contenant seulement 10 et 22.
             Imprimer élément de MaListe à la position 2.
             Maintenant, élément de MaListe à la position 2 vaut 23.

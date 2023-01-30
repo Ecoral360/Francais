@@ -4,6 +4,8 @@ import codemdr.execution.CodeMdrExecutorState;
 import codemdr.module.CodeMdrModule;
 import codemdr.objects.CodeMdrBool;
 import codemdr.objects.CodeMdrFloat;
+import codemdr.objects.CodeMdrInt;
+import codemdr.objects.CodeMdrTableau;
 import codemdr.objects.function.CodeMdrFonctionModule;
 import codemdr.objects.function.CodeMdrParam;
 import org.ascore.lang.objects.ASCVariable;
@@ -23,7 +25,10 @@ public class Builtins implements CodeMdrModule {
                     }
 
                     return new CodeMdrFloat(sum);
-                })
+                }),
+                new CodeMdrFonctionModule("TailleDe", List.of(
+                        new CodeMdrParam("Liste")
+                ), params -> new CodeMdrInt(((CodeMdrTableau) params.get(0)).getValue().size()))
         };
     }
 
