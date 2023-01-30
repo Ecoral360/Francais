@@ -81,9 +81,27 @@ public class Main {
 
     private static final String CODE_7 = """
             Posons que MaListe vaut un tableau contenant 1, « Bonjour », un tableau contenant seulement 10 et 22.
-            Imprimer élément de MaListe à la position 2.
-            Maintenant, élément de MaListe à la position 2 vaut 23.
-            Imprimer élément de MaListe à la position 2.
+            Imprimer l'élément de MaListe à la position 2.
+            Maintenant, l'élément de MaListe à la position 2 vaut 23.
+            Imprimer l'élément de MaListe à la position 2.
+            """;
+
+    /*
+    for (int i = 0; i < input.length() / 2; i++)
+            if (input.charAt(i) != input.charAt(input.length() - 1 - i)) return false;
+        return true;
+     */
+    private static final String CODE_PALINDROME = """
+            Posons que Mot vaut « kayak ».
+            Posons que I vaut 0.
+            Posons que TailleMot vaut Taille de Mot.
+            Posons que EstPalindrome vaut Vrai.
+            Exécuter 3 énoncés tant que I < TailleMot.
+                Exécuter 2 énoncés si le caractère de Mot à l'index I ne vaut pas le caractère de Mot à l'index "TailleMot moins 1".
+                    Maintenant, EstPalindrome vaut Faux.
+                    Maintenant, I vaut TailleMot.
+                        
+            Imprimer « Le mot  » concaténé à Mot concaténé à «  est un palindrome?  » concaténé à EstPalindrome.
             """;
 
     public static void main(String[] args) {
@@ -93,7 +111,7 @@ public class Main {
                 .withExecutorState(new CodeMdrExecutorState()) // add the executor state to the builder
                 .withPrecompiler(new CodeMdrPreCompiler()) // add the precompiler to the builder
                 .build(); // build the executor
-        JSONArray compilationResult = executor.compile(CODE, true); // compile the code
+        JSONArray compilationResult = executor.compile(CODE_PALINDROME, true); // compile the code
         if (compilationResult.length() != 0) {
             System.out.println(compilationResult);
             return;
@@ -102,6 +120,6 @@ public class Main {
         CodeMdrModules.charger(executor.getExecutorState());
 
         JSONArray executionResult = executor.executerMain(false); // execute the code
-        // System.out.println(executionResult); // print the result
+        //System.out.println(executionResult); // print the result
     }
 }

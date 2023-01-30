@@ -15,7 +15,7 @@ import org.ascore.lang.objects.ASCObject;
  *
  * @author Mathis Laroche
  */
-public record AddExpr(Expression<?> left, Expression<?> right) implements Expression<ASCObject<?>> {
+public record OpExpr(Expression<?> left, Expression<?> right, String op) implements Expression<ASCObject<?>> {
 
     /**
      * Appel\u00E9 durant le Runtime, cette m\u00E9thode retourne un objet de type ASObjet
@@ -26,10 +26,19 @@ public record AddExpr(Expression<?> left, Expression<?> right) implements Expres
     public ASCObject<?> eval() {
         var leftValue = left.eval();
         var rightValue = right.eval();
-        if (leftValue instanceof CodeMdrString || rightValue instanceof CodeMdrString) {
-            return new CodeMdrString("" + leftValue.getValue() + right.eval().getValue());
+        if (op.equals("concaténé à")) {
+            return new CodeMdrString("" + leftValue + rightValue);
         } else if (leftValue instanceof CodeMdrNumber codeMdrNumberLeft && rightValue instanceof CodeMdrNumber codeMdrNumberRight) {
-            var result = codeMdrNumberLeft.getValue().doubleValue() + codeMdrNumberRight.getValue().doubleValue();
+            var gauche = codeMdrNumberLeft.getValue().doubleValue();
+            var droite = codeMdrNumberRight.getValue().doubleValue();
+            var result = switch (op) {
+                case "plus" -> gauche + droite;
+                case "moins" -> gauche - droite;
+                case "fois" -> gauche * droite;
+                case "divisé par" -> gauche / droite;
+                case "modulo" -> gauche % droite;
+                default -> throw new UnsupportedOperationException(op);
+            };
             return result == (int) result ? new CodeMdrInt((int) result) : new CodeMdrFloat(result);
         } else {
             throw new ASCErrors.ErreurArithmetique(

@@ -12,7 +12,7 @@ import org.ascore.lang.objects.ASCObject;
  *
  * @author Mathis Laroche
  */
-public record CompExpr(Expression<?> left, Expression<?> right) implements Expression<ASCObject<?>> {
+public record CompExpr(Expression<?> left, Expression<?> right, String comp) implements Expression<ASCObject<?>> {
 
     /**
      * Appel\u00E9 durant le Runtime, cette m\u00E9thode retourne un objet de type ASObjet
@@ -21,10 +21,26 @@ public record CompExpr(Expression<?> left, Expression<?> right) implements Expre
      */
     @Override
     public ASCObject<?> eval() {
-        var leftValue = left.eval();
-        var rightValue = right.eval();
+        var leftValue = (CodeMdrObj<?>) left.eval();
+        var rightValue = (CodeMdrObj<?>) right.eval();
+        switch (comp) {
+            case "vaut" -> {
+                return new CodeMdrBool(leftValue.equals(rightValue));
+            }
+            case "ne vaut pas" -> {
+                return new CodeMdrBool(!leftValue.equals(rightValue));
+            }
+        }
+
         if (leftValue instanceof CodeMdrNumber codeMdrNumberLeft && rightValue instanceof CodeMdrNumber codeMdrNumberRight) {
-            return new CodeMdrBool(codeMdrNumberLeft.getValue().doubleValue() < codeMdrNumberRight.getValue().doubleValue());
+            var gauche = codeMdrNumberLeft.getValue().doubleValue();
+            var droite = codeMdrNumberRight.getValue().doubleValue();
+            var result = switch (comp) {
+                case "<" -> gauche < droite;
+                case ">" -> gauche > droite;
+                default -> throw new UnsupportedOperationException(comp);
+            };
+            return new CodeMdrBool(result);
         } else {
             throw new ASCErrors.ErreurArithmetique(
                     "Comparaison not supported for '" + leftValue.getClass().getSimpleName() +

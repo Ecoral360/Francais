@@ -2,7 +2,6 @@ Variables: { }
 
 Add:
   IMPRIMER: '(\bi|^I)mprimer\b'
-  VAUT: '\bvaut\b'
   DECLARER: '(\bp|^P)osons\ que\ '
   MAINTENANT: '(\bm|^M)aintenant,\ (\b|$)'
   DEMANDER: '(\bd|^D)emander\ puis\ enregistrer\ dans\ '
@@ -30,9 +29,10 @@ Add:
   TABLEAU_CREATION_SINGLETON: '\bun\ tableau\ contenant\ seulement'
   TABLEAU_CREATION: '\bun\ tableau\ contenant'
 
-  ELEMENT_DE: 'élément\ de'
+  ELEMENT_DE: "l'élément\\ de"
+  CAR_DE: 'le\ caractère\ de'
   A_LA_POS: 'à\ la\ position'
-  A_INDEX: "à\ l'index"
+  A_INDEX: "à\\ l'index"
 
   EMPHASE: '"'
 
@@ -50,13 +50,18 @@ Add:
     TYPE_TABLEAU: 'un\ tableau'
     TYPE_FONCTION: 'une\ fonction'
 
-  PLUS: 'plus'
-  MOINS: 'moins'
-  FOIS: 'fois'
-  DIV: 'divisé\ par'
-  MODULO: 'modulo'
+  op:
+    PLUS: 'plus'
+    CONCAT_A: 'concaténé\ à'
+    MOINS: 'moins'
+    FOIS: 'fois'
+    DIV: 'divisé\ par'
+    MODULO: 'modulo'
 
-  PLUS_PETIT: '\<'
+  comp:
+    PLUS_PETIT: '\<'
+    NE_VAUT_PAS: 'ne\ vaut\ pas'
+    VAUT: '\bvaut\b'
 
 
   ET: 'et'

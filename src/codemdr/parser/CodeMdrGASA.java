@@ -14,7 +14,6 @@ import org.ascore.generators.ast.AstGenerator;
 import org.ascore.tokens.Token;
 
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 
 /**
  * The parser for the CodeMdr language.
@@ -178,7 +177,6 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
      */
     protected void addExpressions() {
         addExpression("EMPHASE #expression EMPHASE", p -> {
-            System.out.println(p);
             return evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null);
         });
 
@@ -194,8 +192,7 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
             };
         });
 
-        addExpression("expression PLUS expression", p -> new AddExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2)));
-        addExpression("expression PLUS_PETIT expression", p -> new CompExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2)));
+        addExpression("expression {op} expression", p -> new OpExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2), ((Token) p.get(1)).value()));
 
         addExpression("TABLEAU_CREATION #expression ET expression~" +
                         "TABLEAU_CREATION_SINGLETON expression",
@@ -253,10 +250,21 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                 p -> new GetProprieteExpr((Expression<?>) p.get(2), (VarExpr) p.get(0))
         );
 
+        addExpression("CAR_DE expression A_LA_POS expression~" +
+                        "CAR_DE expression A_INDEX expression",
+                (p, variant) -> new IndexTexteExpr(
+                        (Expression<?>) p.get(1), (Expression<?>) p.get(3), variant == 0 ? 1 : 0)
+        );
+
+
         addExpression("ELEMENT_DE expression A_LA_POS expression~" +
                         "ELEMENT_DE expression A_INDEX expression",
                 (p, variant) -> new IndexListeExpr(
                         (Expression<?>) p.get(1), (Expression<?>) p.get(3), variant == 0 ? 1 : 0)
+        );
+
+        addExpression("expression {comp} expression",
+                p -> new CompExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2), ((Token) p.get(1)).value())
         );
     }
 }
