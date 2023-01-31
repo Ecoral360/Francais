@@ -17,5 +17,10 @@ public abstract sealed class BlocDeCode permits BlocDeCodeNbEnonces {
 
     public abstract Coordinate avancer(Coordinate coordActuelle);
 
+    public abstract void plusUn();
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "{départ:" + coordDepart + ", fin: " + coordApres + "}";
+    }
 }

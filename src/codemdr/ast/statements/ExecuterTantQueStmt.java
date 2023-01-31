@@ -62,6 +62,7 @@ public class ExecuterTantQueStmt extends CodeMdrStatement {
             var nbEnoncesSautes = (CodeMdrInt) nbEnoncesSautesExpr.eval();
             for (int i = 0; i < nbEnoncesSautes.getValue().intValue(); i++) {
                 executorInstance.obtenirCoordRunTime().plusUn();
+                ((CodeMdrExecutorState) executorInstance.getExecutorState()).getGestionnaireDeBlocDeCode().plusUn();
             }
         }
         super.nextCoord();

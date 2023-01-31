@@ -61,12 +61,12 @@ public class ExecuterSiStmt extends CodeMdrStatement {
             var nbEnoncesSi = (CodeMdrInt) nbEnoncesSiExpr.eval();
             var nbEnoncesSautesApresSi = ((CodeMdrInt) nbEnoncesSautesApresSiExpr.eval()).getValue().intValue();
             var currCoord = executorInstance.obtenirCoordRunTime().copy();
-            var coordFin = currCoord.copy();
 
             state.getGestionnaireDeBlocDeCode().empilerBlocDeCode(
                     new BlocDeCodeNbEnonces(currCoord, c -> {
                         for (int i = 0; i < nbEnoncesSautesApresSi + 1; i++) {
                             c.plusUn();
+                            ((CodeMdrExecutorState) executorInstance.getExecutorState()).getGestionnaireDeBlocDeCode().plusUn();
                         }
                         return c;
                     }, nbEnoncesSi.getValue().intValue())
@@ -75,12 +75,17 @@ public class ExecuterSiStmt extends CodeMdrStatement {
             var nbEnoncesAvantSinon = (CodeMdrInt) nbEnoncesSautesAvantSinonExpr.eval();
             for (int i = 0; i < nbEnoncesAvantSinon.getValue().intValue(); i++) {
                 executorInstance.obtenirCoordRunTime().plusUn();
+                ((CodeMdrExecutorState) executorInstance.getExecutorState()).getGestionnaireDeBlocDeCode().plusUn();
             }
             var nbEnoncesSinon = (CodeMdrInt) nbEnoncesSinonExpr.eval();
             var currCoord = executorInstance.obtenirCoordRunTime().copy();
 
             state.getGestionnaireDeBlocDeCode().empilerBlocDeCode(
-                    new BlocDeCodeNbEnonces(currCoord, Coordinate::plusUn, nbEnoncesSinon.getValue().intValue())
+                    new BlocDeCodeNbEnonces(currCoord, c -> {
+                        c.plusUn();
+                        ((CodeMdrExecutorState) executorInstance.getExecutorState()).getGestionnaireDeBlocDeCode().plusUn();
+                        return c;
+                    }, nbEnoncesSinon.getValue().intValue())
             );
         }
         super.nextCoord();

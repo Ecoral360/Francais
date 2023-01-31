@@ -27,9 +27,17 @@ public class CodeMdrGestionnaireDeBlocDeCode {
 
     public Optional<Coordinate> obtenirProchaineCoord(Coordinate coordActuelle) {
         if (blocDeCodes.isEmpty()) return Optional.empty();
+
+        /*blocDeCodes.forEach(System.out::println);
+        System.out.println("-".repeat(30));*/
+
+        plusUn();
         var prochaine = blocDeCodeCourant().avancer(coordActuelle);
         if (blocDeCodeCourant().estTermine()) blocDeCodes.pop();
         return Optional.of(prochaine);
     }
 
+    public void plusUn() {
+        blocDeCodes.forEach(BlocDeCode::plusUn);
+    }
 }

@@ -39,10 +39,12 @@ public class Main {
             Imprimer Résultat.
             """;
 
-    private static final String CODE_4 = """
+    private static final String CODE = """
             Posons que I vaut 0.
 
-            Exécuter 2 énoncés tant que I < 10.
+            Exécuter 4 énoncés tant que I < 10.
+                Exécuter 1 énoncé si I vaut 5.
+                    Imprimer « Bonjour! ».
                 Imprimer I.
                 Maintenant, I vaut I plus 1.
 
@@ -50,7 +52,7 @@ public class Main {
             Imprimer Vrai.
             """;
 
-    private static final String CODE_6 = """
+    private static final String CODE_4 = """
             Posons que I vaut 11.
 
             Exécuter 2 énoncés si I < 10 ; sinon, sauter 1 énoncé puis exécuter 1 énoncé.
@@ -70,7 +72,7 @@ public class Main {
             Imprimer X.
             """;
 
-    private static final String CODE = """
+    private static final String CODE_6 = """
             Posons que MaListe vaut un tableau contenant 1, 2 et 5.
             Imprimer le résultat de l'appel à TailleDe avec l'argument MaListe.
             Posons que Nom vaut « Abc def ».
@@ -96,11 +98,12 @@ public class Main {
             Posons que I vaut 0.
             Posons que TailleMot vaut Taille de Mot.
             Posons que EstPalindrome vaut Vrai.
-            Exécuter 3 énoncés tant que I < TailleMot.
-                Exécuter 2 énoncés si le caractère de Mot à l'index I ne vaut pas le caractère de Mot à l'index "TailleMot moins 1".
+            Exécuter 4 énoncés tant que I < TailleMot.
+                Exécuter 2 énoncés si le caractère de Mot à l'index I ne vaut pas le caractère de Mot à la position "TailleMot moins I".
                     Maintenant, EstPalindrome vaut Faux.
                     Maintenant, I vaut TailleMot.
-                        
+                Maintenant, I vaut I plus 1.
+
             Imprimer « Le mot  » concaténé à Mot concaténé à «  est un palindrome?  » concaténé à EstPalindrome.
             """;
 
@@ -120,6 +123,6 @@ public class Main {
         CodeMdrModules.charger(executor.getExecutorState());
 
         JSONArray executionResult = executor.executerMain(false); // execute the code
-        //System.out.println(executionResult); // print the result
+        System.out.println(executionResult); // print the result
     }
 }

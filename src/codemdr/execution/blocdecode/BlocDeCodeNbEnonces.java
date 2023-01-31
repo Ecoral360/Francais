@@ -15,11 +15,15 @@ public final class BlocDeCodeNbEnonces extends BlocDeCode {
     }
 
     @Override
-    public Coordinate avancer(Coordinate coordActuelle) {
+    public void plusUn() {
         nbEnoncesCourant++;
-        if (nbEnoncesCourant == nbEnoncesMax) {
+    }
+
+    @Override
+    public Coordinate avancer(Coordinate coordActuelle) {
+        if (estTermine()) {
             // On fait moinsUn parce qu'il y a un plusUn automatique de la part de l'exécuteur après l'exécution de chaque ligne de code
-            return coordApres.apply(coordActuelle).moinsUn();
+            return coordApres.apply(coordActuelle).copy().moinsUn();
         }
         return coordActuelle.copy();
     }
@@ -31,7 +35,12 @@ public final class BlocDeCodeNbEnonces extends BlocDeCode {
     }
 
     @Override
+    public String toString() {
+        return super.toString() + " ligne: " + nbEnoncesCourant;
+    }
+
+    @Override
     public boolean estTermine() {
-        return nbEnoncesCourant > nbEnoncesMax;
+        return nbEnoncesCourant >= nbEnoncesMax;
     }
 }
