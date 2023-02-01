@@ -6,6 +6,7 @@ import codemdr.lexer.CodeMdrJetoniseur;
 import codemdr.module.CodeMdrModule;
 import codemdr.module.CodeMdrModules;
 import codemdr.parser.CodeMdrGASA;
+import org.ascore.errors.ASCErrors;
 import org.ascore.executor.ASCExecutorBuilder;
 import org.json.JSONArray;
 
@@ -74,7 +75,7 @@ public class Main {
 
     private static final String CODE_6 = """
             Posons que MaListe vaut un tableau contenant 1, 2 et 5.
-            Imprimer le résultat de l'appel à TailleDe avec l'argument MaListe.
+            Imprimer le résultat de le résultat de l'appel à TailleDe avec l'argument MaListe.
             Posons que Nom vaut « Abc def ».
             Imprimer Taille de Nom.
             Maintenant, Taille de Nom vaut 13.
@@ -88,12 +89,7 @@ public class Main {
             Imprimer l'élément de MaListe à la position 2.
             """;
 
-    /*
-    for (int i = 0; i < input.length() / 2; i++)
-            if (input.charAt(i) != input.charAt(input.length() - 1 - i)) return false;
-        return true;
-     */
-    private static final String CODE_PALINDROME = """
+    private static final String CODE_PALINDROME_3 = """
             Posons que Mot vaut « kayak ».
             Posons que I vaut 0.
             Posons que TailleMot vaut Taille de Mot.
@@ -104,6 +100,25 @@ public class Main {
                     Maintenant, I vaut TailleMot.
                 Maintenant, I vaut I plus 1.
 
+            Imprimer « Le mot  » concaténé à Mot concaténé à «  est un palindrome?  » concaténé à EstPalindrome.
+            """;
+
+    private static final String CODE_PALINDROME = """
+            Début de la définition de la fonction nommée EstUnPalindrome acceptant le paramètre Mot.
+                Posons que I vaut 0.
+                Posons que TailleMot vaut Taille de Mot.
+                Posons que EstPalindrome vaut Vrai.
+                Exécuter 4 énoncés tant que I < TailleMot.
+                    Exécuter 2 énoncés si le caractère de Mot à l'index I ne vaut pas le caractère de Mot à la position "TailleMot moins I".
+                        Maintenant, EstPalindrome vaut Faux.
+                        Maintenant, I vaut TailleMot.
+                    Maintenant, I vaut I plus 1.
+                Retourner la valeur EstPalindrome.
+            Fin de la définition de la fonction.
+                        
+
+            Posons que Mot vaut « kayak ».
+            Posons que EstPalindrome vaut le résultat de l'appel à EstUnPalindrome avec l'argument Mot.
             Imprimer « Le mot  » concaténé à Mot concaténé à «  est un palindrome?  » concaténé à EstPalindrome.
             """;
 
@@ -123,6 +138,12 @@ public class Main {
         CodeMdrModules.charger(executor.getExecutorState());
 
         JSONArray executionResult = executor.executerMain(false); // execute the code
-        System.out.println(executionResult); // print the result
+        for (int i = 0; i < executionResult.length(); i++) {
+            var action = executionResult.getJSONObject(i);
+            if (action.getInt("id") == 400) {
+                throw new ASCErrors.ASCError(action.getJSONArray("p").getString(1), action.getJSONArray("p").getString(0));
+            }
+        }
+        // System.out.println(executionResult); // print the result
     }
 }

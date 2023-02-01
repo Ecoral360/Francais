@@ -17,14 +17,17 @@ Add:
   SINON: 'sinon,'
   SI: 'si'
 
-  FONCTION_DEF: "(\bd|^D)ébut\ de\ la\ définition\ d'une\ fonction\ nommée"
-  FONCTION_END: "(\bf|^F)in\ de\ la\ définition\ de\ la\ fonction"
+  FONCTION_DEF: '(\bd|^D)ébut\ de\ la\ définition\ de\ la\ fonction\ nommée'
+  FONCTION_END: '(\bf|^F)in\ de\ la\ définition\ de\ la\ fonction'
 
   APPELER: '(\ba|^A)ppeler'
 
-  AVEC: '\bavec\b'
+  AVEC: '\bavec'
   ARG: "l'argument"
   ARGS: 'les\ arguments'
+  PARAM: 'acceptant\ le\ paramètre'
+  PARAMS: 'acceptant\ les\ paramètres'
+  RETOURNER: '(\br|^R)etourner\ la\ valeur'
 
   TABLEAU_CREATION_SINGLETON: '\bun\ tableau\ contenant\ seulement'
   TABLEAU_CREATION: '\bun\ tableau\ contenant'

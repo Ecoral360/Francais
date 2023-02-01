@@ -29,6 +29,11 @@ public class EnumerationExpr implements Expression<CodeMdrTableau> {
         return EnumerationExpr.completeEnumeration(expr);
     }
 
+    @SuppressWarnings("unchecked")
+    public <T extends Expression<?>> List<T> cast() {
+        return elements.stream().map(e -> (T) e).toList();
+    }
+
     public void addElement(Expression<?> valeur) {
         elements.add(valeur);
     }

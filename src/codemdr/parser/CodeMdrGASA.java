@@ -11,6 +11,7 @@ import org.ascore.ast.buildingBlocs.Expression;
 import org.ascore.errors.ASCErrors;
 import org.ascore.executor.ASCExecutor;
 import org.ascore.generators.ast.AstGenerator;
+import org.ascore.lang.objects.ASCVariable;
 import org.ascore.tokens.Token;
 
 import java.util.ArrayList;
@@ -64,13 +65,22 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
      */
     protected void addStatements() {
         // add your statements here
-        addStatement("FONCTION_DEF", p -> {
-            return null;
-        });
+        addStatement("FONCTION_DEF VARIABLE PARAM expression~" +
+                        "FONCTION_DEF VARIABLE PARAMS expression ET expression~",
+                (p, variant) -> {
+                    var args = EnumerationExpr.getOrWrap((Expression<?>) p.get(3));
 
-        addStatement("FONCTION_END", p -> {
-            return null;
-        });
+                    if (variant == 1) {
+                        args.addElement((Expression<?>) p.get(5));
+                    }
+                    var f = new CreerFonctionStmt(((Token) p.get(1)).value(), args.cast(), executorInstance);
+                    // f.execute();
+                    return f;
+                });
+
+        addStatement("FONCTION_END", p -> new FinFonctionStmt(executorInstance));
+
+        addStatement("RETOURNER expression", p -> new RetournerStmt((Expression<?>) p.get(1), executorInstance));
 
         addStatement("EXECUTER expression ENONCES TANT_QUE expression~" +
                         "EXECUTER expression ENONCES TANT_QUE expression PUIS SAUTER expression ENONCES",
@@ -192,7 +202,8 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
             };
         });
 
-        addExpression("expression {op} expression", p -> new OpExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2), ((Token) p.get(1)).value()));
+        addExpression("expression {op} expression",
+                p -> new OpExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2), ((Token) p.get(1)).value()));
 
         addExpression("TABLEAU_CREATION #expression ET expression~" +
                         "TABLEAU_CREATION_SINGLETON expression",

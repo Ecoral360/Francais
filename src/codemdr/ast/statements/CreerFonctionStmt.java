@@ -1,19 +1,19 @@
 package codemdr.ast.statements;
 
 import codemdr.ast.CodeMdrStatement;
-import codemdr.ast.expressions.ConstValueExpr;
 import codemdr.ast.expressions.VarExpr;
 import codemdr.execution.CodeMdrExecutorState;
 import codemdr.objects.CodeMdrObj;
-import org.ascore.ast.buildingBlocs.Expression;
-import org.ascore.ast.buildingBlocs.Statement;
+import codemdr.objects.function.CodeMdrFonction;
 import org.ascore.errors.ASCErrors;
 import org.ascore.executor.ASCExecutor;
-import org.ascore.lang.objects.ASCObject;
+import org.ascore.executor.Coordinate;
 import org.ascore.lang.objects.ASCVariable;
 import org.ascore.lang.objects.ASScope;
-import org.jetbrains.annotations.Nullable;
+import org.ascore.managers.scope.ASScopeManager;
+import org.ascore.tokens.Token;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,7 +23,7 @@ import java.util.List;
  * @author Mathis Laroche
  */
 public class CreerFonctionStmt extends CodeMdrStatement {
-    private final VarExpr fonction;
+    private final String nomFonction;
     private final List<VarExpr> args;
     private final ASScope scope;
 
@@ -31,21 +31,21 @@ public class CreerFonctionStmt extends CodeMdrStatement {
      * Si le programme n'a pas besoin d'avoir accès à l'exécuteur lorsque la méthode {@link #execute()}
      * est appelée
      */
-    public CreerFonctionStmt(VarExpr nom, List<VarExpr> args, ASCExecutor<CodeMdrExecutorState> executeurInstance) {
+    public CreerFonctionStmt(String nom, List<VarExpr> args, ASCExecutor<CodeMdrExecutorState> executeurInstance) {
         super(executeurInstance);
-        this.fonction = nom;
+        this.nomFonction = nom;
         this.args = args;
 
         var scope = executeurInstance.getExecutorState()
                 .getScopeManager()
                 .getCurrentScope();
 
-        if (scope.getVariable(fonction.nom()) != null) {
-            throw new ASCErrors.ErreurDeclaration("La variable " + fonction.nom() +
-                    " a déjà été déclarée. Utilisez `Maintenant, " + fonction.nom() + " vaut <valeur>.`");
+        if (scope.getVariable(nomFonction) != null) {
+            throw new ASCErrors.ErreurDeclaration("La variable " + nomFonction +
+                    " a déjà été déclarée. Utilisez `Maintenant, " + nomFonction + " vaut <valeur>.`");
         }
 
-        scope.declareVariable(new ASCVariable<>(fonction.nom(), CodeMdrObj.AUCUNE_VALEUR));
+        scope.declareVariable(new ASCVariable<>(nomFonction, CodeMdrObj.AUCUNE_VALEUR));
 
         this.scope = executeurInstance.getExecutorState().getScopeManager().makeNewCurrentScope();
     }
@@ -71,13 +71,33 @@ public class CreerFonctionStmt extends CodeMdrStatement {
     @Override
     @SuppressWarnings("unchecked")
     public Object execute() {
-        var valeur = this.args.stream().map(Expression::eval).toList();
-        var variable = (ASCVariable<Object>) executorInstance.getExecutorState().getScopeManager().getCurrentScopeInstance()
-                .getVariable(this.fonction.nom());
+        var scope = new ASScope(this.scope);
+        var currentScope = executorInstance.obtenirCoordRunTime().getScope();
+        var callingCoord = ASScopeManager.formatNewScope(ASScopeManager.ScopeKind.FONCTION, currentScope, this.nomFonction);
 
-        variable.setAscObject((ASCObject<Object>) valeur);
+        var variable = (ASCVariable<Object>) executorInstance.getExecutorState().getScopeManager().getCurrentScopeInstance()
+                .getVariable(this.nomFonction);
+
+        var fonction = new CodeMdrFonction(this.nomFonction,
+                args.stream().map(arg -> new ASCVariable<>(arg.nom(), CodeMdrObj.AUCUNE_VALEUR)).toList(),
+                callingCoord,
+                (ASCExecutor<CodeMdrExecutorState>) executorInstance);
+
+        variable.setAscObject(fonction);
+
+        for (var arg : this.args) {
+            scope.declareVariable(new ASCVariable<>(arg.nom(), CodeMdrObj.AUCUNE_VALEUR));
+        }
+
+        fonction.setScope(scope);
+        scope.setParent(executorInstance.getExecutorState().getScopeManager().getCurrentScopeInstance());
 
         super.nextCoord();
         return null;
+    }
+
+    @Override
+    public Coordinate getNextCoordinate(Coordinate coord, List<Token> ligne) {
+        return new Coordinate(executorInstance.nouveauScope(ASScopeManager.formatNewScope(ASScopeManager.ScopeKind.FONCTION, coord.getScope(), nomFonction)));
     }
 }

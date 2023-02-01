@@ -3,6 +3,7 @@ package codemdr.ast.expressions;
 import codemdr.execution.CodeMdrExecutorState;
 import codemdr.objects.CodeMdrObj;
 import org.ascore.ast.buildingBlocs.Expression;
+import org.ascore.errors.ASCErrors;
 import org.ascore.lang.objects.ASCObject;
 import org.ascore.lang.objects.ASCVariable;
 
@@ -21,6 +22,7 @@ public record VarExpr(String nom, CodeMdrExecutorState executorState) implements
                 .getCurrentScopeInstance()
                 .getVariable(nom);
     }
+
     /**
      * Appel\u00E9 durant le Runtime, cette m\u00E9thode retourne un objet de type ASObjet
      *
@@ -28,6 +30,10 @@ public record VarExpr(String nom, CodeMdrExecutorState executorState) implements
      */
     @Override
     public CodeMdrObj<?> eval() {
-        return (CodeMdrObj<?>) getVar().getAscObject();
+        var variable = getVar();
+        if (variable == null) {
+            throw new ASCErrors.ErreurVariableInconnue("La variable " + nom + " n'a pas été définie. Je suis très déçu de toi.");
+        }
+        return (CodeMdrObj<?>) variable.getAscObject();
     }
 }
