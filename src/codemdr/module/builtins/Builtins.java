@@ -28,7 +28,7 @@ public class Builtins implements CodeMdrModule {
                 }),
                 new CodeMdrFonctionModule("TailleDe", List.of(
                         new CodeMdrParam("Liste")
-                ), params -> new CodeMdrInt(((CodeMdrTableau) params.get(0)).getValue().size()))
+                ), params -> new CodeMdrInt(((CodeMdrTableau) params.get(0)).getValue().size())),
         };
     }
 

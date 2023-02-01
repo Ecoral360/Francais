@@ -80,7 +80,14 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
 
         addStatement("FONCTION_END", p -> new FinFonctionStmt(executorInstance));
 
-        addStatement("RETOURNER expression", p -> new RetournerStmt((Expression<?>) p.get(1), executorInstance));
+        addStatement("RETOURNER LA_VALEUR expression~" +
+                        "RETOURNER expression",
+                (p, variant) -> {
+                    if (variant == 1 && !(p.get(1) instanceof AppelerFoncExpr)) {
+                        throw new ASCErrors.ErreurSyntaxe("Tu dois dire `Retourner la valeur`. Je suis très déçu de toi.");
+                    }
+                    return new RetournerStmt((Expression<?>) p.get(variant == 0 ? 2 : 1), executorInstance);
+                });
 
         addStatement("EXECUTER expression ENONCES TANT_QUE expression~" +
                         "EXECUTER expression ENONCES TANT_QUE expression PUIS SAUTER expression ENONCES",
@@ -160,7 +167,7 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                         case 2 -> EnumerationExpr.completeEnumeration();
                         default -> throw new UnsupportedOperationException("Unreachable");
                     };
-                    var appel = new AppelerFoncExpr((VarExpr) p.get(4), args);
+                    var appel = new AppelerFoncExpr((Expression<?>) p.get(4), args);
 
                     return new DeclarerStmt(
                             new VarExpr(((Token) p.get(1)).value(), executorInstance.getExecutorState()),
@@ -221,26 +228,8 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                     return new CreationTableauExpr(EnumerationExpr.completeEnumeration(contenu, (Expression<?>) p.get(p.size() - 1)));
                 });
 
-        addExpression("L_APPEL_A expression AVEC ARG expression~" +
-                        "L_APPEL_A expression AVEC ARGS expression~" +
-                        "L_APPEL_A expression",
-                (p, variant) ->
-                        switch (variant) {
-                            case 2 -> new AppelerFoncExpr((VarExpr) p.get(1));
-                            case 0, 1 -> {
-                                var params = (Expression<?>) p.get(4);
-                                if ((variant == 0 && params instanceof EnumerationExpr) ||
-                                        (variant == 1 && (!(params instanceof EnumerationExpr)))) {
-                                    throw new ASCErrors.ErreurSyntaxe("Mauvais accord du mot `paramètre`. Je suis très déçu de toi.");
-                                }
-
-                                yield new AppelerFoncExpr(
-                                        (VarExpr) p.get(1),
-                                        EnumerationExpr.getOrWrap(params)
-                                );
-                            }
-                            default -> throw new UnsupportedOperationException("Ne devrait pas arrivé");
-                        }
+        addExpression("expression DE expression",
+                p -> new GetProprieteExpr((Expression<?>) p.get(2), (VarExpr) p.get(0))
         );
 
         addExpression("expression VIRGULE expression~" +
@@ -257,8 +246,26 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                     return enumeration;
                 });
 
-        addExpression("expression DE expression",
-                p -> new GetProprieteExpr((Expression<?>) p.get(2), (VarExpr) p.get(0))
+        addExpression("L_APPEL_A expression AVEC ARG expression~" +
+                        "L_APPEL_A expression AVEC ARGS expression~" +
+                        "L_APPEL_A expression",
+                (p, variant) ->
+                        switch (variant) {
+                            case 2 -> new AppelerFoncExpr((Expression<?>) p.get(1));
+                            case 0, 1 -> {
+                                var params = (Expression<?>) p.get(4);
+                                if ((variant == 0 && params instanceof EnumerationExpr) ||
+                                        (variant == 1 && (!(params instanceof EnumerationExpr)))) {
+                                    throw new ASCErrors.ErreurSyntaxe("Mauvais accord du mot `argument`. Je suis très déçu de toi.");
+                                }
+
+                                yield new AppelerFoncExpr(
+                                        (Expression<?>) p.get(1),
+                                        EnumerationExpr.getOrWrap(params)
+                                );
+                            }
+                            default -> throw new UnsupportedOperationException("Ne devrait pas arrivé");
+                        }
         );
 
         addExpression("CAR_DE expression A_LA_POS expression~" +

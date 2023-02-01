@@ -24,6 +24,9 @@ public record CompExpr(Expression<?> left, Expression<?> right, String comp) imp
         var leftValue = (CodeMdrObj<?>) left.eval();
         var rightValue = (CodeMdrObj<?>) right.eval();
         switch (comp) {
+            case "veau", "ne veau pas" -> {
+                throw new ASCErrors.ErreurComparaison("Meuuuh. Je suis très déçu de toi.");
+            }
             case "vaut" -> {
                 return new CodeMdrBool(leftValue.equals(rightValue));
             }
@@ -36,8 +39,10 @@ public record CompExpr(Expression<?> left, Expression<?> right, String comp) imp
             var gauche = codeMdrNumberLeft.getValue().doubleValue();
             var droite = codeMdrNumberRight.getValue().doubleValue();
             var result = switch (comp) {
-                case "<" -> gauche < droite;
-                case ">" -> gauche > droite;
+                case "vaut moins que" -> gauche < droite;
+                case "vaut moins ou autant que" -> gauche <= droite;
+                case "vaut plus que" -> gauche > droite;
+                case "vaut plus ou autant que" -> gauche >= droite;
                 default -> throw new UnsupportedOperationException(comp);
             };
             return new CodeMdrBool(result);

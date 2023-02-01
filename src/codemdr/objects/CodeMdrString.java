@@ -1,8 +1,11 @@
 package codemdr.objects;
 
+import codemdr.objects.function.CodeMdrFonctionModule;
+import codemdr.objects.function.CodeMdrParam;
 import org.ascore.tokens.Token;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,7 +14,22 @@ import java.util.Map;
 public class CodeMdrString extends CodeMdrObj<String> {
     public CodeMdrString(String value) {
         super(value, Map.ofEntries(
-                Map.entry("Taille", new CodeMdrInt(value.length()))
+                Map.entry("Taille", new CodeMdrInt(value.length())),
+
+                Map.entry("Minuscule", new CodeMdrFonctionModule("Minuscule", List.of(),
+                        args -> new CodeMdrString(value.toLowerCase()))),
+
+                Map.entry("Majuscule", new CodeMdrFonctionModule("Majuscule", List.of(),
+                        args -> new CodeMdrString(value.toUpperCase()))),
+
+                Map.entry("EstAlphaNumérique", new CodeMdrFonctionModule("EstAlphaNumérique", List.of(),
+                        args -> new CodeMdrBool(value.matches("[A-Za-z0-9]")))),
+
+                Map.entry("Remplacer", new CodeMdrFonctionModule("Remplacer", List.of(
+                        new CodeMdrParam("Ancien"), new CodeMdrParam("Nouveau")
+                ), args -> {
+                    return new CodeMdrString(value.replace((String) args.get(0).getValue(), (String) args.get(1).getValue()));
+                }))
         ));
     }
 

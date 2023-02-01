@@ -10,6 +10,10 @@ import org.ascore.errors.ASCErrors;
 import org.ascore.executor.ASCExecutorBuilder;
 import org.json.JSONArray;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 /**
  * Entry point for the CodeMdr language where you can try it out and experiment with it while developing it.
  */
@@ -104,32 +108,66 @@ public class Main {
             """;
 
     private static final String CODE_PALINDROME = """
-            Début de la définition de la fonction nommée EstUnPalindrome acceptant le paramètre Mot.
-                Posons que I vaut 0.
+            Début de la définition de la fonction EnleverNonAlphaNumérique acceptant le paramètre Mot.
                 Posons que TailleMot vaut Taille de Mot.
+                Posons que I vaut 0.
+                Exécuter 4 énoncés tant que I vaut moins que TailleMot.
+                    
+                    Posons que Car vaut le caractère de Mot à l'index I.
+                    Exécuter 1 énoncé si le résultat de l'appel à EstAlphaNumérique de Car ne vaut pas Vrai.
+                        Maintenant, Mot vaut le résultat de l'appel à Remplacer de Mot avec les paramètres Car et «   ».
+                    Maintenant, I vaut I plus 1.
+                    
+            Fin de la définition de la fonction.
+                        
+            Début de la définition de la fonction nommée EstUnPalindrome acceptant le paramètre Mot.
+                Posons que BonMot vaut le résultat de l'appel à Remplacer de Mot avec les arguments «   » et «  ».
+                Imprimer BonMot.
+                Posons que I vaut 0.
+                Posons que TailleMot vaut Taille de BonMot.
                 Posons que EstPalindrome vaut Vrai.
-                Exécuter 4 énoncés tant que I < TailleMot.
-                    Exécuter 2 énoncés si le caractère de Mot à l'index I ne vaut pas le caractère de Mot à la position "TailleMot moins I".
+                Exécuter 4 énoncés tant que I vaut moins que TailleMot.
+                    Exécuter 2 énoncés si le caractère de BonMot à l'index I ne vaut pas le caractère de BonMot à la position "TailleMot moins I".
                         Maintenant, EstPalindrome vaut Faux.
                         Maintenant, I vaut TailleMot.
                     Maintenant, I vaut I plus 1.
                 Retourner la valeur EstPalindrome.
             Fin de la définition de la fonction.
-                        
 
-            Posons que Mot vaut « kayak ».
+
+            Posons que Mot vaut « A man, a plan, a canal: Panama ».
             Posons que EstPalindrome vaut le résultat de l'appel à EstUnPalindrome avec l'argument Mot.
             Imprimer « Le mot  » concaténé à Mot concaténé à «  est un palindrome?  » concaténé à EstPalindrome.
             """;
 
-    public static void main(String[] args) {
+    private static final String CODE_PALINDROME_4 = """
+            Début de la définition de la fonction nommée EstUnPalindrome acceptant le paramètre Mot.
+                Posons que BonMot vaut le résultat de l'appel à Remplacer de Mot avec les arguments «   » et «  ».
+                Imprimer BonMot.
+            Fin de la définition de la fonction.
+
+            Posons que Mot vaut « ka yak ».
+            Posons que EstPalindrome vaut le résultat de l'appel à EstUnPalindrome avec l'argument Mot.
+            Imprimer « Le mot  » concaténé à Mot concaténé à «  est un palindrome?  » concaténé à EstPalindrome.
+            """;
+
+    public static void main(String[] args) throws FileNotFoundException {
+        var codeToExecute = CODE_PALINDROME;
+        if (args.length != 0) {
+            var file = new Scanner(new File(args[0]));
+            var code = new StringBuilder();
+            while (file.hasNextLine()) {
+                code.append(file.nextLine()).append("\n");
+            }
+            codeToExecute = code.toString();
+        }
         var executor = new ASCExecutorBuilder<CodeMdrExecutorState>() // create an executor builder
                 .withLexer(new CodeMdrJetoniseur("/codemdr/grammar_rules/Grammar.yaml")) // add the lexer to the builder
                 .withParser(CodeMdrGASA::new) // add the parser to the builder
                 .withExecutorState(new CodeMdrExecutorState()) // add the executor state to the builder
                 .withPrecompiler(new CodeMdrPreCompiler()) // add the precompiler to the builder
                 .build(); // build the executor
-        JSONArray compilationResult = executor.compile(CODE_PALINDROME, true); // compile the code
+        JSONArray compilationResult = executor.compile(codeToExecute, true); // compile the code
         if (compilationResult.length() != 0) {
             System.out.println(compilationResult);
             return;

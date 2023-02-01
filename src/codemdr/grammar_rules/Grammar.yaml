@@ -1,13 +1,14 @@
-Variables: { }
+Variables:
+  start: '(^|(?<=\.))\s*'
 
 Add:
-  IMPRIMER: '(\bi|^I)mprimer\b'
-  DECLARER: '(\bp|^P)osons\ que\ '
-  MAINTENANT: '(\bm|^M)aintenant,\ (\b|$)'
-  DEMANDER: '(\bd|^D)emander\ puis\ enregistrer\ dans\ '
+  IMPRIMER: '${start}Imprimer\b'
+  DECLARER: '${start}Posons\ que'
+  MAINTENANT: '${start}Maintenant,\ (\b|$)'
+  DEMANDER: '${start}Demander\ puis\ enregistrer\ dans\ '
   L_APPEL_A: "le\\ résultat\\ de\\ l'appel\\ à"
 
-  EXECUTER: '(\be|^E)xécuter\ '
+  EXECUTER: '(${start}E|\be)xécuter\ '
   ENONCES: 'énoncé(s?)'
   PUIS: 'puis'
   ALLER_A: 'aller\ à'
@@ -17,17 +18,18 @@ Add:
   SINON: 'sinon,'
   SI: 'si'
 
-  FONCTION_DEF: '(\bd|^D)ébut\ de\ la\ définition\ de\ la\ fonction\ nommée'
-  FONCTION_END: '(\bf|^F)in\ de\ la\ définition\ de\ la\ fonction'
+  FONCTION_DEF: '${start}Début\ de\ la\ définition\ de\ la\ fonction\ nommée'
+  FONCTION_END: '${start}Fin\ de\ la\ définition\ de\ la\ fonction'
 
-  APPELER: '(\ba|^A)ppeler'
+  APPELER: '${start}Appeler'
 
   AVEC: '\bavec'
   ARG: "l'argument"
   ARGS: 'les\ arguments'
   PARAM: 'acceptant\ le\ paramètre'
   PARAMS: 'acceptant\ les\ paramètres'
-  RETOURNER: '(\br|^R)etourner\ la\ valeur'
+  RETOURNER: '${start}Retourner'
+  LA_VALEUR: 'la\ valeur'
 
   TABLEAU_CREATION_SINGLETON: '\bun\ tableau\ contenant\ seulement'
   TABLEAU_CREATION: '\bun\ tableau\ contenant'
@@ -62,9 +64,14 @@ Add:
     MODULO: 'modulo'
 
   comp:
-    PLUS_PETIT: '\<'
+    PLUS_PETIT: 'vaut\ moins\ que'
+    PLUS_PETIT_OU_EGAL: 'vaut\ moins\ ou\ autant\ que'
+    PLUS_GRAND: 'vaut\ plus\ que'
+    PLUS_GRAND_OU_EGAL: 'vaut\ plus\ ou\ autant\ que'
     NE_VAUT_PAS: 'ne\ vaut\ pas'
     VAUT: '\bvaut\b'
+    VEAU: '\bveau\b'
+    NE_VEAU_PAS: '\bveau\b'
 
 
   ET: 'et'
