@@ -14,14 +14,15 @@ public class ImporterStmt extends Statement {
         super(executor);
         this.nomModule = nomModule;
         this.alias = alias;
-        CodeMdrModules.getModule(nomModule).charger(
-                (CodeMdrExecutorState) executorInstance.getExecutorState(),
-                alias
-        );
+
     }
 
     @Override
     public Object execute() {
+        CodeMdrModules.getModule(nomModule).chargerRuntime(
+                (CodeMdrExecutorState) executorInstance.getExecutorState(),
+                alias
+        );
         return null;
     }
 }

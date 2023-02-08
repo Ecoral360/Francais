@@ -46,4 +46,13 @@ public enum CodeMdrModules {
         var moduleObj = new CodeMdrModule(nomModule, fonctions, variables);
         executorState.getScopeManager().getCurrentScope().declareVariable(new ASCVariable<>(alias, moduleObj));
     }
+
+    public void chargerRuntime(CodeMdrExecutorState executorState, String alias) {
+        if (alias == null) alias = nomModule;
+
+        var fonctions = module.chargerFonctions(executorState);
+        var variables = module.chargerVariables(executorState);
+        var moduleObj = new CodeMdrModule(nomModule, fonctions, variables);
+        executorState.getScopeManager().getCurrentScopeInstance().declareScopeInstanceVariable(new ASCVariable<>(alias, moduleObj));
+    }
 }
