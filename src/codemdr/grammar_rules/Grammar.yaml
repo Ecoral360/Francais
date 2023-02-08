@@ -8,6 +8,16 @@ Add:
   DEMANDER: '${start}Demander\ puis\ enregistrer\ dans\ '
   L_APPEL_A: "le\\ résultat\\ de\\ l'appel\\ à"
 
+  IMPORTER: '${start}Importer\ le\ module'
+  BIB_STD: 'de\ la\ bibliothèque\ standard'
+  PROVENANT: 'provenant'
+  SOUS_LE_NOM: 'sous\ le\ nom\ de'
+  MEME_NOM: 'sous\ le\ même\ nom'
+
+  INCLURE: '${start}Inclure\ le\ contenu\ du\ fichier'
+  MODULE_NOMME: 'dans\ un\ module\ nommé'
+  TEL_QUEL: 'tel\ quel'
+
   EXECUTER: '(${start}E|\be)xécuter\ '
   ENONCES: 'énoncé(s?)'
   PUIS: 'puis'

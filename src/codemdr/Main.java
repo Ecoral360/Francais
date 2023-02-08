@@ -3,7 +3,6 @@ package codemdr;
 import codemdr.execution.CodeMdrExecutorState;
 import codemdr.execution.CodeMdrPreCompiler;
 import codemdr.lexer.CodeMdrJetoniseur;
-import codemdr.module.CodeMdrModule;
 import codemdr.module.CodeMdrModules;
 import codemdr.parser.CodeMdrGASA;
 import org.ascore.errors.ASCErrors;
@@ -173,7 +172,7 @@ public class Main {
             return;
         }
 
-        CodeMdrModules.charger(executor.getExecutorState());
+        CodeMdrModules.BUILTINS.charger(executor.getExecutorState());
 
         JSONArray executionResult = executor.executerMain(false); // execute the code
         for (int i = 0; i < executionResult.length(); i++) {

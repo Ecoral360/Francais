@@ -1,7 +1,7 @@
 package codemdr.module.builtins;
 
 import codemdr.execution.CodeMdrExecutorState;
-import codemdr.module.CodeMdrModule;
+import codemdr.module.CodeMdrModuleInterface;
 import codemdr.objects.CodeMdrBool;
 import codemdr.objects.CodeMdrFloat;
 import codemdr.objects.CodeMdrInt;
@@ -12,7 +12,7 @@ import org.ascore.lang.objects.ASCVariable;
 
 import java.util.List;
 
-public class Builtins implements CodeMdrModule {
+public class Builtins implements CodeMdrModuleInterface {
     @Override
     public CodeMdrFonctionModule[] chargerFonctions(CodeMdrExecutorState executeurState) {
         return new CodeMdrFonctionModule[]{

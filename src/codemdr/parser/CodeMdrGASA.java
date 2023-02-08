@@ -6,12 +6,14 @@ import codemdr.ast.expressions.*;
 import codemdr.ast.statements.*;
 import codemdr.execution.CodeMdrExecutorState;
 import codemdr.lexer.CodeMdrJetoniseur;
-import codemdr.objects.*;
+import codemdr.objects.CodeMdrFloat;
+import codemdr.objects.CodeMdrInt;
+import codemdr.objects.CodeMdrString;
+import codemdr.objects.CodeMdrType;
 import org.ascore.ast.buildingBlocs.Expression;
 import org.ascore.errors.ASCErrors;
 import org.ascore.executor.ASCExecutor;
 import org.ascore.generators.ast.AstGenerator;
-import org.ascore.lang.objects.ASCVariable;
 import org.ascore.tokens.Token;
 
 import java.util.ArrayList;
@@ -64,7 +66,15 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
      * Defines the rules of the statements of the language.
      */
     protected void addStatements() {
-        // add your statements here
+        // Importer des modules
+        addStatement("IMPORTER VARIABLE BIB_STD SOUS_LE_NOM VARIABLE~" +
+                        "IMPORTER VARIABLE BIB_STD MEME_NOM",
+                (p, variant) -> new ImporterStmt(
+                        executorInstance, ((Token) p.get(1)).value(),
+                        variant == 0 ? ((Token) p.get(4)).value() : null
+                ));
+
+        // Définition de fonctions
         addStatement("FONCTION_DEF VARIABLE PARAM expression~" +
                         "FONCTION_DEF VARIABLE PARAMS expression ET expression~",
                 (p, variant) -> {

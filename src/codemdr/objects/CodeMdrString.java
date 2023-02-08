@@ -4,7 +4,6 @@ import codemdr.objects.function.CodeMdrFonctionModule;
 import codemdr.objects.function.CodeMdrParam;
 import org.ascore.tokens.Token;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,9 +26,7 @@ public class CodeMdrString extends CodeMdrObj<String> {
 
                 Map.entry("Remplacer", new CodeMdrFonctionModule("Remplacer", List.of(
                         new CodeMdrParam("Ancien"), new CodeMdrParam("Nouveau")
-                ), args -> {
-                    return new CodeMdrString(value.replace((String) args.get(0).getValue(), (String) args.get(1).getValue()));
-                }))
+                ), args -> new CodeMdrString(value.replace((String) args.get(0).getValue(), (String) args.get(1).getValue()))))
         ));
     }
 

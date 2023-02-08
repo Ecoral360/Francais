@@ -28,3 +28,4 @@ Fin de la définition de la fonction.
 Posons que Mot vaut « A man, a plan, a canal: Panama ».
 Posons que EstPalindrome vaut le résultat de l'appel à EstUnPalindrome avec l'argument Mot.
 Imprimer « Le mot  » concaténé à Mot concaténé à «  est un palindrome?  » concaténé à EstPalindrome.
+
