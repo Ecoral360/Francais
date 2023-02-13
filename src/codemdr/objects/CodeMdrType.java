@@ -30,6 +30,7 @@ public class CodeMdrType extends CodeMdrObj<CodeMdrType.CodeMdrTypes> {
         NOMBRE("un nombre"),
         NOMBRE_DECIMAL("un nombre décimal"),
         NOMBRE_ENTIER("un nombre entier"),
+        GRAND_NOMBRE_ENTIER("un grand nombre entier"),
         TABLEAU("un tableau"),
         FONCTION("une fonction");
 

@@ -22,8 +22,6 @@ public class ModuleMath implements CodeMdrModuleInterface {
     @Override
     public ASCVariable<?>[] chargerVariables(CodeMdrExecutorState executeurState) {
         return new ASCVariable[]{
-                new ASCVariable<>("Vrai", new CodeMdrBool(true)),
-                new ASCVariable<>("Faux", new CodeMdrBool(false))
         };
     }
 }

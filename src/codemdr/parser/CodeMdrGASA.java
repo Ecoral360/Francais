@@ -68,11 +68,16 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
     protected void addStatements() {
         // Importer des modules
         addStatement("IMPORTER VARIABLE BIB_STD SOUS_LE_NOM VARIABLE~" +
-                        "IMPORTER VARIABLE BIB_STD MEME_NOM",
-                (p, variant) -> new ImporterStmt(
-                        executorInstance, ((Token) p.get(1)).value(),
-                        variant == 0 ? ((Token) p.get(4)).value() : null
-                ));
+                        "IMPORTER VARIABLE BIB_STD MEME_NOM~" +
+                        "IMPORTER VARIABLE BIB_STD TEL_QUEL~",
+                (p, variant) -> {
+                    if (variant == 2) return new ImporterStmt(executorInstance, ((Token) p.get(1)).value());
+                    else
+                        return new ImporterStmt(
+                                executorInstance, ((Token) p.get(1)).value(),
+                                variant == 0 ? ((Token) p.get(4)).value() : null
+                        );
+                });
 
         // Définition de fonctions
         addStatement("FONCTION_DEF VARIABLE PARAM expression~" +
