@@ -184,7 +184,7 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                             // s'assure qu'il y a au moins deux paramètres et que l'énumération est complète (fini par un `et`)
                             if ((variant == 0 && params instanceof EnumerationExpr) ||
                                     (variant == 1 && (!(params instanceof EnumerationExpr)))) {
-                                throw new ASCErrors.ErreurSyntaxe("Mauvais accord du mot `paramètre`");
+                                throw new ASCErrors.ErreurSyntaxe("Mauvais accord du mot `argument`");
                             }
                             yield EnumerationExpr.getOrWrap(params);
                         }
@@ -236,20 +236,30 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
         addExpression("expression {op} expression",
                 p -> new OpExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2), ((Token) p.get(1)).value()));
 
-        addExpression("TABLEAU_CREATION #expression ET expression~" +
-                        "TABLEAU_CREATION_SINGLETON expression",
+        addExpression("TABLEAU_CREATION_SINGLETON expression~" +
+                        "TABLEAU_CREATION #expression ET expression~" +  // FIXME: supporter le cas où expression est aussi une création de tableau
+                        "TABLEAU_CREATION #expression ET expression",
                 (p, variant) -> {
                     // System.out.println(p);
-                    if (variant == 1) {
-                        return new CreationTableauExpr(EnumerationExpr.completeEnumeration((Expression<?>) p.get(1)));
-                    }
-                    var contenu = evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 2)), null);
-                    if (contenu instanceof EnumerationExpr enumerationExpr) {
-                        enumerationExpr.addElement((Expression<?>) p.get(p.size() - 1));
-                        enumerationExpr.setComplete(true);
-                        return new CreationTableauExpr(enumerationExpr);
-                    }
-                    return new CreationTableauExpr(EnumerationExpr.completeEnumeration(contenu, (Expression<?>) p.get(p.size() - 1)));
+                    return switch (variant) {
+                        case 0 ->
+                                new CreationTableauExpr(EnumerationExpr.completeEnumeration((Expression<?>) p.get(1)));
+                        /*case 1 -> {
+                            var indexOfEt = p.indexOf(Token.withName("ET"));
+                            var contenu = evalOneExpr(new ArrayList<>(p.subList(1, indexOfEt - 1)), null);
+                            yield new EnumerationExpr(contenu);
+                        }*/
+                        case 1, 2 -> {
+                            var contenu = evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 2)), null);
+                            if (contenu instanceof EnumerationExpr enumerationExpr) {
+                                enumerationExpr.addElement((Expression<?>) p.get(p.size() - 1));
+                                enumerationExpr.setComplete(true);
+                                yield new CreationTableauExpr(enumerationExpr);
+                            }
+                            yield new CreationTableauExpr(EnumerationExpr.completeEnumeration(contenu, (Expression<?>) p.get(p.size() - 1)));
+                        }
+                        default -> throw new IllegalStateException("Unexpected value: " + variant);
+                    };
                 });
 
         addExpression("expression DE expression",

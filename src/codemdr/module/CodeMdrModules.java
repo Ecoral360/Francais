@@ -3,6 +3,7 @@ package codemdr.module;
 import codemdr.execution.CodeMdrExecutorState;
 import codemdr.module.builtins.Builtins;
 import codemdr.module.builtins.ModuleMath;
+import codemdr.module.builtins.ModuleMatriceDeDimensionN;
 import codemdr.objects.CodeMdrModule;
 import org.ascore.errors.ASCErrors;
 import org.ascore.lang.objects.ASCVariable;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 public enum CodeMdrModules {
     BUILTINS("", new Builtins()),
     MATH("Mathématique", new ModuleMath()),
+    MATRICE_DE_DIMENSIONS_N("MatriceDeDimensionN", new ModuleMatriceDeDimensionN()),
     ;
 
     private final CodeMdrModuleInterface module;
@@ -66,6 +68,6 @@ public enum CodeMdrModules {
         );
         Arrays.stream(variables).forEach(var -> executorState.getScopeManager()
                 .getCurrentScopeInstance()
-                .declareScopeInstanceVariable(var));
+                .declareScopeInstanceVariable(var.clone()));
     }
 }

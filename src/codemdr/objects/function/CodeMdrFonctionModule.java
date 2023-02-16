@@ -11,7 +11,7 @@ import java.util.function.Function;
  */
 public class CodeMdrFonctionModule extends CodeMdrCallable {
     private String nom;
-    private List<CodeMdrParam> params;
+    private final List<CodeMdrParam> params;
 
     private Function<List<CodeMdrObj<?>>, CodeMdrObj<?>> callback;
 
@@ -19,6 +19,10 @@ public class CodeMdrFonctionModule extends CodeMdrCallable {
         this.nom = nom;
         this.params = params;
         this.callback = callback;
+    }
+
+    public CodeMdrFonctionModule(String nom, Function<List<CodeMdrObj<?>>, CodeMdrObj<?>> callback) {
+        this(nom, List.of(), callback);
     }
 
     @Override
@@ -37,6 +41,18 @@ public class CodeMdrFonctionModule extends CodeMdrCallable {
 
     public void setNom(String nom) {
         this.nom = nom;
+    }
+
+    public List<CodeMdrParam> getParams() {
+        return params;
+    }
+
+    public Function<List<CodeMdrObj<?>>, CodeMdrObj<?>> getCallback() {
+        return callback;
+    }
+
+    public void before(Function<List<CodeMdrObj<?>>, List<CodeMdrObj<?>>> before) {
+        this.callback = this.callback.compose(before);
     }
 
     @Override

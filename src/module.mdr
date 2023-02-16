@@ -1,4 +1,10 @@
-Importer le module Mathématique de la bibliothèque standard sous le même nom.
+Importer le module MatriceDeDimensionN de la bibliothèque standard tel quel.
 
-Imprimer le résultat de l'appel à Sinus de Mathématique avec l'argument 90.
+Posons que Tableau vaut un tableau contenant
+ un tableau contenant 1, 2, 3 et 4,
+ un tableau contenant 5, 6, 7 et 8 et
+ "un tableau contenant 9, 10, 11 et 12".
 
+Posons que MaMatrice vaut le résultat de l'appel à Créer de Matrice avec l'argument Tableau.
+
+Imprimer TableauInterne de MaMatrice.

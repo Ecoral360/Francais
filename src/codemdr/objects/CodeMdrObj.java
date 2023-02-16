@@ -40,7 +40,9 @@ public abstract class CodeMdrObj<T> extends ASCObject<T> {
         return Optional.ofNullable(proprietes.getOrDefault(nom, null));
     }
 
-    // Met à jour ou déclare la propriété et y associe la valeur `valeur`.
+    /**
+     * Met à jour ou déclare la propriété et y associe la valeur <code>valeur</code>.
+     */
     public void setPropriete(String nom, CodeMdrObj<?> valeur) {
         proprietes.put(nom, valeur);
     }
