@@ -14,4 +14,9 @@ public class CodeMdrInt extends CodeMdrNumber {
         this(Integer.parseInt(token.value()));
     }
 
+
+    @Override
+    public CodeMdrType getType() {
+        return CodeMdrTypePrimitif.NOMBRE_ENTIER;
+    }
 }

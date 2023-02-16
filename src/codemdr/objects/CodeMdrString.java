@@ -33,4 +33,9 @@ public class CodeMdrString extends CodeMdrObj<String> {
     public CodeMdrString(Token token) {
         this(token.value().substring(2, token.value().length() - 2)); // removing the enclosing `"` from the string
     }
+
+    @Override
+    public CodeMdrType getType() {
+        return CodeMdrTypePrimitif.TEXTE;
+    }
 }

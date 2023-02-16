@@ -24,4 +24,9 @@ public class CodeMdrTableau extends CodeMdrObj<ArrayList<CodeMdrObj<?>>> {
     public int taille() {
         return getValue().size();
     }
+
+    @Override
+    public CodeMdrType getType() {
+        return CodeMdrTypePrimitif.TABLEAU;
+    }
 }

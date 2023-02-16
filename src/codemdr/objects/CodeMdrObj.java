@@ -10,7 +10,11 @@ import java.util.Optional;
 
 public abstract class CodeMdrObj<T> extends ASCObject<T> {
     private final HashMap<String, CodeMdrObj<?>> proprietes;
-    public static final CodeMdrObj<?> AUCUNE_VALEUR = new CodeMdrObj<>(0) {
+    public static final CodeMdrObj<?> AUCUNE_VALEUR = new CodeMdrObj<>() {
+        @Override
+        public CodeMdrType getType() {
+            return CodeMdrTypePrimitif.NULLE;
+        }
     };
 
     protected CodeMdrObj(@NotNull T value, Map<String, CodeMdrObj<?>> proprietes) {
@@ -20,6 +24,16 @@ public abstract class CodeMdrObj<T> extends ASCObject<T> {
 
     protected CodeMdrObj(@NotNull T value) {
         this(value, new HashMap<>());
+    }
+
+    protected CodeMdrObj(Map<String, CodeMdrObj<?>> proprietes) {
+        super();
+        this.proprietes = new HashMap<>(proprietes);
+    }
+
+    protected CodeMdrObj() {
+        super();
+        this.proprietes = new HashMap<>();
     }
 
     public Optional<CodeMdrObj<?>> getPropriete(String nom) {
@@ -48,4 +62,6 @@ public abstract class CodeMdrObj<T> extends ASCObject<T> {
     public int hashCode() {
         return proprietes != null ? proprietes.hashCode() : 0;
     }
+
+    public abstract CodeMdrType getType();
 }

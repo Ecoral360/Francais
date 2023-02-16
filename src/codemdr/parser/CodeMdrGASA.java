@@ -79,18 +79,27 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                         );
                 });
 
+        addStatement("INCLURE expression MODULE_NOMME~" +
+                        "INCLURE expression TEL_QUEL",
+                (p, variant) -> {
+                    if (variant == 2) return new ImporterStmt(executorInstance, ((Token) p.get(1)).value());
+                    else
+                        return new ImporterStmt(
+                                executorInstance, ((Token) p.get(1)).value(),
+                                variant == 0 ? ((Token) p.get(4)).value() : null
+                        );
+                });
+
         // Définition de fonctions
         addStatement("FONCTION_DEF VARIABLE PARAM expression~" +
-                        "FONCTION_DEF VARIABLE PARAMS expression ET expression~",
+                        "FONCTION_DEF VARIABLE PARAMS expression ET expression",
                 (p, variant) -> {
                     var args = EnumerationExpr.getOrWrap((Expression<?>) p.get(3));
 
                     if (variant == 1) {
                         args.addElement((Expression<?>) p.get(5));
                     }
-                    var f = new CreerFonctionStmt(((Token) p.get(1)).value(), args.cast(), executorInstance);
-                    // f.execute();
-                    return f;
+                    return new CreerFonctionStmt(((Token) p.get(1)).value(), args.cast(), executorInstance);
                 });
 
         addStatement("FONCTION_END", p -> new FinFonctionStmt(executorInstance));
@@ -98,7 +107,7 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
         addStatement("RETOURNER LA_VALEUR expression~" +
                         "RETOURNER expression",
                 (p, variant) -> {
-                    if (variant == 1 && !(p.get(1) instanceof AppelerFoncExpr)) {
+                    if (variant == 1 && !(p.get(1) instanceof AppelerFoncExpr || p.get(1) instanceof CreationTableauExpr)) {
                         throw new ASCErrors.ErreurSyntaxe("Tu dois dire `Retourner la valeur`. Je suis très déçu de toi.");
                     }
                     return new RetournerStmt((Expression<?>) p.get(variant == 0 ? 2 : 1), executorInstance);
