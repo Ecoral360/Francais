@@ -7,4 +7,6 @@ Posons que Tableau vaut un tableau contenant
 
 Posons que MaMatrice vaut le résultat de l'appel à Créer de Matrice avec l'argument Tableau.
 
+Imprimer 1 vaut 1.
+
 Imprimer TableauInterne de MaMatrice.
