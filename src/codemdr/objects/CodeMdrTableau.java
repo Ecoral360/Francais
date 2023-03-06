@@ -26,6 +26,12 @@ public class CodeMdrTableau extends CodeMdrObj<List<CodeMdrObj<?>>> {
             setPropriete("Taille", new CodeMdrInt(value.size()));
             return AUCUNE_VALEUR;
         }));
+
+        setPropriete("SousSection", new CodeMdrFonctionModule("SousSection", params -> {
+            int indexDebut = ((CodeMdrInt) params.get(0)).getValue();
+            int indexFin = ((CodeMdrInt) params.get(1)).getValue();
+            return new CodeMdrTableau(getValue().subList(indexDebut, indexFin));
+        }));
     }
 
     public CodeMdrTableau() {

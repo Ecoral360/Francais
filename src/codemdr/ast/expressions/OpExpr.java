@@ -36,6 +36,10 @@ public record OpExpr(Expression<?> left, Expression<?> right, String op) impleme
                 case "moins" -> gauche - droite;
                 case "fois" -> gauche * droite;
                 case "divisé par" -> gauche / droite;
+
+                case "divisé entièrement par" -> //noinspection IntegerDivisionInFloatingPointContext
+                        (int) gauche / (int) droite;
+
                 case "modulo" -> gauche % droite;
                 case "exposant" -> Math.pow(gauche, droite);
                 case "l'opération ET binaire de" -> (int) gauche & (int) droite;

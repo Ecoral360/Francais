@@ -57,21 +57,50 @@ Fin de la définition de la fonction.
 Début de la définition de la fonction nommée Bourrage acceptant le paramètre M.
     Posons que TailleM vaut Taille de M fois 8.
     Posons que K vaut 448 moins "TailleM plus 1".
+
     Exécuter 1 énoncé si K vaut moins que 0.
         Maintenant, K vaut 512 moins K.
-    Posons que Bloc vaut le résultat de l'appel à TableauDeBits de M.
-    Appeler Ajouter de Bloc avec l'argument 1.
-    Posons que I vaut K.
+
+    Posons que BitsDeM vaut le résultat de l'appel à TableauDeBits de M.
+    Posons que MessageBourré vaut un tableau vide.
+    Posons que I vaut 0.
+    Exécuter 4 énoncés tant que I vaut moins que Taille de BitsDeM.
+        Posons que BitsDuCaractère vaut le résultat de l'appel à TableauBinaire de "l'élément de BitsDeM à l'index I".
+        Note à moi-même : Exécuter 1 énoncé si Taille de BitsDuCaractère vaut 7.
+        Appeler Ajouter de MessageBourré avec l'argument 0.
+        Appeler AjouterTout de MessageBourré avec l'argument BitsDuCaractère.
+        Maintenant, I vaut I plus 1.
+
+    Appeler Ajouter de MessageBourré avec l'argument 1.
+    Maintenant, I vaut K.
     Exécuter 2 énoncés tant que I vaut plus que 0.
-        Appeler Ajouter de Bloc avec l'argument 0.
+        Appeler Ajouter de MessageBourré avec l'argument 0.
         Maintenant, I vaut I moins 1.
-    Posons que TableauBinaireK vaut le résultat de l'appel à TableauBinaire de K.
-    Appeler AjouterTout de Bloc avec l'argument TableauBinaireK.
-    Retourner la valeur Bloc.
+    Posons que TableauBinaireM vaut le résultat de l'appel à TableauBinaire de TailleM.
+
+    Maintenant, I vaut 64 moins "Taille de TableauBinaireM".
+    Exécuter 2 énoncés tant que I vaut plus que 0.
+        Appeler Ajouter de MessageBourré avec l'argument 0.
+        Maintenant, I vaut I moins 1.
+
+    Appeler AjouterTout de MessageBourré avec l'argument TableauBinaireM.
+    Retourner la valeur MessageBourré.
 Fin de la définition de la fonction.
 
 
-Imprimer le résultat de l'appel à ROTR avec les arguments 1 et 3.
-Imprimer le résultat de l'appel à ROTR avec les arguments 4 et 6.
-Imprimer le résultat de l'appel à ROTR avec les arguments 11 et 31.
-Imprimer le résultat de l'appel à Bourrage avec l'argument « abc ».
+Début de la définition de la fonction nommée DécoupageEnBloc acceptant le paramètre MessageBourré.
+    Posons que NombreDeBlocs vaut Taille de MessageBourré divisé entièrement par 512.
+    Posons que Blocs vaut un tableau vide.
+    Posons que I vaut 0.
+    Exécuter 3 énoncés tant que I vaut moins que NombreDeBlocs.
+        Posons que Bloc vaut le résultat de l'appel à SousSection de MessageBourré avec les arguments "I fois 512" et "I fois 512 plus 1".
+        Appeler Ajouter de Blocs avec l'argument Bloc.
+        Maintenant, I vaut I plus 1.
+
+Fin de la définition de la fonction.
+
+
+Note à moi-même : Imprimer le résultat de l'appel à ROTR avec les arguments 1 et 3.
+Note à moi-même : Imprimer le résultat de l'appel à ROTR avec les arguments 4 et 6.
+Note à moi-même : Imprimer le résultat de l'appel à ROTR avec les arguments 11 et 31.
+Imprimer Taille de "le résultat de l'appel à Bourrage avec l'argument « abc »".

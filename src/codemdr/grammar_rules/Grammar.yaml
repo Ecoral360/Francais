@@ -24,7 +24,7 @@ Add:
   ALLER_A: 'aller\ à'
   SAUTER: 'sauter'
 
-  TANT_QUE: '\btant\ que\b'
+  TANT_QUE: 'tant\ que'
   SINON: 'sinon,'
   SI: 'si'
 
@@ -72,6 +72,7 @@ Add:
     EXPOSANT: 'exposant'
     FOIS: 'fois'
     DIV: 'divisé\ par'
+    DIV_ENTIER: 'divisé\ entièrement\ par'
     CONCAT_A: 'concaténé\ à'
     PLUS: 'plus'
     MOINS: 'moins'

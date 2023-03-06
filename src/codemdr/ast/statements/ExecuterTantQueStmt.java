@@ -51,16 +51,15 @@ public class ExecuterTantQueStmt extends CodeMdrStatement {
     public Object execute() {
         var condition = (CodeMdrBool) conditionExpr.eval();
         var state = (CodeMdrExecutorState) executorInstance.getExecutorState();
-
         if (condition.getValue()) {
             var nbEnonces = (CodeMdrInt) nbEnoncesExpr.eval();
             var currCoord = executorInstance.obtenirCoordRunTime().copy();
             state.getGestionnaireDeBlocDeCode().empilerBlocDeCode(
-                    new BlocDeCodeNbEnonces(currCoord, c -> currCoord, nbEnonces.getValue().intValue())
+                    new BlocDeCodeNbEnonces(currCoord, c -> currCoord, nbEnonces.getValue())
             );
         } else {
             var nbEnoncesSautes = (CodeMdrInt) nbEnoncesSautesExpr.eval();
-            for (int i = 0; i < nbEnoncesSautes.getValue().intValue(); i++) {
+            for (int i = 0; i < nbEnoncesSautes.getValue(); i++) {
                 executorInstance.obtenirCoordRunTime().plusUn();
                 ((CodeMdrExecutorState) executorInstance.getExecutorState()).getGestionnaireDeBlocDeCode().plusUn();
             }
