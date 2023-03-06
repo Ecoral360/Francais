@@ -15,7 +15,7 @@ import org.ascore.lang.objects.ASCObject;
  *
  * @author Mathis Laroche
  */
-public record OpExpr(Expression<?> left, Expression<?> right, String op) implements Expression<ASCObject<?>> {
+public record BinCompExpr(Expression<?> left, Expression<?> right, String op) implements Expression<ASCObject<?>> {
 
     /**
      * Appel\u00E9 durant le Runtime, cette m\u00E9thode retourne un objet de type ASObjet
@@ -26,7 +26,7 @@ public record OpExpr(Expression<?> left, Expression<?> right, String op) impleme
     public ASCObject<?> eval() {
         var leftValue = left.eval();
         var rightValue = right.eval();
-        if (op.equals("concaténé à")) {
+        if (op.equals("")) {
             return new CodeMdrString("" + leftValue + rightValue);
         } else if (leftValue instanceof CodeMdrNumber codeMdrNumberLeft && rightValue instanceof CodeMdrNumber codeMdrNumberRight) {
             var gauche = codeMdrNumberLeft.getValue().doubleValue();
@@ -37,9 +37,6 @@ public record OpExpr(Expression<?> left, Expression<?> right, String op) impleme
                 case "fois" -> gauche * droite;
                 case "divisé par" -> gauche / droite;
                 case "modulo" -> gauche % droite;
-                case "l'opération ET binaire de" -> (int) gauche & (int) droite;
-                case "l'opération OU binaire de" -> (int) gauche | (int) droite;
-                case "l'opération OU binaire exclusif de" -> (int) gauche ^ (int) droite;
                 default -> throw new UnsupportedOperationException(op);
             };
             return result == (int) result ? new CodeMdrInt((int) result) : new CodeMdrFloat(result);

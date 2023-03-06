@@ -1,0 +1,11 @@
+Début de la définition de la fonction nommée Ch acceptant les paramètres X, Y et Z.
+    Posons que XetY vaut l'opération ET binaire de X et Y.
+    Posons que NonXetZ vaut l'opération ET binaire de "l'inverse binaire de X" et Z.
+    Retourner l'opération OU binaire exclusif de XetY et NonXetZ.
+Fin de la définition de la fonction.
+
+
+
+Imprimer le résultat de l'appel à Ch avec les arguments 1, 2 et 3.
+Imprimer le résultat de l'appel à Ch avec les arguments 4, 5 et 6.
+Imprimer le résultat de l'appel à Ch avec les arguments 11, -12 et 33.

@@ -107,7 +107,7 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
         addStatement("RETOURNER LA_VALEUR expression~" +
                         "RETOURNER expression",
                 (p, variant) -> {
-                    if (variant == 1 && !(p.get(1) instanceof AppelerFoncExpr || p.get(1) instanceof CreationTableauExpr)) {
+                    if (variant == 1 && (p.get(1) instanceof ConstValueExpr || p.get(1) instanceof VarExpr)) {
                         throw new ASCErrors.ErreurSyntaxe("Tu dois dire `Retourner la valeur`. Je suis très déçu de toi.");
                     }
                     return new RetournerStmt((Expression<?>) p.get(variant == 0 ? 2 : 1), executorInstance);
@@ -235,6 +235,16 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
 
         addExpression("expression {op} expression",
                 p -> new OpExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2), ((Token) p.get(1)).value()));
+
+        addExpression("ET_BINAIRE expression ET expression~" +
+                        "OU_BINAIRE expression ET expression~" +
+                        "OU_BINAIRE_EXCLUSIF expression ET expression",
+                p -> new OpExpr((Expression<?>) p.get(1), (Expression<?>) p.get(3), ((Token) p.get(0)).value()));
+
+        addExpression("INVERSE_BINAIRE expression~" +
+                        "OPPOSE_DE expression~" +
+                        "INVERSE_DE expression",
+                p -> new UniOpExpr((Expression<?>) p.get(1), ((Token) p.get(0)).value()));
 
         addExpression("TABLEAU_CREATION_SINGLETON expression~" +
                         "TABLEAU_CREATION #expression ET expression~" +  // FIXME: supporter le cas où expression est aussi une création de tableau

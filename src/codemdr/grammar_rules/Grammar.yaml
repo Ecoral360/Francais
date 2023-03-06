@@ -85,6 +85,12 @@ Add:
     NE_VEAU_PAS: '\bveau\b'
 
 
+  ET_BINAIRE: "l'opération\\ ET\\ binaire\\ de"
+  OU_BINAIRE: "l'opération\\ OU\\ binaire\\ de"
+  OU_BINAIRE_EXCLUSIF: "l'opération\\ OU\\ binaire\\ exclusif\\ de"
+  INVERSE_BINAIRE: "l'inverse\\ binaire\\ de"
+  INVERSE_DE: "l'inverse\\ de"
+  OPPOSE_DE: "l'opposé\\ de"
   ET: 'et'
   OU: 'ou'
   DE: 'de'
