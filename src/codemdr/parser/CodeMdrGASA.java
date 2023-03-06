@@ -213,7 +213,7 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                         "APPELER expression AVEC ARGS expression~" +
                         "APPELER expression",
                 (p, variant) ->
-                        CodeMdrStatement.evalExpression(switch (variant) {
+                        CodeMdrStatement.evalExpression(executorInstance, switch (variant) {
                                     case 2 -> new AppelerFoncExpr((Expression<?>) p.get(1));
                                     case 0, 1 -> {
                                         var params = (Expression<?>) p.get(4);
