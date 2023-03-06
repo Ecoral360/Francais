@@ -4,8 +4,12 @@ import codemdr.objects.function.CodeMdrFonctionModule;
 import codemdr.objects.function.CodeMdrParam;
 import org.ascore.tokens.Token;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * An example of an object for the CodeMdr programming main.language
@@ -28,6 +32,8 @@ public class CodeMdrString extends CodeMdrObj<String> {
                         new CodeMdrParam("Ancien"), new CodeMdrParam("Nouveau")
                 ), args -> new CodeMdrString(value.replace((String) args.get(0).getValue(), (String) args.get(1).getValue()))))
         ));
+        setPropriete("TableauDeBits", new CodeMdrFonctionModule("TableauDeBits", List.of(),
+                args -> new CodeMdrTableau(getValue().chars().mapToObj(CodeMdrInt::new).collect(Collectors.toList()))));
     }
 
     public CodeMdrString(Token token) {

@@ -11,6 +11,7 @@ import codemdr.objects.CodeMdrInt;
 import codemdr.objects.CodeMdrString;
 import codemdr.objects.CodeMdrType;
 import org.ascore.ast.buildingBlocs.Expression;
+import org.ascore.ast.buildingBlocs.Statement;
 import org.ascore.errors.ASCErrors;
 import org.ascore.executor.ASCExecutor;
 import org.ascore.generators.ast.AstGenerator;
@@ -208,6 +209,28 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
         addStatement("MAINTENANT expression VAUT expression",
                 p -> new AffecterStmt((Expression<?>) p.get(1), (Expression<?>) p.get(3), executorInstance));
 
+        addStatement("APPELER expression AVEC ARG expression~" +
+                        "APPELER expression AVEC ARGS expression~" +
+                        "APPELER expression",
+                (p, variant) ->
+                        CodeMdrStatement.evalExpression(switch (variant) {
+                                    case 2 -> new AppelerFoncExpr((Expression<?>) p.get(1));
+                                    case 0, 1 -> {
+                                        var params = (Expression<?>) p.get(4);
+                                        if ((variant == 0 && params instanceof EnumerationExpr) ||
+                                                (variant == 1 && (!(params instanceof EnumerationExpr)))) {
+                                            throw new ASCErrors.ErreurSyntaxe("Mauvais accord du mot `argument`. Je suis très déçu de toi.");
+                                        }
+
+                                        yield new AppelerFoncExpr(
+                                                (Expression<?>) p.get(1),
+                                                EnumerationExpr.getOrWrap(params)
+                                        );
+                                    }
+                                    default -> throw new UnsupportedOperationException("Ne devrait pas arrivé");
+                                }
+                        ));
+
         addStatement("IMPRIMER expression", p -> new ImprimerStmt((Expression<?>) p.get(1), executorInstance));
         addStatement("expression", p -> CodeMdrStatement.evalExpression(executorInstance, (Expression<?>) p.get(0)));
         addStatement("", p -> CodeMdrStatement.statementVide(executorInstance));
@@ -217,9 +240,7 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
      * Defines the rules of the expressions of the language.
      */
     protected void addExpressions() {
-        addExpression("EMPHASE #expression EMPHASE", p -> {
-            return evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null);
-        });
+        addExpression("EMPHASE #expression EMPHASE", p -> evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null));
 
         // add your expressions here
         addExpression("{datatypes}~VARIABLE~{datatypes_name}", p -> {
@@ -233,6 +254,10 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
             };
         });
 
+        addExpression("expression DE expression",
+                p -> new GetProprieteExpr((Expression<?>) p.get(2), (VarExpr) p.get(0))
+        );
+
         addExpression("expression {op} expression",
                 p -> new OpExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2), ((Token) p.get(1)).value()));
 
@@ -241,25 +266,22 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                         "OU_BINAIRE_EXCLUSIF expression ET expression",
                 p -> new OpExpr((Expression<?>) p.get(1), (Expression<?>) p.get(3), ((Token) p.get(0)).value()));
 
-        addExpression("INVERSE_BINAIRE expression~" +
-                        "OPPOSE_DE expression~" +
-                        "INVERSE_DE expression",
-                p -> new UniOpExpr((Expression<?>) p.get(1), ((Token) p.get(0)).value()));
-
-        addExpression("TABLEAU_CREATION_SINGLETON expression~" +
+        addExpression("TABLEAU_CREATION_VIDE~" +
+                        "TABLEAU_CREATION_SINGLETON expression~" +
                         "TABLEAU_CREATION #expression ET expression~" +  // FIXME: supporter le cas où expression est aussi une création de tableau
                         "TABLEAU_CREATION #expression ET expression",
                 (p, variant) -> {
                     // System.out.println(p);
                     return switch (variant) {
-                        case 0 ->
+                        case 0 -> new CreationTableauExpr(EnumerationExpr.completeEnumeration());
+                        case 1 ->
                                 new CreationTableauExpr(EnumerationExpr.completeEnumeration((Expression<?>) p.get(1)));
                         /*case 1 -> {
                             var indexOfEt = p.indexOf(Token.withName("ET"));
                             var contenu = evalOneExpr(new ArrayList<>(p.subList(1, indexOfEt - 1)), null);
                             yield new EnumerationExpr(contenu);
                         }*/
-                        case 1, 2 -> {
+                        case 2, 3 -> {
                             var contenu = evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 2)), null);
                             if (contenu instanceof EnumerationExpr enumerationExpr) {
                                 enumerationExpr.addElement((Expression<?>) p.get(p.size() - 1));
@@ -272,9 +294,6 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                     };
                 });
 
-        addExpression("expression DE expression",
-                p -> new GetProprieteExpr((Expression<?>) p.get(2), (VarExpr) p.get(0))
-        );
 
         addExpression("expression VIRGULE expression~" +
                         "expression ET expression",

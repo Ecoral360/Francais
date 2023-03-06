@@ -42,6 +42,7 @@ Add:
   LA_VALEUR: 'la\ valeur'
 
   TABLEAU_CREATION_SINGLETON: '\bun\ tableau\ contenant\ seulement'
+  TABLEAU_CREATION_VIDE: '\bun\ tableau\ vide'
   TABLEAU_CREATION: '\bun\ tableau\ contenant'
 
   ELEMENT_DE: "l'élément\\ de"
@@ -67,12 +68,13 @@ Add:
     TYPE_FONCTION: 'une\ fonction'
 
   op:
-    PLUS: 'plus'
-    CONCAT_A: 'concaténé\ à'
-    MOINS: 'moins'
+    MODULO: 'modulo'
+    EXPOSANT: 'exposant'
     FOIS: 'fois'
     DIV: 'divisé\ par'
-    MODULO: 'modulo'
+    CONCAT_A: 'concaténé\ à'
+    PLUS: 'plus'
+    MOINS: 'moins'
 
   comp:
     PLUS_PETIT: 'vaut\ moins\ que'
@@ -88,9 +90,6 @@ Add:
   ET_BINAIRE: "l'opération\\ ET\\ binaire\\ de"
   OU_BINAIRE: "l'opération\\ OU\\ binaire\\ de"
   OU_BINAIRE_EXCLUSIF: "l'opération\\ OU\\ binaire\\ exclusif\\ de"
-  INVERSE_BINAIRE: "l'inverse\\ binaire\\ de"
-  INVERSE_DE: "l'inverse\\ de"
-  OPPOSE_DE: "l'opposé\\ de"
   ET: 'et'
   OU: 'ou'
   DE: 'de'

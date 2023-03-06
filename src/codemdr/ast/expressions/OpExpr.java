@@ -37,6 +37,7 @@ public record OpExpr(Expression<?> left, Expression<?> right, String op) impleme
                 case "fois" -> gauche * droite;
                 case "divisé par" -> gauche / droite;
                 case "modulo" -> gauche % droite;
+                case "exposant" -> Math.pow(gauche, droite);
                 case "l'opération ET binaire de" -> (int) gauche & (int) droite;
                 case "l'opération OU binaire de" -> (int) gauche | (int) droite;
                 case "l'opération OU binaire exclusif de" -> (int) gauche ^ (int) droite;

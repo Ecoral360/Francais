@@ -4,11 +4,13 @@ import codemdr.objects.function.CodeMdrFonctionModule;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
-public class CodeMdrTableau extends CodeMdrObj<ArrayList<CodeMdrObj<?>>> {
+public class CodeMdrTableau extends CodeMdrObj<List<CodeMdrObj<?>>> {
 
-    public CodeMdrTableau(@NotNull ArrayList<CodeMdrObj<?>> value) {
+    public CodeMdrTableau(@NotNull List<CodeMdrObj<?>> value) {
         super(value, Map.ofEntries(
                 Map.entry("Taille", new CodeMdrInt(value.size()))
         ));
@@ -18,12 +20,16 @@ public class CodeMdrTableau extends CodeMdrObj<ArrayList<CodeMdrObj<?>>> {
             setPropriete("Taille", new CodeMdrInt(value.size()));
             return AUCUNE_VALEUR;
         }));
+
+        setPropriete("AjouterTout", new CodeMdrFonctionModule("AjouterTout", params -> {
+            value.addAll(((CodeMdrTableau) params.get(0)).getValue());
+            setPropriete("Taille", new CodeMdrInt(value.size()));
+            return AUCUNE_VALEUR;
+        }));
     }
 
     public CodeMdrTableau() {
-        super(new ArrayList<>(), Map.ofEntries(
-                Map.entry("Taille", new CodeMdrInt(0))
-        ));
+        this(new ArrayList<>());
     }
 
     public void setValeur(int position, CodeMdrObj<?> valeur) {
