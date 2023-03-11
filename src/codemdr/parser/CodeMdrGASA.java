@@ -18,6 +18,7 @@ import org.ascore.generators.ast.AstGenerator;
 import org.ascore.tokens.Token;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The parser for the CodeMdr language.
@@ -93,8 +94,12 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
 
         // Définition de fonctions
         addStatement("FONCTION_DEF VARIABLE PARAM expression~" +
-                        "FONCTION_DEF VARIABLE PARAMS expression ET expression",
+                        "FONCTION_DEF VARIABLE PARAMS expression ET expression~" +
+                        "FONCTION_DEF VARIABLE NO_PARAM",
                 (p, variant) -> {
+                    if (variant == 2) {
+                        return new CreerFonctionStmt(((Token) p.get(1)).value(), List.of(), executorInstance);
+                    }
                     var args = EnumerationExpr.getOrWrap((Expression<?>) p.get(3));
 
                     if (variant == 1) {
@@ -247,6 +252,7 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
             var token = (Token) p.get(0);
             return switch (token.name()) {
                 case "ENTIER" -> new ConstValueExpr(new CodeMdrInt(token));
+                case "HEX" -> new ConstValueExpr(new CodeMdrInt(Long.parseLong(token.value().substring(2), 16)));
                 case "DECIMAL" -> new ConstValueExpr(new CodeMdrFloat(token));
                 case "TEXTE" -> new ConstValueExpr(new CodeMdrString(token));
                 case "VARIABLE" -> new VarExpr(token.value(), executorInstance.getExecutorState());

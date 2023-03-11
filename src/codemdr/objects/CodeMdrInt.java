@@ -14,6 +14,7 @@ public class CodeMdrInt extends CodeMdrNumber {
     public CodeMdrInt(Number value) {
         super(value);
 
+
         setPropriete("DécalageÀGauche",
                 new CodeMdrFonctionModule("DécalageÀGauche", List.of(new CodeMdrParam("BitsDécalées")),
                         args -> new CodeMdrInt(

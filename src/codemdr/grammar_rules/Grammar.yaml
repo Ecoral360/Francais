@@ -38,6 +38,7 @@ Add:
   ARGS: 'les\ arguments'
   PARAM: 'acceptant\ le\ paramètre'
   PARAMS: 'acceptant\ les\ paramètres'
+  NO_PARAM: "n'acceptant\\ aucun\\ paramètre"
   RETOURNER: '${start}Retourner'
   LA_VALEUR: 'la\ valeur'
 
@@ -53,6 +54,7 @@ Add:
   EMPHASE: '"'
 
   datatypes:
+    HEX: '0x[0-9AaBbCcDdEeFf]+'
     DECIMAL: '-?\d+,\d+'
     ENTIER: '-?\d+'
     TEXTE: '«\ .*?\ »'

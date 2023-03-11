@@ -100,7 +100,33 @@ Début de la définition de la fonction nommée DécoupageEnBloc acceptant le pa
 Fin de la définition de la fonction.
 
 
+Début de la définition de la fonction nommée TableauW n'acceptant aucun paramètre.
+    Posons que I vaut 0.
+    Exécuter
+Fin de la définition de la fonction.
+
+Posons que H vaut un tableau contenant
+    0x6a09e667,
+    0xbb67ae85,
+    0x3c6ef372,
+    0xa54ff53a,
+    0x510e527f,
+    0x9b05688c,
+    0x1f83d9ab et
+    0x5be0cd19.
+
+Imprimer H.
+
 Note à moi-même : Imprimer le résultat de l'appel à ROTR avec les arguments 1 et 3.
 Note à moi-même : Imprimer le résultat de l'appel à ROTR avec les arguments 4 et 6.
 Note à moi-même : Imprimer le résultat de l'appel à ROTR avec les arguments 11 et 31.
 Imprimer Taille de "le résultat de l'appel à Bourrage avec l'argument « abc »".
+
+
+
+
+
+
+
+
+
