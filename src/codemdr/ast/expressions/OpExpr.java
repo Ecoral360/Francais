@@ -1,10 +1,7 @@
 package codemdr.ast.expressions;
 
 
-import codemdr.objects.CodeMdrFloat;
-import codemdr.objects.CodeMdrInt;
-import codemdr.objects.CodeMdrNumber;
-import codemdr.objects.CodeMdrString;
+import codemdr.objects.*;
 import org.ascore.ast.buildingBlocs.Expression;
 import org.ascore.errors.ASCErrors;
 import org.ascore.lang.objects.ASCObject;
@@ -29,25 +26,29 @@ public record OpExpr(Expression<?> left, Expression<?> right, String op) impleme
         if (op.equals("concaténé à")) {
             return new CodeMdrString("" + leftValue + rightValue);
         } else if (leftValue instanceof CodeMdrNumber codeMdrNumberLeft && rightValue instanceof CodeMdrNumber codeMdrNumberRight) {
+            boolean unsigned = leftValue instanceof CodeMdrUnsignedInt && rightValue instanceof CodeMdrUnsignedInt;
             var gauche = codeMdrNumberLeft.getValue().doubleValue();
             var droite = codeMdrNumberRight.getValue().doubleValue();
             var result = switch (op) {
                 case "plus" -> gauche + droite;
                 case "moins" -> gauche - droite;
                 case "fois" -> gauche * droite;
-                case "divisé par" -> gauche / droite;
+                case "divisé par" -> unsigned ? Integer.divideUnsigned((int) gauche, (int) droite) : gauche / droite;
 
                 case "divisé entièrement par" -> //noinspection IntegerDivisionInFloatingPointContext
-                        (int) gauche / (int) droite;
+                        unsigned ? Integer.divideUnsigned((int) gauche, (int) droite) : (int) gauche / (int) droite;
 
-                case "modulo" -> gauche % droite;
+                case "modulo" -> unsigned ? Integer.remainderUnsigned((int) gauche, (int) droite) : gauche % droite;
+
                 case "exposant" -> Math.pow(gauche, droite);
                 case "l'opération ET binaire de" -> (int) gauche & (int) droite;
                 case "l'opération OU binaire de" -> (int) gauche | (int) droite;
                 case "l'opération OU binaire exclusif de" -> (int) gauche ^ (int) droite;
                 default -> throw new UnsupportedOperationException(op);
             };
-            return result == (int) result ? new CodeMdrInt((int) result) : new CodeMdrFloat(result);
+            return result != (int) result ? new CodeMdrFloat(result)
+                    : unsigned ? new CodeMdrUnsignedInt((int) result)
+                    : new CodeMdrInt((int) result);
         } else {
             throw new ASCErrors.ErreurArithmetique(
                     "Addition not supported for '" + leftValue.getClass().getSimpleName() +

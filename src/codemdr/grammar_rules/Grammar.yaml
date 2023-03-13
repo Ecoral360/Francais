@@ -24,9 +24,11 @@ Add:
   ALLER_A: 'aller\ à'
   SAUTER: 'sauter'
 
+  # control flow
   TANT_QUE: 'tant\ que'
   SINON: 'sinon,'
   SI: 'si'
+  POUR_CHAQUE: 'pour\ chaque'
 
   FONCTION_DEF: '${start}Début\ de\ la\ définition\ de\ la\ fonction\ nommée'
   FONCTION_END: '${start}Fin\ de\ la\ définition\ de\ la\ fonction'

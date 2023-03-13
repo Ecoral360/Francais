@@ -252,7 +252,7 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
             var token = (Token) p.get(0);
             return switch (token.name()) {
                 case "ENTIER" -> new ConstValueExpr(new CodeMdrInt(token));
-                case "HEX" -> new ConstValueExpr(new CodeMdrInt(Long.parseLong(token.value().substring(2), 16)));
+                case "HEX" -> new ConstValueExpr(new CodeMdrInt(Integer.parseUnsignedInt(token.value().substring(2), 16)));
                 case "DECIMAL" -> new ConstValueExpr(new CodeMdrFloat(token));
                 case "TEXTE" -> new ConstValueExpr(new CodeMdrString(token));
                 case "VARIABLE" -> new VarExpr(token.value(), executorInstance.getExecutorState());

@@ -20,5 +20,7 @@
     <orderEntry type="library" name="ASCore (10)" level="project" />
     <orderEntry type="library" name="ASCore (11)" level="project" />
     <orderEntry type="library" name="ASCore (12)" level="project" />
+    <orderEntry type="library" name="jetbrains.annotations" level="project" />
+    <orderEntry type="library" name="ASCore (13)" level="project" />
   </component>
 </module>
