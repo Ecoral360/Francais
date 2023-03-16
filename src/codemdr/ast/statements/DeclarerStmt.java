@@ -44,6 +44,14 @@ public class DeclarerStmt extends CodeMdrStatement {
         scope.declareVariable(new ASCVariable<>(variable.nom(), CodeMdrObj.AUCUNE_VALEUR));
     }
 
+    public Expression<?> getValeur() {
+        return valeur;
+    }
+
+    public VarExpr getVariable() {
+        return variable;
+    }
+
     /**
      * M\u00E9thode d\u00E9crivant l'effet de la ligne de code
      *

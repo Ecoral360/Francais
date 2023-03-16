@@ -89,24 +89,35 @@ Fin de la définition de la fonction.
 
 
 Début de la définition de la fonction nommée DécoupageEnBloc acceptant le paramètre MessageBourré.
-    Posons que NombreDeBlocs vaut Taille de MessageBourré divisé entièrement par 512.
-    Posons que Blocs vaut un tableau vide.
+    Posons que NombreDeM vaut Taille de MessageBourré divisé entièrement par 512.
+    Posons que M vaut un tableau vide.
     Posons que I vaut 0.
-    Exécuter 3 énoncés tant que I vaut moins que NombreDeBlocs.
+    Exécuter 3 énoncés tant que I vaut moins que NombreDeM.
         Posons que Bloc vaut le résultat de l'appel à SousSection de MessageBourré avec les arguments "I fois 512" et "I fois 512 plus 1".
-        Appeler Ajouter de Blocs avec l'argument Bloc.
+        Appeler Ajouter de M avec l'argument Bloc.
         Maintenant, I vaut I plus 1.
-
+    Retourner la valeur M.
 Fin de la définition de la fonction.
 
 
 Début de la définition de la fonction nommée TableauW n'acceptant aucun paramètre.
     Posons que I vaut 0.
+    Posons que Tableau vaut un tableau vide.
     Exécuter 2 énoncés tant que I vaut moins que 64.
-    Maintenant, I vaut I plus 1.
-    Imprimer I.
-    Retourner la valeur 12.
-    Note à moi-même : Fin de la boucle.
+        Maintenant, I vaut I plus 1.
+        Appeler Ajouter de Tableau avec l'argument 0x0. 
+    Retourner la valeur Tableau.
+Fin de la définition de la fonction.
+
+Début de la définition de la fonction nommée ProchaineItération n'acceptant aucun paramètre.
+    Posons que I vaut 0.
+    Exécuter 3 énoncés tant que I vaut moins que N
+        Posons que T vaut 0.
+        Exécuter 3 énoncés tant que T vaut moins que 64.
+            Exécuter 2 énoncés si T vaut moins ou autant que 15; sinon, exécuter 2 énoncés.
+                Maintenant, l'élément de W à l'index T vaut 
+
+
 Fin de la définition de la fonction.
 
 Posons que H vaut un tableau contenant
@@ -120,9 +131,26 @@ Posons que H vaut un tableau contenant
     0x5be0cd19.
 
 Imprimer H.
-Imprimer le résultat de l'appel à TableauW.
-Imprimer Taille de "le résultat de l'appel à Bourrage avec l'argument « abc »".
 
+Imprimer W.
+Imprimer Taille de W.
+
+Note à moi-même : Initialisation des variables.
+Posons que M vaut le résultat de l'appel à DécoupageEnBloc « Vive le G! ».
+Posons que N vaut Taille de M.
+Posons que W vaut le résultat de l'appel à TableauW.
+
+Posons que a vaut 0x0.
+Posons que b vaut 0x0.
+Posons que c vaut 0x0.
+Posons que d vaut 0x0.
+Posons que e vaut 0x0.
+Posons que f vaut 0x0.
+Posons que g vaut 0x0.
+Posons que h vaut 0x0.
+
+Posons que T1 vaut 0x0.
+Posons que T2 vaut 0x0.
 
 
 

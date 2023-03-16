@@ -37,6 +37,14 @@ public class AffecterStmt extends CodeMdrStatement {
         this.valeurExpr = valeurExpr == null ? new ConstValueExpr(CodeMdrObj.AUCUNE_VALEUR) : valeurExpr;
     }
 
+    public Expression<?> getVariableExpr() {
+        return variableExpr;
+    }
+
+    public Expression<?> getValeurExpr() {
+        return valeurExpr;
+    }
+
     /**
      * M\u00E9thode d\u00E9crivant l'effet de la ligne de code
      *

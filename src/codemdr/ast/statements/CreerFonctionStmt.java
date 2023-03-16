@@ -50,6 +50,18 @@ public class CreerFonctionStmt extends CodeMdrStatement {
         this.scope = executeurInstance.getExecutorState().getScopeManager().makeNewCurrentScope();
     }
 
+    public List<VarExpr> getArgs() {
+        return args;
+    }
+
+    public String getNomFonction() {
+        return nomFonction;
+    }
+
+    public ASScope getScope() {
+        return scope;
+    }
+
     /**
      * M\u00E9thode d\u00E9crivant l'effet de la ligne de code
      *
@@ -96,8 +108,12 @@ public class CreerFonctionStmt extends CodeMdrStatement {
         return null;
     }
 
+    public String getScopeCoordinate(Coordinate coord) {
+        return ASScopeManager.formatNewScope(ASScopeManager.ScopeKind.FONCTION, coord.getScope(), nomFonction);
+    }
+
     @Override
     public Coordinate getNextCoordinate(Coordinate coord, List<Token> ligne) {
-        return new Coordinate(executorInstance.nouveauScope(ASScopeManager.formatNewScope(ASScopeManager.ScopeKind.FONCTION, coord.getScope(), nomFonction)));
+        return new Coordinate(executorInstance.nouveauScope(getScopeCoordinate(coord)));
     }
 }

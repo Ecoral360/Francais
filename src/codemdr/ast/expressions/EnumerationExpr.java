@@ -34,6 +34,10 @@ public class EnumerationExpr implements Expression<CodeMdrTableau> {
         return elements.stream().map(e -> (T) e).toList();
     }
 
+    public ArrayList<Expression<?>> getElements() {
+        return elements;
+    }
+
     public void addElement(Expression<?> valeur) {
         elements.add(valeur);
     }

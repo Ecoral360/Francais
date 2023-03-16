@@ -23,6 +23,10 @@ public class ImprimerStmt extends CodeMdrStatement {
         this.expression = expression;
     }
 
+    public Expression<?> getExpression() {
+        return expression;
+    }
+
     /**
      * M\u00E9thode d\u00E9crivant l'effet de la ligne de code
      *
