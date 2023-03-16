@@ -16,9 +16,9 @@ import org.ascore.executor.Coordinate;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public final class Transpiler {
@@ -93,25 +93,7 @@ public final class Transpiler {
     }
 
     private String transpileStmt(Statement stmt) {
-        if (stmt instanceof ImprimerStmt imprimerStmt)
-            return transpileImprimer(imprimerStmt);
-
-        if (stmt instanceof DeclarerStmt declarerStmt)
-            return transpileDeclaration(declarerStmt);
-
-        if (stmt instanceof AffecterStmt affecterStmt)
-            return transpileAffectation(affecterStmt);
-
-        if (stmt instanceof CreerFonctionStmt creerFonctionStmt)
-            return transpileFunction(creerFonctionStmt);
-
-        if (stmt instanceof FinFonctionStmt finFonctionStmt)
-            return transpileEndFunction(finFonctionStmt);
-
-        if (stmt instanceof RetournerStmt retournerStmt)
-            return transpileReturnFunction(retournerStmt);
-
-        return null;
+        return Stmt.call(this, stmt);
     }
 
 
@@ -201,6 +183,39 @@ public final class Transpiler {
                         .stream()
                         .map(this::transpileExpr)
                         .collect(Collectors.joining(" ")));
+    }
+
+    enum Stmt {
+        Imprimer((t, s) -> t.transpileImprimer((ImprimerStmt) s), ImprimerStmt.class),
+        Declarer((t, s) -> t.transpileDeclaration((DeclarerStmt) s), DeclarerStmt.class),
+        Affecter((t, s) -> t.transpileAffectation((AffecterStmt) s), AffecterStmt.class),
+        CreerFonc((t, s) -> t.transpileFunction((CreerFonctionStmt) s), CreerFonctionStmt.class),
+        RetournerFonc((t, s) -> t.transpileReturnFunction((RetournerStmt) s), RetournerStmt.class),
+        FinFonc((t, s) -> t.transpileEndFunction((FinFonctionStmt) s), FinFonctionStmt.class);
+
+        private final BiFunction<Transpiler, Statement, String> transpile;
+        private final Class<? extends Statement> compatibleWith;
+
+        Stmt(BiFunction<Transpiler, Statement, String> transpile, Class<? extends Statement> compatibleWith) {
+            this.transpile = transpile;
+            this.compatibleWith = compatibleWith;
+        }
+
+        static String call(Transpiler transpiler, Statement statement) {
+            for (var stmt : values()) {
+                if (stmt.compatibleWith.isInstance(statement)) {
+                    return stmt.transpile.apply(transpiler, statement);
+                }
+            }
+            throw new UnsupportedOperationException("Unsupported statement '" + statement + "'.");
+        }
+    }
+
+    enum Expr {
+        Const,
+        Var,
+        Tableau,
+        Appel,
     }
 }
 
