@@ -1,23 +1,16 @@
 package codemdr.transpiler;
 
-import codemdr.ast.expressions.AppelerFoncExpr;
-import codemdr.ast.expressions.ConstValueExpr;
-import codemdr.ast.expressions.CreationTableauExpr;
-import codemdr.ast.expressions.VarExpr;
+import codemdr.ast.expressions.*;
 import codemdr.ast.statements.*;
 import codemdr.execution.CodeMdrExecutorState;
 import codemdr.objects.CodeMdrNumber;
+import codemdr.objects.CodeMdrObj;
 import codemdr.objects.CodeMdrString;
 import org.ascore.ast.buildingBlocs.Expression;
 import org.ascore.ast.buildingBlocs.Statement;
 import org.ascore.errors.ASCErrors;
 import org.ascore.executor.ASCExecutor;
-import org.ascore.executor.Coordinate;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Stack;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -25,13 +18,13 @@ public final class Transpiler {
     private final ASCExecutor<CodeMdrExecutorState> executor;
     private TranspileCtx ctx;
 
+
     public Transpiler(ASCExecutor<CodeMdrExecutorState> executor) {
         this.executor = executor;
         executor.setupCompiler();
     }
 
     public String transpile(String lignes) {
-        StringBuilder transpiledCode = new StringBuilder();
         executor.obtenirCoordCompileDict().clear();
         ctx = new TranspileCtx(executor);
 
@@ -61,7 +54,7 @@ public final class Transpiler {
                 // met ligneParsed dans le dictionnaire de coordonne
                 ctx.addStatementToScope(ligneParsed);
 
-                transpiledCode.append(transpileStmt(ligneParsed)).append("\n");
+                ctx.appendCode(transpileStmt(ligneParsed), "\n");
 
                 // accede a la fonction prochaineCoord du programme trouvee afin de definir la prochaine coordonnee
                 ctx.setNextCoord(ligneParsed.getNextCoordinate(ctx.currentCoord().copy(), lineToken));
@@ -89,7 +82,7 @@ public final class Transpiler {
             throw err;
         }
 
-        return transpiledCode.toString();
+        return ctx.finalCompiledCode();
     }
 
     private String transpileStmt(Statement stmt) {
@@ -98,7 +91,7 @@ public final class Transpiler {
 
 
     private String transpileImprimer(ImprimerStmt stmt) {
-        return "(begin (display %s) (display \"\\n\"))".formatted(transpileExpr(stmt.getExpression()));
+        return "(begin (display %s) (putchar %d))".formatted(transpileExpr(stmt.getExpression()), (int) '\n');
     }
 
     private String transpileDeclaration(DeclarerStmt stmt) {
@@ -139,16 +132,7 @@ public final class Transpiler {
     }
 
     private String transpileExpr(Expression<?> expr) {
-        if (expr instanceof ConstValueExpr constValueExpr)
-            return transpileConst(constValueExpr);
-        if (expr instanceof CreationTableauExpr tableauExpr)
-            return transpileTableau(tableauExpr);
-        if (expr instanceof VarExpr varExpr)
-            return transpileVar(varExpr);
-        if (expr instanceof AppelerFoncExpr appelerFoncExpr)
-            return transpileCall(appelerFoncExpr);
-
-        return null;
+        return Expr.call(this, expr);
     }
 
     private String transpileConst(ConstValueExpr expr) {
@@ -185,6 +169,32 @@ public final class Transpiler {
                         .collect(Collectors.joining(" ")));
     }
 
+    private String getProperty(GetProprieteExpr expr) {
+        var objManager = ctx.getObjManager();
+        CodeMdrObj<?> value;
+        if (expr.objExpr() instanceof ConstValueExpr constValueExpr) {
+            value = (CodeMdrObj<?>) constValueExpr.value();
+        } else if (expr.objExpr() instanceof VarExpr varExpr) {
+            var x = varExpr.getCompileTimeVar().getAscObject();
+            if (x == null || x.isNoValue()) {
+                throw new UnsupportedOperationException("Unsupported for now");
+            }
+
+            value = (CodeMdrObj<?>) x;
+        } else {
+            value = (CodeMdrObj<?>) expr.objExpr().eval();
+        }
+
+        var functionName = objManager.registerProperty(expr.nomProprieteExpr().nom(), value);
+        var propType = objManager.getPropertyType(functionName);
+        return switch (propType) {
+            case "@p" -> "(%s %s)".formatted(functionName, transpileExpr(expr.objExpr()));
+            case "@!" -> "(set! (%s %s))".formatted(functionName, transpileExpr(expr.objExpr()));
+            default -> throw new IllegalArgumentException("Invalid propType: '" + propType + "'.");
+        };
+
+    }
+
     enum Stmt {
         Imprimer((t, s) -> t.transpileImprimer((ImprimerStmt) s), ImprimerStmt.class),
         Declarer((t, s) -> t.transpileDeclaration((DeclarerStmt) s), DeclarerStmt.class),
@@ -212,84 +222,30 @@ public final class Transpiler {
     }
 
     enum Expr {
-        Const,
-        Var,
-        Tableau,
-        Appel,
-    }
-}
+        Const((t, e) -> t.transpileConst((ConstValueExpr) e), ConstValueExpr.class),
+        Var((t, e) -> t.transpileVar((VarExpr) e), VarExpr.class),
+        Tableau((t, e) -> t.transpileTableau((CreationTableauExpr) e), CreationTableauExpr.class),
+        GetPropriete((t, e) -> t.getProperty((GetProprieteExpr) e), GetProprieteExpr.class),
+        Appel((t, e) -> t.transpileCall((AppelerFoncExpr) e), AppelerFoncExpr.class);
 
+        private final BiFunction<Transpiler, Expression<?>, String> transpile;
+        private final Class<? extends Expression<?>> compatibleWith;
 
-class TranspileCtx {
-    private final Hashtable<String, Hashtable<String, Statement>> compileDict;
-    private final ArrayList<Coordinate> coordStack;
-    private final Stack<ScopeParens> scopeParens = new Stack<>();
-
-    TranspileCtx(ASCExecutor<CodeMdrExecutorState> executor) {
-        this.compileDict = executor.obtenirCoordCompileDict();
-        this.coordStack = executor.getCoordCompileTime();
-        coordStack.add(new Coordinate("<0>main"));
-        this.compileDict.put("main", new Hashtable<>());
-    }
-
-    Coordinate currentCoord() {
-        return coordStack.get(coordStack.size() - 1);
-    }
-
-    String currentScope() {
-        return currentCoord().getScope();
-    }
-
-    ScopeParens pushScopeParens() {
-        return scopeParens.push(new ScopeParens());
-    }
-
-    ScopeParens currScopeParens() {
-        return scopeParens.peek();
-    }
-
-    int popScopeParens() {
-        return scopeParens.pop().totalSum();
-    }
-
-    void setNextCoord(Coordinate coord) {
-        var nextCoord = coord.toString();
-        if (nextCoord.length() == 0) {
-            throw new ASCErrors.ErreurFermeture(currentScope());
-        }
-        currentCoord().setCoord(nextCoord);
-        currentCoord().plusUn();
-    }
-
-    void addStatementToScope(Statement stmt) {
-        compileDict.get(currentScope()).put(currentCoord().toString(), stmt);
-    }
-
-    boolean inMain() {
-        return currentCoord().getScope().equals("main");
-    }
-
-    static class ScopeParens {
-        private final Stack<AtomicInteger> openParenStack = new Stack<>();
-
-        void pushBloc(int initialOpenedParens) {
-            openParenStack.push(new AtomicInteger(initialOpenedParens));
+        Expr(BiFunction<Transpiler, Expression<?>, String> transpile, Class<? extends Expression<?>> compatibleWith) {
+            this.transpile = transpile;
+            this.compatibleWith = compatibleWith;
         }
 
-        void openParens(int openedParens) {
-            openParenStack.peek().addAndGet(openedParens);
-        }
-
-        void closeParens(int closedParens) {
-            openParenStack.peek().addAndGet(-closedParens);
-        }
-
-        int popBloc() {
-            return openParenStack.pop().get();
-        }
-
-        int totalSum() {
-            return openParenStack.stream().mapToInt(AtomicInteger::get).sum();
+        static String call(Transpiler transpiler, Expression<?> expression) {
+            for (var expr : values()) {
+                if (expr.compatibleWith.isInstance(expression)) {
+                    return expr.transpile.apply(transpiler, expression);
+                }
+            }
+            throw new UnsupportedOperationException("Unsupported expression '" + expression + "'.");
         }
     }
 }
+
+
+

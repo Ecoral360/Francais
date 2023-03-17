@@ -17,6 +17,11 @@ public abstract class CodeMdrObj<T> extends ASCObject<T> {
         }
     };
 
+    @SuppressWarnings("unchecked")
+    public static <T> CodeMdrObj<T> aucuneValeur() {
+        return (CodeMdrObj<T>) AUCUNE_VALEUR;
+    }
+
     protected CodeMdrObj(@NotNull T value, Map<String, CodeMdrObj<?>> proprietes) {
         super(value);
         this.proprietes = new HashMap<>(proprietes);

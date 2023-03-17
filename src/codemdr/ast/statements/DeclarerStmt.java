@@ -41,7 +41,14 @@ public class DeclarerStmt extends CodeMdrStatement {
                     " a déjà été déclarée. Utilisez `Maintenant, " + variable.nom() + " vaut <valeur>.`");
         }
 
-        scope.declareVariable(new ASCVariable<>(variable.nom(), CodeMdrObj.AUCUNE_VALEUR));
+        CodeMdrObj<?> value;
+        try {
+            value = (CodeMdrObj<?>) this.valeur.eval();
+        } catch (Exception e) {
+            value = CodeMdrObj.aucuneValeur();
+        }
+
+        scope.declareVariable(new ASCVariable<>(variable.nom(), value == null ? CodeMdrObj.aucuneValeur() : value));
     }
 
     public Expression<?> getValeur() {

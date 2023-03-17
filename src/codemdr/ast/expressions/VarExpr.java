@@ -23,6 +23,13 @@ public record VarExpr(String nom, CodeMdrExecutorState executorState) implements
                 .getVariable(nom);
     }
 
+    public ASCVariable<?> getCompileTimeVar() {
+        return executorState
+                .getScopeManager()
+                .getCurrentScope()
+                .getVariable(nom);
+    }
+
     /**
      * Appel\u00E9 durant le Runtime, cette m\u00E9thode retourne un objet de type ASObjet
      *
