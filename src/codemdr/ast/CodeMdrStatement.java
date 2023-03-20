@@ -1,5 +1,6 @@
 package codemdr.ast;
 
+import codemdr.ast.statements.EvalExprStmt;
 import codemdr.execution.CodeMdrExecutorState;
 import org.ascore.ast.buildingBlocs.Expression;
 import org.ascore.ast.buildingBlocs.Statement;
@@ -18,15 +19,8 @@ public abstract class CodeMdrStatement extends Statement {
         };
     }
 
-    public static CodeMdrStatement evalExpression(ASCExecutor<?> executorInstance, Expression<?> expression) {
-        return new CodeMdrStatement(executorInstance) {
-            @Override
-            public Object execute() {
-                expression.eval();
-                nextCoord();
-                return null;
-            }
-        };
+    public static CodeMdrStatement evalExpression(ASCExecutor<CodeMdrExecutorState> executorInstance, Expression<?> expression) {
+        return new EvalExprStmt(executorInstance, expression);
     }
 
     protected CodeMdrStatement(@NotNull ASCExecutor<?> executorInstance) {

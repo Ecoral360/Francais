@@ -5,10 +5,7 @@ import codemdr.ast.expressions.GetProprieteExpr;
 import codemdr.ast.expressions.IndexListeExpr;
 import codemdr.ast.expressions.VarExpr;
 import codemdr.execution.CodeMdrExecutorState;
-import codemdr.objects.CodeMdrInt;
-import codemdr.objects.CodeMdrObj;
-import codemdr.objects.CodeMdrString;
-import codemdr.objects.CodeMdrTableau;
+import codemdr.objects.*;
 import org.ascore.ast.buildingBlocs.Expression;
 import org.ascore.ast.buildingBlocs.Statement;
 import org.ascore.errors.ASCErrors;
@@ -16,6 +13,7 @@ import org.ascore.executor.ASCExecutor;
 import org.ascore.executor.Coordinate;
 import org.ascore.utils.Pair;
 
+import javax.swing.plaf.synth.ColorType;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -112,26 +110,34 @@ class TranspileCtx {
     }
 
     class TranspilerObjManager {
-        private static final HashMap<String, String> ALL_PROPERTIES = new HashMap<>();
+        /**
+         * Map(PropertyName, Map(ObjTypeName, PropertyCode))
+         */
+        private static final HashMap<String, Map<Class<? extends CodeMdrObj<?>>, String>> ALL_PROPERTIES = new HashMap<>();
         private static final Set<String> seenProperties = new HashSet<>();
 
         static {
-            ALL_PROPERTIES.putAll(propertiesOf(CodeMdrString.class,
+            propertiesOf(CodeMdrString.class,
                     Map.entry("Taille", "@p (string-length s)")
-            ));
+            );
 
-            ALL_PROPERTIES.putAll(propertiesOf(CodeMdrTableau.class,
+            propertiesOf(CodeMdrTableau.class,
                     Map.entry("Taille", "@p (length s)"),
-                    Map.entry("Ajouter", "@! (append s (cons p '()))")
-            ));
+                    Map.entry("Ajouter", "@! (append s p)")
+            );
         }
 
-        @SuppressWarnings("unchecked")
+        /**
+         * @param type       ObjTypeName
+         * @param properties Entries of (PropertyName, PropertyCode)
+         */
         @SafeVarargs
-        private static Map<String, String> propertiesOf(Class<? extends CodeMdrObj<?>> mdrClass, Map.Entry<String, String>... properties) {
-            return Map.ofEntries(Arrays.stream(properties)
-                    .map(prop -> Map.entry("%s-%s".formatted(mdrClass.getSimpleName(), prop.getKey()), prop.getValue()))
-                    .toArray(Map.Entry[]::new));
+        private static void propertiesOf(Class<? extends CodeMdrObj<?>> type, Map.Entry<String, String>... properties) {
+            Arrays.stream(properties).forEach(prop -> {
+                var map = ALL_PROPERTIES.putIfAbsent(prop.getKey(), new HashMap<>());
+                if (map == null) map = ALL_PROPERTIES.get(prop.getKey());
+                map.put(type, prop.getValue());
+            });
         }
 
         String registerProperty(String propertyName, Expression<?> obj) {
@@ -152,7 +158,7 @@ class TranspileCtx {
             var formattedName = formatPropertyName(propertyName, obj.getClass());
 
             if (seenProperties.add(formattedName)) {
-                var body = ALL_PROPERTIES.get(formattedName);
+                var body = ALL_PROPERTIES.get(propertyName).get(obj.getClass());
                 var argPrefix = body.substring(0, 2);
 
                 body = body.substring(3);
@@ -168,16 +174,13 @@ class TranspileCtx {
             return formattedName;
         }
 
+
         /**
-         * @param formattedProperty
          * @return <code>@p</code> if property, <code>@m</code> if method, <code>@!</code> if method that changes the caller
          */
-        String getPropertyType(String formattedProperty) {
-            return ALL_PROPERTIES.get(formattedProperty).substring(0, 2);
-        }
-
-        String generateMethodCall(String formattedProperty, GetProprieteExpr expr) {
-            return "(%s ".formatted(ALL_PROPERTIES.get(formattedProperty).substring(3));
+        @SuppressWarnings("rawtypes")
+        String getPropertyType(String propertyName, Class<? extends CodeMdrObj> mdrClass) {
+            return ALL_PROPERTIES.get(propertyName).get(mdrClass).substring(0, 2);
         }
 
         @SuppressWarnings("rawtypes")

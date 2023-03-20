@@ -43,7 +43,7 @@ public class DeclarerStmt extends CodeMdrStatement {
 
         CodeMdrObj<?> value;
         try {
-            value = (CodeMdrObj<?>) this.valeur.eval();
+            value = (CodeMdrObj<?>) valeur.eval();
         } catch (Exception e) {
             value = CodeMdrObj.aucuneValeur();
         }

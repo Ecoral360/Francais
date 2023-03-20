@@ -147,12 +147,15 @@ public final class Transpiler {
     }
 
     private String transpileTableau(CreationTableauExpr expr) {
-        var elements = expr.valeurs().getElements();
-        return "(cons %s '()%s".formatted(elements
+        return transpileEnumeration(expr.valeurs());
+    }
+
+    private String transpileEnumeration(EnumerationExpr expr) {
+        return "(cons %s '()%s".formatted(expr.getElements()
                         .stream()
                         .map(this::transpileExpr)
                         .collect(Collectors.joining(" (cons ")),
-                ")".repeat(elements.size()));
+                ")".repeat(expr.getElements().size()));
     }
 
     private String transpileVar(VarExpr expr) {
@@ -160,6 +163,11 @@ public final class Transpiler {
     }
 
     private String transpileCall(AppelerFoncExpr expr) {
+        if (expr.fonctionExpr() instanceof GetProprieteExpr getProprieteExpr) {
+            // TODO
+            return getPropertyCall(getProprieteExpr, expr.args());
+        }
+
         return "(%s %s)".formatted(
                 transpileExpr(expr.fonctionExpr()),
                 expr.args()
@@ -179,20 +187,44 @@ public final class Transpiler {
             if (x == null || x.isNoValue()) {
                 throw new UnsupportedOperationException("Unsupported for now");
             }
-
             value = (CodeMdrObj<?>) x;
         } else {
             value = (CodeMdrObj<?>) expr.objExpr().eval();
         }
 
         var functionName = objManager.registerProperty(expr.nomProprieteExpr().nom(), value);
-        var propType = objManager.getPropertyType(functionName);
+        var propType = objManager.getPropertyType(expr.nomProprieteExpr().nom(), value.getClass());
         return switch (propType) {
             case "@p" -> "(%s %s)".formatted(functionName, transpileExpr(expr.objExpr()));
             case "@!" -> "(set! (%s %s))".formatted(functionName, transpileExpr(expr.objExpr()));
             default -> throw new IllegalArgumentException("Invalid propType: '" + propType + "'.");
         };
+    }
 
+    private String getPropertyCall(GetProprieteExpr expr, EnumerationExpr args) {
+        var objManager = ctx.getObjManager();
+        CodeMdrObj<?> value;
+        if (expr.objExpr() instanceof ConstValueExpr constValueExpr) {
+            value = (CodeMdrObj<?>) constValueExpr.value();
+        } else if (expr.objExpr() instanceof VarExpr varExpr) {
+            var x = varExpr.getCompileTimeVar().getAscObject();
+            if (x == null || x.isNoValue()) {
+                throw new UnsupportedOperationException("Unsupported for now");
+            }
+            value = (CodeMdrObj<?>) x;
+        } else {
+            value = (CodeMdrObj<?>) expr.objExpr().eval();
+        }
+
+        var functionName = objManager.registerProperty(expr.nomProprieteExpr().nom(), value);
+        var propType = objManager.getPropertyType(expr.nomProprieteExpr().nom(), value.getClass());
+        return switch (propType) {
+            case "@m" ->
+                    "(%s %s %s)".formatted(functionName, transpileExpr(expr.objExpr()), transpileExpr(args));
+            case "@!" ->
+                    "(set! %2$s (%s %s %s))".formatted(functionName, transpileExpr(expr.objExpr()), transpileExpr(args));
+            default -> throw new IllegalArgumentException("Invalid propType: '" + propType + "'.");
+        };
     }
 
     enum Stmt {
@@ -201,7 +233,8 @@ public final class Transpiler {
         Affecter((t, s) -> t.transpileAffectation((AffecterStmt) s), AffecterStmt.class),
         CreerFonc((t, s) -> t.transpileFunction((CreerFonctionStmt) s), CreerFonctionStmt.class),
         RetournerFonc((t, s) -> t.transpileReturnFunction((RetournerStmt) s), RetournerStmt.class),
-        FinFonc((t, s) -> t.transpileEndFunction((FinFonctionStmt) s), FinFonctionStmt.class);
+        FinFonc((t, s) -> t.transpileEndFunction((FinFonctionStmt) s), FinFonctionStmt.class),
+        EvalExpr((t, s) -> t.transpileExpr(((EvalExprStmt) s).getExpression()), EvalExprStmt.class);
 
         private final BiFunction<Transpiler, Statement, String> transpile;
         private final Class<? extends Statement> compatibleWith;
@@ -225,6 +258,7 @@ public final class Transpiler {
         Const((t, e) -> t.transpileConst((ConstValueExpr) e), ConstValueExpr.class),
         Var((t, e) -> t.transpileVar((VarExpr) e), VarExpr.class),
         Tableau((t, e) -> t.transpileTableau((CreationTableauExpr) e), CreationTableauExpr.class),
+        Enumeration((t, e) -> t.transpileEnumeration((EnumerationExpr) e), EnumerationExpr.class),
         GetPropriete((t, e) -> t.getProperty((GetProprieteExpr) e), GetProprieteExpr.class),
         Appel((t, e) -> t.transpileCall((AppelerFoncExpr) e), AppelerFoncExpr.class);
 
