@@ -24,11 +24,6 @@ public final class CodeMdrTypePrimitif extends CodeMdrType {
     }
 
     @Override
-    public String toString() {
-        return getValue().name();
-    }
-
-    @Override
     public CodeMdrTypePrimitif getType() {
         return CodeMdrTypePrimitif.TYPE;
     }

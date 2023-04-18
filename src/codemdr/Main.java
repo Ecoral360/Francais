@@ -151,7 +151,7 @@ public class Main {
             """;
 
     public static void main(String[] args) throws FileNotFoundException {
-        var codeToExecute = CODE_PALINDROME;
+        String codeToExecute;
         if (args.length != 0) {
             var file = new Scanner(new File(args[0]));
             var code = new StringBuilder();
@@ -159,6 +159,9 @@ public class Main {
                 code.append(file.nextLine()).append("\n");
             }
             codeToExecute = code.toString();
+        } else {
+            System.err.println("Vous devez passer un fichier '.mdr' pour qu'il soit exécuté.");
+            return;
         }
         var executor = new ASCExecutorBuilder<CodeMdrExecutorState>() // create an executor builder
                 .withLexer(new CodeMdrJetoniseur("/codemdr/grammar_rules/Grammar.yaml")) // add the lexer to the builder
@@ -168,14 +171,17 @@ public class Main {
                 .build(); // build the executor
         JSONArray compilationResult = executor.compile(codeToExecute, true); // compile the code
         if (compilationResult.length() != 0) {
-            System.out.println(compilationResult);
+            for (int i = 0; i < compilationResult.length(); i++) {
+                var action = compilationResult.getJSONObject(i);
+                new ASCErrors.ASCError(action.getJSONArray("p").getString(1), action.getJSONArray("p").getString(0)).afficher(executor);
+            }
             return;
         }
-
         CodeMdrModules.BUILTINS.charger(executor.getExecutorState());
 
         JSONArray executionResult = executor.executerMain(false); // execute the code
-        for (int i = 0; i < executionResult.length(); i++) {
+        for (
+                int i = 0; i < executionResult.length(); i++) {
             var action = executionResult.getJSONObject(i);
             if (action.getInt("id") == 400) {
                 throw new ASCErrors.ASCError(action.getJSONArray("p").getString(1), action.getJSONArray("p").getString(0));

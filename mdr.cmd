@@ -1,0 +1,1 @@
+java -jar .\codeMdr.jar %1

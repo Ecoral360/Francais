@@ -2,10 +2,7 @@ package codemdr.module.builtins;
 
 import codemdr.execution.CodeMdrExecutorState;
 import codemdr.module.CodeMdrModuleInterface;
-import codemdr.objects.CodeMdrBool;
-import codemdr.objects.CodeMdrFloat;
-import codemdr.objects.CodeMdrInt;
-import codemdr.objects.CodeMdrTableau;
+import codemdr.objects.*;
 import codemdr.objects.function.CodeMdrFonctionModule;
 import codemdr.objects.function.CodeMdrParam;
 import org.ascore.lang.objects.ASCVariable;
@@ -29,6 +26,10 @@ public class Builtins implements CodeMdrModuleInterface {
                 new CodeMdrFonctionModule("TailleDe", List.of(
                         new CodeMdrParam("Liste")
                 ), params -> new CodeMdrInt(((CodeMdrTableau) params.get(0)).getValue().size())),
+
+                new CodeMdrFonctionModule("TypeDe", List.of(
+                        new CodeMdrParam("Element")
+                ), params -> new CodeMdrString(params.get(0).getType().toString())),
         };
     }
 

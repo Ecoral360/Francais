@@ -21,7 +21,7 @@ public class CodeMdrType extends CodeMdrObj<CodeMdrType.CodeMdrBuiltinTypes> {
 
     @Override
     public String toString() {
-        return getValue().name();
+        return getValue().toString();
     }
 
     @Override
@@ -31,6 +31,9 @@ public class CodeMdrType extends CodeMdrObj<CodeMdrType.CodeMdrBuiltinTypes> {
 
     public enum CodeMdrBuiltinTypes {
         TYPE("un type"),
+        MODULE("un module"),
+        OBJET("un objet"),
+        NULLE("une valeur nulle"),
         BOOLEEN("un booléen"),
         TEXTE("du texte"),
         NOMBRE("un nombre"),
@@ -57,6 +60,11 @@ public class CodeMdrType extends CodeMdrObj<CodeMdrType.CodeMdrBuiltinTypes> {
                 }
             }
             throw new ASCErrors.ErreurType("Type invalide " + s);
+        }
+
+        @Override
+        public String toString() {
+            return syntax;
         }
     }
 }
