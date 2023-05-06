@@ -11,12 +11,14 @@ import codemdr.objects.CodeMdrInt;
 import codemdr.objects.CodeMdrString;
 import codemdr.objects.CodeMdrType;
 import org.ascore.ast.buildingBlocs.Expression;
+import org.ascore.ast.buildingBlocs.Statement;
 import org.ascore.errors.ASCErrors;
 import org.ascore.executor.ASCExecutor;
 import org.ascore.generators.ast.AstGenerator;
 import org.ascore.tokens.Token;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The parser for the CodeMdr language.
@@ -79,18 +81,31 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                         );
                 });
 
+        addStatement("INCLURE expression MODULE_NOMME~" +
+                        "INCLURE expression TEL_QUEL",
+                (p, variant) -> {
+                    if (variant == 2) return new ImporterStmt(executorInstance, ((Token) p.get(1)).value());
+                    else
+                        return new ImporterStmt(
+                                executorInstance, ((Token) p.get(1)).value(),
+                                variant == 0 ? ((Token) p.get(4)).value() : null
+                        );
+                });
+
         // Définition de fonctions
         addStatement("FONCTION_DEF VARIABLE PARAM expression~" +
-                        "FONCTION_DEF VARIABLE PARAMS expression ET expression~",
+                        "FONCTION_DEF VARIABLE PARAMS expression ET expression~" +
+                        "FONCTION_DEF VARIABLE NO_PARAM",
                 (p, variant) -> {
+                    if (variant == 2) {
+                        return new CreerFonctionStmt(((Token) p.get(1)).value(), List.of(), executorInstance);
+                    }
                     var args = EnumerationExpr.getOrWrap((Expression<?>) p.get(3));
 
                     if (variant == 1) {
                         args.addElement((Expression<?>) p.get(5));
                     }
-                    var f = new CreerFonctionStmt(((Token) p.get(1)).value(), args.cast(), executorInstance);
-                    // f.execute();
-                    return f;
+                    return new CreerFonctionStmt(((Token) p.get(1)).value(), args.cast(), executorInstance);
                 });
 
         addStatement("FONCTION_END", p -> new FinFonctionStmt(executorInstance));
@@ -98,7 +113,7 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
         addStatement("RETOURNER LA_VALEUR expression~" +
                         "RETOURNER expression",
                 (p, variant) -> {
-                    if (variant == 1 && !(p.get(1) instanceof AppelerFoncExpr)) {
+                    if (variant == 1 && (p.get(1) instanceof ConstValueExpr || p.get(1) instanceof VarExpr)) {
                         throw new ASCErrors.ErreurSyntaxe("Tu dois dire `Retourner la valeur`. Je suis très déçu de toi.");
                     }
                     return new RetournerStmt((Expression<?>) p.get(variant == 0 ? 2 : 1), executorInstance);
@@ -175,7 +190,7 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
                             // s'assure qu'il y a au moins deux paramètres et que l'énumération est complète (fini par un `et`)
                             if ((variant == 0 && params instanceof EnumerationExpr) ||
                                     (variant == 1 && (!(params instanceof EnumerationExpr)))) {
-                                throw new ASCErrors.ErreurSyntaxe("Mauvais accord du mot `paramètre`");
+                                throw new ASCErrors.ErreurSyntaxe("Mauvais accord du mot `argument`");
                             }
                             yield EnumerationExpr.getOrWrap(params);
                         }
@@ -199,6 +214,28 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
         addStatement("MAINTENANT expression VAUT expression",
                 p -> new AffecterStmt((Expression<?>) p.get(1), (Expression<?>) p.get(3), executorInstance));
 
+        addStatement("APPELER expression AVEC ARG expression~" +
+                        "APPELER expression AVEC ARGS expression~" +
+                        "APPELER expression",
+                (p, variant) ->
+                        CodeMdrStatement.evalExpression(executorInstance, switch (variant) {
+                                    case 2 -> new AppelerFoncExpr((Expression<?>) p.get(1));
+                                    case 0, 1 -> {
+                                        var params = (Expression<?>) p.get(4);
+                                        if ((variant == 0 && params instanceof EnumerationExpr) ||
+                                                (variant == 1 && (!(params instanceof EnumerationExpr)))) {
+                                            throw new ASCErrors.ErreurSyntaxe("Mauvais accord du mot `argument`. Je suis très déçu de toi.");
+                                        }
+
+                                        yield new AppelerFoncExpr(
+                                                (Expression<?>) p.get(1),
+                                                EnumerationExpr.getOrWrap(params)
+                                        );
+                                    }
+                                    default -> throw new UnsupportedOperationException("Ne devrait pas arrivé");
+                                }
+                        ));
+
         addStatement("IMPRIMER expression", p -> new ImprimerStmt((Expression<?>) p.get(1), executorInstance));
         addStatement("expression", p -> CodeMdrStatement.evalExpression(executorInstance, (Expression<?>) p.get(0)));
         addStatement("", p -> CodeMdrStatement.statementVide(executorInstance));
@@ -208,15 +245,14 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
      * Defines the rules of the expressions of the language.
      */
     protected void addExpressions() {
-        addExpression("EMPHASE #expression EMPHASE", p -> {
-            return evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null);
-        });
+        addExpression("EMPHASE #expression EMPHASE", p -> evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 1)), null));
 
         // add your expressions here
         addExpression("{datatypes}~VARIABLE~{datatypes_name}", p -> {
             var token = (Token) p.get(0);
             return switch (token.name()) {
                 case "ENTIER" -> new ConstValueExpr(new CodeMdrInt(token));
+                case "HEX" -> new ConstValueExpr(new CodeMdrInt(Integer.parseUnsignedInt(token.value().substring(2), 16)));
                 case "DECIMAL" -> new ConstValueExpr(new CodeMdrFloat(token));
                 case "TEXTE" -> new ConstValueExpr(new CodeMdrString(token));
                 case "VARIABLE" -> new VarExpr(token.value(), executorInstance.getExecutorState());
@@ -224,28 +260,46 @@ public class CodeMdrGASA extends AstGenerator<CodeMdrAstFrameKind> {
             };
         });
 
-        addExpression("expression {op} expression",
-                p -> new OpExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2), ((Token) p.get(1)).value()));
-
-        addExpression("TABLEAU_CREATION #expression ET expression~" +
-                        "TABLEAU_CREATION_SINGLETON expression",
-                (p, variant) -> {
-                    // System.out.println(p);
-                    if (variant == 1) {
-                        return new CreationTableauExpr(EnumerationExpr.completeEnumeration((Expression<?>) p.get(1)));
-                    }
-                    var contenu = evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 2)), null);
-                    if (contenu instanceof EnumerationExpr enumerationExpr) {
-                        enumerationExpr.addElement((Expression<?>) p.get(p.size() - 1));
-                        enumerationExpr.setComplete(true);
-                        return new CreationTableauExpr(enumerationExpr);
-                    }
-                    return new CreationTableauExpr(EnumerationExpr.completeEnumeration(contenu, (Expression<?>) p.get(p.size() - 1)));
-                });
-
         addExpression("expression DE expression",
                 p -> new GetProprieteExpr((Expression<?>) p.get(2), (VarExpr) p.get(0))
         );
+
+        addExpression("expression {op} expression",
+                p -> new OpExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2), ((Token) p.get(1)).value()));
+
+        addExpression("ET_BINAIRE expression ET expression~" +
+                        "OU_BINAIRE expression ET expression~" +
+                        "OU_BINAIRE_EXCLUSIF expression ET expression",
+                p -> new OpExpr((Expression<?>) p.get(1), (Expression<?>) p.get(3), ((Token) p.get(0)).value()));
+
+        addExpression("TABLEAU_CREATION_VIDE~" +
+                        "TABLEAU_CREATION_SINGLETON expression~" +
+                        "TABLEAU_CREATION #expression ET expression~" +  // FIXME: supporter le cas où expression est aussi une création de tableau
+                        "TABLEAU_CREATION #expression ET expression",
+                (p, variant) -> {
+                    // System.out.println(p);
+                    return switch (variant) {
+                        case 0 -> new CreationTableauExpr(EnumerationExpr.completeEnumeration());
+                        case 1 ->
+                                new CreationTableauExpr(EnumerationExpr.completeEnumeration((Expression<?>) p.get(1)));
+                        /*case 1 -> {
+                            var indexOfEt = p.indexOf(Token.withName("ET"));
+                            var contenu = evalOneExpr(new ArrayList<>(p.subList(1, indexOfEt - 1)), null);
+                            yield new EnumerationExpr(contenu);
+                        }*/
+                        case 2, 3 -> {
+                            var contenu = evalOneExpr(new ArrayList<>(p.subList(1, p.size() - 2)), null);
+                            if (contenu instanceof EnumerationExpr enumerationExpr) {
+                                enumerationExpr.addElement((Expression<?>) p.get(p.size() - 1));
+                                enumerationExpr.setComplete(true);
+                                yield new CreationTableauExpr(enumerationExpr);
+                            }
+                            yield new CreationTableauExpr(EnumerationExpr.completeEnumeration(contenu, (Expression<?>) p.get(p.size() - 1)));
+                        }
+                        default -> throw new IllegalStateException("Unexpected value: " + variant);
+                    };
+                });
+
 
         addExpression("expression VIRGULE expression~" +
                         "expression ET expression",

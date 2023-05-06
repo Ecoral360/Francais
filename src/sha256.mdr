@@ -1,0 +1,133 @@
+Note à moi-même : C'est testé, ça marche ✔.
+Début de la définition de la fonction nommée Ch acceptant les paramètres X, Y et Z.
+    Posons que XetY vaut l'opération ET binaire de X et Y.
+    Posons que NonXetZ vaut l'opération ET binaire de "InverseBinaire de X" et Z.
+    Retourner l'opération OU binaire exclusif de XetY et NonXetZ.
+Fin de la définition de la fonction.
+
+Note à moi-même : C'est testé, ça marche ✔.
+Début de la définition de la fonction nommée Maj acceptant les paramètres X, Y et Z.
+    Posons que XetY vaut l'opération ET binaire de X et Y.
+    Posons que XetZ vaut l'opération ET binaire de X et Z.
+    Posons que YetZ vaut l'opération ET binaire de Y et Z.
+    Retourner l'opération OU binaire exclusif de XetY et "l'opération OU binaire exclusif de XetZ et YetZ".
+Fin de la définition de la fonction.
+
+Note à moi-même : C'est testé, ça marche ✔.
+Début de la définition de la fonction nommée Add acceptant les paramètres X et Y.
+    Retourner "X plus Y" modulo "2 exposant 32".
+Fin de la définition de la fonction.
+
+Note à moi-même : C'est testé, ça marche ✔.
+Début de la définition de la fonction nommée ROTR acceptant les paramètres X et N.
+    Posons que XDécalé1 vaut le résultat de l'appel à DécalageÀDroite de X avec l'argument N.
+    Posons que XDécalé2 vaut le résultat de l'appel à DécalageÀGauche de X avec l'argument "32 moins N".
+    Retourner l'opération OU binaire de XDécalé1 et XDécalé2.
+Fin de la définition de la fonction.
+
+Début de la définition de la fonction nommée GrandSigma0 acceptant le paramètre X.
+    Posons que ROTR2 vaut le résultat de l'appel à ROTR avec les arguments X et 2.
+    Posons que ROTR13 vaut le résultat de l'appel à ROTR avec les arguments X et 13.
+    Posons que ROTR22 vaut le résultat de l'appel à ROTR avec les arguments X et 22.
+    Retourner l'opération OU binaire exclusif de ROTR2 et "l'opération OU binaire exclusif de ROTR13 et ROTR22".
+Fin de la définition de la fonction.
+
+Début de la définition de la fonction nommée GrandSigma1 acceptant le paramètre X.
+    Posons que ROTR6 vaut le résultat de l'appel à ROTR avec les arguments X et 6.
+    Posons que ROTR11 vaut le résultat de l'appel à ROTR avec les arguments X et 11.
+    Posons que ROTR25 vaut le résultat de l'appel à ROTR avec les arguments X et 25.
+    Retourner l'opération OU binaire exclusif de ROTR6 et "l'opération OU binaire exclusif de ROTR11 et ROTR25".
+Fin de la définition de la fonction.
+
+Début de la définition de la fonction nommée Sigma0 acceptant le paramètre X.
+    Posons que ROTR7 vaut le résultat de l'appel à ROTR avec les arguments X et 7.
+    Posons que ROTR18 vaut le résultat de l'appel à ROTR avec les arguments X et 18.
+    Posons que ROTR3 vaut le résultat de l'appel à ROTR avec les arguments X et 3.
+    Retourner l'opération OU binaire exclusif de ROTR7 et "l'opération OU binaire exclusif de ROTR18 et ROTR3".
+Fin de la définition de la fonction.
+
+Début de la définition de la fonction nommée Sigma1 acceptant le paramètre X.
+    Posons que ROTR17 vaut le résultat de l'appel à ROTR avec les arguments X et 17.
+    Posons que ROTR19 vaut le résultat de l'appel à ROTR avec les arguments X et 19.
+    Posons que ROTR10 vaut le résultat de l'appel à ROTR avec les arguments X et 10.
+    Retourner l'opération OU binaire exclusif de ROTR17 et "l'opération OU binaire exclusif de ROTR19 et ROTR10".
+Fin de la définition de la fonction.
+
+
+Début de la définition de la fonction nommée Bourrage acceptant le paramètre M.
+    Posons que TailleM vaut Taille de M fois 8.
+    Posons que K vaut 448 moins "TailleM plus 1".
+
+    Exécuter 1 énoncé si K vaut moins que 0.
+        Maintenant, K vaut 512 moins K.
+
+    Posons que BitsDeM vaut le résultat de l'appel à TableauDeBits de M.
+    Posons que MessageBourré vaut un tableau vide.
+    Posons que I vaut 0.
+    Exécuter 4 énoncés tant que I vaut moins que Taille de BitsDeM.
+        Posons que BitsDuCaractère vaut le résultat de l'appel à TableauBinaire de "l'élément de BitsDeM à l'index I".
+        Note à moi-même : Exécuter 1 énoncé si Taille de BitsDuCaractère vaut 7.
+        Appeler Ajouter de MessageBourré avec l'argument 0.
+        Appeler AjouterTout de MessageBourré avec l'argument BitsDuCaractère.
+        Maintenant, I vaut I plus 1.
+
+    Appeler Ajouter de MessageBourré avec l'argument 1.
+    Maintenant, I vaut K.
+    Exécuter 2 énoncés tant que I vaut plus que 0.
+        Appeler Ajouter de MessageBourré avec l'argument 0.
+        Maintenant, I vaut I moins 1.
+    Posons que TableauBinaireM vaut le résultat de l'appel à TableauBinaire de TailleM.
+
+    Maintenant, I vaut 64 moins "Taille de TableauBinaireM".
+    Exécuter 2 énoncés tant que I vaut plus que 0.
+        Appeler Ajouter de MessageBourré avec l'argument 0.
+        Maintenant, I vaut I moins 1.
+
+    Appeler AjouterTout de MessageBourré avec l'argument TableauBinaireM.
+    Retourner la valeur MessageBourré.
+Fin de la définition de la fonction.
+
+
+Début de la définition de la fonction nommée DécoupageEnBloc acceptant le paramètre MessageBourré.
+    Posons que NombreDeBlocs vaut Taille de MessageBourré divisé entièrement par 512.
+    Posons que Blocs vaut un tableau vide.
+    Posons que I vaut 0.
+    Exécuter 3 énoncés tant que I vaut moins que NombreDeBlocs.
+        Posons que Bloc vaut le résultat de l'appel à SousSection de MessageBourré avec les arguments "I fois 512" et "I fois 512 plus 1".
+        Appeler Ajouter de Blocs avec l'argument Bloc.
+        Maintenant, I vaut I plus 1.
+
+Fin de la définition de la fonction.
+
+
+Début de la définition de la fonction nommée TableauW n'acceptant aucun paramètre.
+    Posons que I vaut 0.
+    Exécuter 2 énoncés tant que I vaut moins que 64.
+    Maintenant, I vaut I plus 1.
+    Imprimer I.
+    Retourner la valeur 12.
+    Note à moi-même : Fin de la boucle.
+Fin de la définition de la fonction.
+
+Posons que H vaut un tableau contenant
+    0x6a09e667,
+    0xbb67ae85,
+    0x3c6ef372,
+    0xa54ff53a,
+    0x510e527f,
+    0x9b05688c,
+    0x1f83d9ab et
+    0x5be0cd19.
+
+Imprimer H.
+Imprimer le résultat de l'appel à TableauW.
+Imprimer Taille de "le résultat de l'appel à Bourrage avec l'argument « abc »".
+
+
+
+
+
+
+
+
+

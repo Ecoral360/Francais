@@ -6,7 +6,6 @@ import codemdr.execution.blocdecode.BlocDeCodeNbEnonces;
 import codemdr.objects.CodeMdrBool;
 import codemdr.objects.CodeMdrInt;
 import org.ascore.ast.buildingBlocs.Expression;
-import org.ascore.ast.buildingBlocs.Statement;
 import org.ascore.executor.ASCExecutor;
 
 /**
@@ -15,14 +14,14 @@ import org.ascore.executor.ASCExecutor;
  *
  * @author Mathis Laroche
  */
-public class ExecuterTantQueStmt extends CodeMdrStatement {
+public class ExecuterPourStmt extends CodeMdrStatement {
     private final Expression<?> conditionExpr, nbEnoncesExpr, nbEnoncesSautesExpr;
 
     /**
      * Si le programme n'a pas besoin d'avoir accès à l'exécuteur lorsque la méthode {@link #execute()}
      * est appelée
      */
-    public ExecuterTantQueStmt(Expression<?> nbEnoncesExpr, Expression<?> conditionExpr, Expression<?> nbEnoncesSautesExpr, ASCExecutor<CodeMdrExecutorState> executeurInstance) {
+    public ExecuterPourStmt(Expression<?> nbEnoncesExpr, Expression<?> conditionExpr, Expression<?> nbEnoncesSautesExpr, ASCExecutor<CodeMdrExecutorState> executeurInstance) {
         super(executeurInstance);
         this.conditionExpr = conditionExpr;
         this.nbEnoncesExpr = nbEnoncesExpr;

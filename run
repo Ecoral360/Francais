@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ "$2" == "-b" ]; then 
+    if [ -d ./out/production/codeMdr/codemdr ];
+    then rm -rf ./out/production/codeMdr/codemdr
+    fi  
+
+    echo "[Builing]" 
+    javac -encoding UTF-8 -sourcepath ./src/ -d ./out/production/codeMdr/ ./src/codemdr/Main.java -cp ./lib/ASCore.jar:./lib/annotations-13.0.jar 
+
+    if [ ! -d ./out/production/codeMdr/codemdr/grammar_rules ];
+    then mkdir -p ./out/production/codeMdr/codemdr/grammar_rules/
+    fi
+    cp ./src/code mdr/grammar_rules/* ./out/production/codeMdr/codemdr/grammar_rules/
+else
+    echo "[Not Builing]"
+fi
+
+echo "[Executing]"
+echo ""
+java -Dfile.encoding=UTF-8 -cp ./out/production/codeMdr:./lib/annotations-13.0.jar:./lib/ASCore.jar codemdr.Main $1

@@ -26,6 +26,6 @@ Début de la définition de la fonction nommée EstUnPalindrome acceptant le par
 Fin de la définition de la fonction.
 
 Posons que Mot vaut « A man, a plan, a canal: Panama ».
-Posons que EstPalindrome vaut le résultat de l'appel à EstUnPalindrome avec l'argument Mot.
-Imprimer « Le mot  » concaténé à Mot concaténé à «  est un palindrome?  » concaténé à EstPalindrome.
-
+Posons que Mot2 vaut « kayak ».
+Posons que EstPalindrome vaut le résultat de l'appel à EstUnPalindrome avec l'argument Mot2.
+Imprimer « Le mot  » concaténé à Mot2 concaténé à «  est un palindrome?  » concaténé à EstPalindrome.

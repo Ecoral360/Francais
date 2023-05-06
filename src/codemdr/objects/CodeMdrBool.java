@@ -22,4 +22,9 @@ public class CodeMdrBool extends CodeMdrObj<Boolean> {
     public String toString() {
         return getValue() ? "VRAI" : "FAUX";
     }
+
+    @Override
+    public CodeMdrType getType() {
+        return CodeMdrTypePrimitif.BOOLEEN;
+    }
 }

@@ -23,4 +23,9 @@ public class CodeMdrModule extends CodeMdrObj<Object> {
         }
         return fonctionDict;
     }
+
+    @Override
+    public CodeMdrType getType() {
+        return CodeMdrTypePrimitif.MODULE;
+    }
 }

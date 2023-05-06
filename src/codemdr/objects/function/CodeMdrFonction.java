@@ -2,6 +2,8 @@ package codemdr.objects.function;
 
 import codemdr.execution.CodeMdrExecutorState;
 import codemdr.objects.CodeMdrObj;
+import codemdr.objects.CodeMdrType;
+import codemdr.objects.CodeMdrTypePrimitif;
 import org.ascore.executor.ASCExecutor;
 import org.ascore.lang.objects.ASCObject;
 import org.ascore.lang.objects.ASCVariable;
@@ -82,6 +84,11 @@ public class CodeMdrFonction extends CodeMdrCallable {
             fonctionParent.executor.getExecutorState().getScopeManager().popCurrentScopeInstance();
 
             return result;
+        }
+
+        @Override
+        public CodeMdrType getType() {
+            return CodeMdrTypePrimitif.FONCTION;
         }
     }
 }

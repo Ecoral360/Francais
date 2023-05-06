@@ -24,9 +24,11 @@ Add:
   ALLER_A: 'aller\ à'
   SAUTER: 'sauter'
 
-  TANT_QUE: '\btant\ que\b'
+  # control flow
+  TANT_QUE: 'tant\ que'
   SINON: 'sinon,'
   SI: 'si'
+  POUR_CHAQUE: 'pour\ chaque'
 
   FONCTION_DEF: '${start}Début\ de\ la\ définition\ de\ la\ fonction\ nommée'
   FONCTION_END: '${start}Fin\ de\ la\ définition\ de\ la\ fonction'
@@ -38,10 +40,12 @@ Add:
   ARGS: 'les\ arguments'
   PARAM: 'acceptant\ le\ paramètre'
   PARAMS: 'acceptant\ les\ paramètres'
+  NO_PARAM: "n'acceptant\\ aucun\\ paramètre"
   RETOURNER: '${start}Retourner'
   LA_VALEUR: 'la\ valeur'
 
   TABLEAU_CREATION_SINGLETON: '\bun\ tableau\ contenant\ seulement'
+  TABLEAU_CREATION_VIDE: '\bun\ tableau\ vide'
   TABLEAU_CREATION: '\bun\ tableau\ contenant'
 
   ELEMENT_DE: "l'élément\\ de"
@@ -52,6 +56,7 @@ Add:
   EMPHASE: '"'
 
   datatypes:
+    HEX: '0x[0-9AaBbCcDdEeFf]+'
     DECIMAL: '-?\d+,\d+'
     ENTIER: '-?\d+'
     TEXTE: '«\ .*?\ »'
@@ -67,12 +72,14 @@ Add:
     TYPE_FONCTION: 'une\ fonction'
 
   op:
-    PLUS: 'plus'
-    CONCAT_A: 'concaténé\ à'
-    MOINS: 'moins'
+    MODULO: 'modulo'
+    EXPOSANT: 'exposant'
     FOIS: 'fois'
     DIV: 'divisé\ par'
-    MODULO: 'modulo'
+    DIV_ENTIER: 'divisé\ entièrement\ par'
+    CONCAT_A: 'concaténé\ à'
+    PLUS: 'plus'
+    MOINS: 'moins'
 
   comp:
     PLUS_PETIT: 'vaut\ moins\ que'
@@ -85,6 +92,9 @@ Add:
     NE_VEAU_PAS: '\bveau\b'
 
 
+  ET_BINAIRE: "l'opération\\ ET\\ binaire\\ de"
+  OU_BINAIRE: "l'opération\\ OU\\ binaire\\ de"
+  OU_BINAIRE_EXCLUSIF: "l'opération\\ OU\\ binaire\\ exclusif\\ de"
   ET: 'et'
   OU: 'ou'
   DE: 'de'

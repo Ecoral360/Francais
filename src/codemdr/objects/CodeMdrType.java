@@ -6,13 +6,13 @@ import org.ascore.tokens.Token;
 /**
  * An example of an object for the CodeMdr programming main.language
  */
-public class CodeMdrType extends CodeMdrObj<CodeMdrType.CodeMdrTypes> {
-    public CodeMdrType(CodeMdrTypes value) {
+public class CodeMdrType extends CodeMdrObj<CodeMdrType.CodeMdrBuiltinTypes> {
+    public CodeMdrType(CodeMdrBuiltinTypes value) {
         super(value);
     }
 
     public CodeMdrType(String s) {
-        super(CodeMdrTypes.fromString(s));
+        super(CodeMdrBuiltinTypes.fromString(s));
     }
 
     public CodeMdrType(Token token) {
@@ -24,7 +24,13 @@ public class CodeMdrType extends CodeMdrObj<CodeMdrType.CodeMdrTypes> {
         return getValue().name();
     }
 
-    public enum CodeMdrTypes {
+    @Override
+    public CodeMdrType getType() {
+        return CodeMdrBuiltinTypes.TYPE.asType();
+    }
+
+    public enum CodeMdrBuiltinTypes {
+        TYPE("un type"),
         BOOLEEN("un booléen"),
         TEXTE("du texte"),
         NOMBRE("un nombre"),
@@ -36,11 +42,15 @@ public class CodeMdrType extends CodeMdrObj<CodeMdrType.CodeMdrTypes> {
 
         private final String syntax;
 
-        CodeMdrTypes(String syntaxe) {
+        CodeMdrBuiltinTypes(String syntaxe) {
             this.syntax = syntaxe;
         }
 
-        public static CodeMdrTypes fromString(String s) {
+        public CodeMdrType asType() {
+            return new CodeMdrType(this);
+        }
+
+        public static CodeMdrBuiltinTypes fromString(String s) {
             for (var type : values()) {
                 if (type.syntax.equals(s)) {
                     return type;

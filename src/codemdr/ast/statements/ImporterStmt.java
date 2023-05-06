@@ -22,7 +22,7 @@ public class ImporterStmt extends Statement {
         super(executor);
         this.nomModule = nomModule;
         this.alias = null;
-        noAlias = false;
+        noAlias = true;
     }
 
     @Override

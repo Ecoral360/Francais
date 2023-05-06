@@ -18,4 +18,9 @@ public class CodeMdrFloat extends CodeMdrNumber {
     public String toString() {
         return getValue().toString().replace(".", ",");
     }
+
+    @Override
+    public CodeMdrType getType() {
+        return CodeMdrTypePrimitif.NOMBRE_DECIMAL;
+    }
 }
