@@ -77,10 +77,10 @@ public class FrancaisLangGASA extends AstGenerator<FrancaisLangAstFrameKind> {
                         );
                 });
 
-        addStatement("INCLURE expression MODULE_NOMME~" +
+        addStatement("INCLURE expression MODULE_NOMME VARIABLE~" +
                         "INCLURE expression TEL_QUEL",
                 (p, variant) -> {
-                    if (variant == 2) return new ImporterStmt(executorInstance, ((Token) p.get(1)).value());
+                    if (variant == 2) return new InclureStmt(executorInstance, null, ((Token) p.get(1)).value());
                     else
                         return new ImporterStmt(
                                 executorInstance, ((Token) p.get(1)).value(),

@@ -3,11 +3,14 @@ package francaislang.ast.statements;
 import francaislang.execution.FrancaisLangExecutorState;
 import francaislang.execution.FrancaisLangPreCompiler;
 import francaislang.module.FrancaisLangModules;
+import francaislang.objects.FrancaisLangModule;
+import francaislang.objects.function.FrancaisLangFonctionModule;
 import francaislang.parser.FrancaisLangGASA;
 import org.ascore.ast.buildingBlocs.Statement;
 import org.ascore.errors.ASCErrors;
 import org.ascore.executor.ASCExecutor;
 import org.ascore.executor.ASCExecutorBuilder;
+import org.ascore.lang.objects.ASCVariable;
 import org.json.JSONArray;
 
 import java.io.File;
@@ -31,7 +34,7 @@ public class InclureStmt extends Statement {
 
         try (Scanner scanner = new Scanner(new File(cheminFichier))) {
             StringBuilder s = new StringBuilder();
-            while (scanner.hasNextLine()) s.append(scanner.nextLine());
+            while (scanner.hasNextLine()) s.append(scanner.nextLine()).append('\n');
             codeToExecute = s.toString();
         } catch (FileNotFoundException e) {
             throw new ASCErrors.ErreurModule("Fichier " + cheminFichier + " n'a pas été trouvé. Je suis très déçu de toi.");
@@ -57,6 +60,24 @@ public class InclureStmt extends Statement {
                 throw new ASCErrors.ASCError(action.getJSONArray("p").getString(1), action.getJSONArray("p").getString(0));
             }
         }
+        var variablesModule = executor.getExecutorState().getScopeManager().getCurrentScope().getVariablesDeclarees();
+        if (nomModule == null) {
+            for (var variable : variablesModule) {
+                executorInstance
+                        .getExecutorState()
+                        .getScopeManager()
+                        .getCurrentScopeInstance()
+                        .declareScopeInstanceVariable(variable);
+            }
+        } else {
+            var module = new FrancaisLangModule(nomModule, new FrancaisLangFonctionModule[0], variablesModule.toArray(ASCVariable[]::new));
+            executorInstance
+                    .getExecutorState()
+                    .getScopeManager()
+                    .getCurrentScopeInstance()
+                    .declareScopeInstanceVariable(new ASCVariable<>(nomModule, module));
+        }
+
         var contenuModule = new Hashtable<String, Statement>();
 
         executorInstance.obtenirCoordCompileDict().put(nomModule, contenuModule);
