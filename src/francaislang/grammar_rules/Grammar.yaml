@@ -1,0 +1,114 @@
+Variables:
+  start: '(^|(?<=\.))\s*'
+
+Add:
+  IMPRIMER: '${start}Imprimer\b'
+  DECLARER: '${start}Posons\ que'
+  MAINTENANT: '${start}Maintenant,\ (\b|$)'
+  DEMANDER: '${start}Demander\ puis\ enregistrer\ dans\ '
+  L_APPEL_A: "le\\ résultat\\ de\\ l'appel\\ à"
+
+  IMPORTER: '${start}Importer\ le\ module'
+  BIB_STD: 'de\ la\ bibliothèque\ standard'
+  PROVENANT: 'provenant'
+  SOUS_LE_NOM: 'sous\ le\ nom\ de'
+  MEME_NOM: 'sous\ le\ même\ nom'
+
+  INCLURE: '${start}Inclure\ le\ contenu\ du\ fichier'
+  MODULE_NOMME: 'dans\ un\ module\ nommé'
+  TEL_QUEL: 'tel\ quel'
+
+  EXECUTER: '(${start}E|\be)xécuter\ '
+  ENONCES: 'énoncé(s?)'
+  PUIS: 'puis'
+  ALLER_A: 'aller\ à'
+  SAUTER: 'sauter'
+
+  # control flow
+  TANT_QUE: 'tant\ que'
+  SINON: 'sinon,'
+  SI: 'si'
+  POUR_CHAQUE: 'pour\ chaque'
+
+  FONCTION_DEF: '${start}Début\ de\ la\ définition\ de\ la\ fonction\ nommée'
+  FONCTION_END: '${start}Fin\ de\ la\ définition\ de\ la\ fonction'
+
+  APPELER: '${start}Appeler'
+
+  AVEC: '\bavec'
+  ARG: "l'argument"
+  ARGS: 'les\ arguments'
+  PARAM: 'acceptant\ le\ paramètre'
+  PARAMS: 'acceptant\ les\ paramètres'
+  NO_PARAM: "n'acceptant\\ aucun\\ paramètre"
+  RETOURNER: '${start}Retourner'
+  LA_VALEUR: 'la\ valeur'
+
+  TABLEAU_CREATION_SINGLETON: '\bun\ tableau\ contenant\ seulement'
+  TABLEAU_CREATION_VIDE: '\bun\ tableau\ vide'
+  TABLEAU_CREATION: '\bun\ tableau\ contenant'
+
+  ELEMENT_DE: "l'élément\\ de"
+  CAR_DE: 'le\ caractère\ de'
+  A_LA_POS: 'à\ la\ position'
+  A_INDEX: "à\\ l'index"
+
+  EMPHASE: '"'
+
+  datatypes:
+    HEX: '0x[0-9AaBbCcDdEeFf]+'
+    DECIMAL: '-?\d+,\d+'
+    ENTIER: '-?\d+'
+    TEXTE: '«\ .*?\ »'
+
+  datatypes_name:
+    TYPE_BOOL: 'un\ booléen'
+    TYPE_TEXTE: 'du\ texte'
+    TYPE_NOMBRE_DECIMAL: 'un\ nombre\ décimal'
+    TYPE_NOMBRE_ENTIER: 'un\ nombre\ entier'
+    TYPE_GRAND_NOMBRE_ENTIER: 'un\ grand\ nombre\ entier'
+    TYPE_NOMBRE: 'un\ nombre'
+    TYPE_TABLEAU: 'un\ tableau'
+    TYPE_FONCTION: 'une\ fonction'
+
+  op:
+    MODULO: 'modulo'
+    EXPOSANT: 'exposant'
+    FOIS: 'fois'
+    DIV: 'divisé\ par'
+    DIV_ENTIER: 'divisé\ entièrement\ par'
+    CONCAT_A: 'concaténé\ à'
+    PLUS: 'plus'
+    MOINS: 'moins'
+
+  comp:
+    PLUS_PETIT: 'vaut\ moins\ que'
+    PLUS_PETIT_OU_EGAL: 'vaut\ moins\ ou\ autant\ que'
+    PLUS_GRAND: 'vaut\ plus\ que'
+    PLUS_GRAND_OU_EGAL: 'vaut\ plus\ ou\ autant\ que'
+    NE_VAUT_PAS: 'ne\ vaut\ pas'
+    VAUT: '\bvaut\b'
+    VEAU: '\bveau\b'
+    NE_VEAU_PAS: '\bveau\b'
+
+
+  ET_BINAIRE: "l'opération\\ ET\\ binaire\\ de"
+  OU_BINAIRE: "l'opération\\ OU\\ binaire\\ de"
+  OU_BINAIRE_EXCLUSIF: "l'opération\\ OU\\ binaire\\ exclusif\\ de"
+  ET: 'et'
+  OU: 'ou'
+  DE: 'de'
+  VIRGULE: ','
+  POINT_VIRGULE: ';'
+
+  VARIABLE: '\p{Lu}[0-9_\p{L}]*'
+
+Ignore:
+  - 'Note\ à\ moi-même\ :\ .*?[\.\!\?]$'
+  - '\s+'
+
+EndStatement: '[\.\!\?]'
+
+
+# tente - attrape - et puis (try-catch)
+#

@@ -13,6 +13,7 @@ Maintenant, Liste vaut un tableau contenant 1 et "un tableau contenant 1, 3 et �
 Imprimer Liste.
 
 Posons que Mot vaut « A ».
+Maintenant, Mot vaut Liste.
 Imprimer Taille de Liste.
 Imprimer Taille de Mot.
 

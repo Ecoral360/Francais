@@ -1,5 +1,11 @@
 Posons que Liste vaut un tableau contenant 1, 2 et 3.
 
-Imprimer Taille de Liste.
+Posons que X vaut Taille de Liste.
 
+Imprimer X.
 
+Appeler Ajouter de Liste avec l'argument 14.
+
+Maintenant, X vaut Taille de Liste.
+
+Imprimer X.

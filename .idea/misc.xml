@@ -4,6 +4,6 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_19" default="true" project-jdk-name="openjdk-19" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/out" />
+    <output url="file://$PROJECT_DIR$/../francaisLang/out" />
   </component>
 </project>
