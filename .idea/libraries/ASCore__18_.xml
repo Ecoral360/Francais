@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="ASCore (18)">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/ASCore.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/ASCore.jar!/" />
+    </SOURCES>
+  </library>
+</component>

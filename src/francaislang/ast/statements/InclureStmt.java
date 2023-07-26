@@ -1,5 +1,6 @@
 package francaislang.ast.statements;
 
+import francaislang.ast.FrancaisLangStatement;
 import francaislang.execution.FrancaisLangExecutorState;
 import francaislang.execution.FrancaisLangPreCompiler;
 import francaislang.module.FrancaisLangModules;
@@ -18,7 +19,7 @@ import java.io.FileNotFoundException;
 import java.util.Hashtable;
 import java.util.Scanner;
 
-public class InclureStmt extends Statement {
+public class InclureStmt extends FrancaisLangStatement {
     private final String nomModule;
     private final String cheminFichier;
 
@@ -53,14 +54,14 @@ public class InclureStmt extends Statement {
 
         FrancaisLangModules.BUILTINS.charger(executor.getExecutorState());
 
-        JSONArray executionResult = executor.executerMain(false); // execute the code
+        JSONArray executionResult = executor.executerMain(false, false); // execute the code
         for (int i = 0; i < executionResult.length(); i++) {
             var action = executionResult.getJSONObject(i);
             if (action.getInt("id") == 400) {
                 throw new ASCErrors.ASCError(action.getJSONArray("p").getString(1), action.getJSONArray("p").getString(0));
             }
         }
-        var variablesModule = executor.getExecutorState().getScopeManager().getCurrentScope().getVariablesDeclarees();
+        var variablesModule = executor.getExecutorState().getScopeManager().getCurrentScopeInstance().getVariableStack();
         if (nomModule == null) {
             for (var variable : variablesModule) {
                 executorInstance
@@ -78,9 +79,12 @@ public class InclureStmt extends Statement {
                     .declareScopeInstanceVariable(new ASCVariable<>(nomModule, module));
         }
 
-        var contenuModule = new Hashtable<String, Statement>();
+        for (var scope : executor.obtenirCoordCompileDict().entrySet()) {
+            if (scope.getKey().equals("main")) continue;
+            executorInstance.obtenirCoordCompileDict().put(scope.getKey(), scope.getValue());
+        }
 
-        executorInstance.obtenirCoordCompileDict().put(nomModule, contenuModule);
+        super.nextCoord();
         return null;
     }
 }
