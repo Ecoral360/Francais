@@ -28,6 +28,18 @@ public class ExecuterTantQueStmt extends FrancaisLangStatement {
         this.nbEnoncesSautesExpr = nbEnoncesSautesExpr;
     }
 
+    public Expression<?> getConditionExpr() {
+        return conditionExpr;
+    }
+
+    public Expression<?> getNbEnoncesExpr() {
+        return nbEnoncesExpr;
+    }
+
+    public Expression<?> getNbEnoncesSautesExpr() {
+        return nbEnoncesSautesExpr;
+    }
+
     /**
      * M\u00E9thode d\u00E9crivant l'effet de la ligne de code
      *

@@ -29,6 +29,14 @@ public class InclureStmt extends FrancaisLangStatement {
         this.cheminFichier = cheminFichier;
     }
 
+    public String getCheminFichier() {
+        return cheminFichier;
+    }
+
+    public String getNomModule() {
+        return nomModule;
+    }
+
     @Override
     public Object execute() {
         String codeToExecute;

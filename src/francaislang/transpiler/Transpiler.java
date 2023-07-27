@@ -3,24 +3,46 @@ package francaislang.transpiler;
 import francaislang.ast.expressions.*;
 import francaislang.ast.statements.*;
 import francaislang.execution.FrancaisLangExecutorState;
+import francaislang.execution.FrancaisLangPreCompiler;
+import francaislang.lexer.FrancaisLangJetoniseur;
+import francaislang.objects.FrancaisLangEntier;
 import francaislang.objects.FrancaisLangNombre;
 import francaislang.objects.FrancaisLangObj;
 import francaislang.objects.FrancaisLangTexte;
+import francaislang.parser.FrancaisLangGASA;
 import org.ascore.ast.buildingBlocs.Expression;
 import org.ascore.ast.buildingBlocs.Statement;
 import org.ascore.errors.ASCErrors;
 import org.ascore.executor.ASCExecutor;
+import org.ascore.executor.ASCExecutorBuilder;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.Stack;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public final class Transpiler {
     private final ASCExecutor<FrancaisLangExecutorState> executor;
     private TranspileCtx ctx;
+    private int uniqueId = 0;
 
+    private Stack<Map.Entry<Integer, Supplier<String>>> codeBlocStack = new Stack<>();
+
+    public static Transpiler defaultTranspiler() {
+        var executor = new ASCExecutorBuilder<FrancaisLangExecutorState>() // create an executor builder
+                .withLexer(new FrancaisLangJetoniseur("/francaislang/grammar_rules/Grammar.yaml")) // add the lexer to the builder
+                .withParser(FrancaisLangGASA::new) // add the parser to the builder
+                .withExecutorState(new FrancaisLangExecutorState()) // add the executor state to the builder
+                .withPrecompiler(new FrancaisLangPreCompiler()) // add the precompiler to the builder
+                .build(); // build the executor
+
+        return new Transpiler(executor);
+    }
 
     public Transpiler(ASCExecutor<FrancaisLangExecutorState> executor) {
         this.executor = executor;
@@ -30,14 +52,6 @@ public final class Transpiler {
     public String transpile(String lignes) {
         executor.obtenirCoordCompileDict().clear();
         ctx = new TranspileCtx(executor);
-
-        var file = new File("./src/francais-lang.scm");
-        var starterCode = new StringBuilder();
-        try (var reader = new Scanner(file)) {
-            while (reader.hasNextLine()) starterCode.append(reader.nextLine()).append('\n');
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Cannot add startup code to output.");
-        }
 
         lignes = executor.getPreCompiler().preCompile(lignes);
 
@@ -67,6 +81,18 @@ public final class Transpiler {
 
                 ctx.appendCode(transpileStmt(ligneParsed), "\n");
 
+                while (!codeBlocStack.isEmpty()) {
+                    var top = codeBlocStack.pop();
+                    if (top.getKey() > 0) {
+                        codeBlocStack.push(Map.entry(top.getKey() - 1, top.getValue()));
+                        break;
+                    }
+                    ctx.appendCode(
+                            top.getValue().get(),
+                            ")".repeat(ctx.popScopeParens()) + "\n"
+                    );
+                }
+
                 // accede a la fonction prochaineCoord du programme trouvee afin de definir la prochaine coordonnee
                 ctx.setNextCoord(ligneParsed.getNextCoordinate(ctx.currentCoord().copy(), lineToken));
 
@@ -93,8 +119,23 @@ public final class Transpiler {
             throw err;
         }
 
-        ctx.appendCodeToStart(starterCode.toString());
         return ctx.finalCompiledCode();
+    }
+
+    public static String getCodeDepart() {
+        var file = new File("./src/francais-lang.scm");
+        var starterCode = new StringBuilder();
+        try (var reader = new Scanner(file)) {
+            while (reader.hasNextLine()) starterCode.append(reader.nextLine()).append('\n');
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Cannot add startup code to output.");
+        }
+
+        return starterCode.append("\n\n").toString();
+    }
+
+    private int nextId() {
+        return uniqueId++;
     }
 
     private String transpileStmt(Statement stmt) {
@@ -103,7 +144,51 @@ public final class Transpiler {
 
 
     private String transpileImprimer(ImprimerStmt stmt) {
-        return "(begin (display (##field0 %s)) (##putchar %d))".formatted(transpileExpr(stmt.getExpression()), (int) '\n');
+        return "(begin (display (FrancaisLangObj->string %s)) (##putchar %d))".formatted(transpileExpr(stmt.getExpression()), (int) '\n');
+    }
+
+    private String transpileInclure(InclureStmt stmt) {
+        if (stmt.getNomModule() != null) {
+            throw new UnsupportedOperationException("Les modules ne sont pas encore supportés.");
+        }
+        var lignes = new StringBuilder();
+        var fichier = new File(stmt.getCheminFichier());
+        try (var reader = new Scanner(fichier)) {
+            while (reader.hasNextLine()) lignes.append(reader.nextLine()).append('\n');
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        var transpiler = Transpiler.defaultTranspiler();
+        return transpiler.transpile(lignes.toString());
+    }
+
+    private String transpileSi(ExecuterSiStmt stmt) {
+        ctx.pushScopeParens().openParens(2);
+
+        codeBlocStack.push(Map.entry(
+                ((FrancaisLangEntier) stmt.getNbEnoncesSiExpr().eval()).getValue(),
+                () -> ""));
+
+        codeBlocStack.push(Map.entry(
+                ((FrancaisLangEntier) stmt.getNbEnoncesSinonExpr().eval()).getValue(),
+                () -> ""));
+        return "";
+    }
+
+    private String transpileTantQue(ExecuterTantQueStmt stmt) {
+        ctx.pushScopeParens().openParens(3);
+        var loopName = "tant-que-%d".formatted(nextId());
+        var end = "(%s)".formatted(loopName);
+
+        codeBlocStack.push(Map.entry(
+                ((FrancaisLangEntier) stmt.getNbEnoncesExpr().eval()).getValue(),
+                () -> end));
+
+        return ("""
+                (let %s ()
+                  (if %s
+                    (begin
+                      """).formatted(loopName, transpileExpr(stmt.getConditionExpr()));
     }
 
     private String transpileDeclaration(DeclarerStmt stmt) {
@@ -159,10 +244,12 @@ public final class Transpiler {
     }
 
     private String transpileTableau(CreationTableauExpr expr) {
-        return "(##rib %s %d CodeMdrTableau-type)".formatted(transpileEnumeration(expr.valeurs()), expr.valeurs().getElements().size());
+        return "(##rib %s %d FrancaisLangTableau-type)".formatted(transpileEnumeration(expr.valeurs()), expr.valeurs().getElements().size());
     }
 
     private String transpileEnumeration(EnumerationExpr expr) {
+        if (expr.getElements().isEmpty()) return "'()";
+
         return "(##rib %s '()%s".formatted(expr.getElements()
                         .stream()
                         .map(this::transpileExpr)
@@ -178,6 +265,13 @@ public final class Transpiler {
         );
     }
 
+    private String transpileIndexTexte(IndexTexteExpr expr) {
+        return "(##rib (string (string-ref (##field0 %s) (##- %s %d))) 1 FrancaisLangTexte-type)".formatted(
+                transpileExpr(expr.listeExpr()),
+                transpileExpr(expr.indexExpr()),
+                expr.indexDepart()
+        );
+    }
     private String transpileVar(VarExpr expr) {
         return expr.nom();
     }
@@ -228,7 +322,7 @@ public final class Transpiler {
         var obj = transpileExpr(expr.objExpr());
         clauses.append(("""
                 (let ((temp-var %s))
-                    (let ((temp-type (TypeDe temp-var)))
+                    (let ((temp-type (FrancaisLang/Fonc/TypeDe temp-var)))
                         (cond""").formatted(obj));
 
         var properties = objManager.registerProperties(expr.nomProprieteExpr().nom(), expr);
@@ -283,7 +377,7 @@ public final class Transpiler {
         var obj = transpileExpr(expr.objExpr());
         clauses.append(("""
                 (let ((temp-var %s))
-                    (let ((temp-type (TypeDe temp-var)))
+                    (let ((temp-type (FrancaisLang/Fonc/TypeDe temp-var)))
                         (cond""").formatted(obj));
 
         var properties = objManager.registerProperties(expr.nomProprieteExpr().nom(), expr);
@@ -309,11 +403,14 @@ public final class Transpiler {
 
     enum Stmt {
         Imprimer((t, s) -> t.transpileImprimer((ImprimerStmt) s), ImprimerStmt.class),
+        Inclure((t, s) -> t.transpileInclure((InclureStmt) s), InclureStmt.class),
         Declarer((t, s) -> t.transpileDeclaration((DeclarerStmt) s), DeclarerStmt.class),
         Affecter((t, s) -> t.transpileAffectation((AffecterStmt) s), AffecterStmt.class),
         CreerFonc((t, s) -> t.transpileFunction((CreerFonctionStmt) s), CreerFonctionStmt.class),
         RetournerFonc((t, s) -> t.transpileReturnFunction((RetournerStmt) s), RetournerStmt.class),
         FinFonc((t, s) -> t.transpileEndFunction((FinFonctionStmt) s), FinFonctionStmt.class),
+        TantQue((t, s) -> t.transpileTantQue((ExecuterTantQueStmt) s), ExecuterTantQueStmt.class),
+        Si((t, s) -> t.transpileSi((ExecuterSiStmt) s), ExecuterSiStmt.class),
         EvalExpr((t, s) -> t.transpileExpr(((EvalExprStmt) s).getExpression()), EvalExprStmt.class);
 
         private final BiFunction<Transpiler, Statement, String> transpile;
@@ -339,6 +436,7 @@ public final class Transpiler {
         Var((t, e) -> t.transpileVar((VarExpr) e), VarExpr.class),
         Tableau((t, e) -> t.transpileTableau((CreationTableauExpr) e), CreationTableauExpr.class),
         IndexTableau((t, e) -> t.transpileIndexTableau((IndexListeExpr) e), IndexListeExpr.class),
+        IndexTexte((t, e) -> t.transpileIndexTexte((IndexTexteExpr) e), IndexTexteExpr.class),
         Enumeration((t, e) -> t.transpileEnumeration((EnumerationExpr) e), EnumerationExpr.class),
         GetPropriete((t, e) -> t.getProperty((GetProprieteExpr) e), GetProprieteExpr.class),
         Appel((t, e) -> t.transpileCall((AppelerFoncExpr) e), AppelerFoncExpr.class);

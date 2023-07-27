@@ -32,6 +32,26 @@ public class ExecuterSiStmt extends FrancaisLangStatement {
         this.nbEnoncesSautesAvantSinonExpr = nbEnoncesSautesAvantSinonExpr != null ? nbEnoncesSautesAvantSinonExpr : this.nbEnoncesSiExpr;
     }
 
+    public Expression<?> getConditionExpr() {
+        return conditionExpr;
+    }
+
+    public Expression<?> getNbEnoncesSautesApresSiExpr() {
+        return nbEnoncesSautesApresSiExpr;
+    }
+
+    public Expression<?> getNbEnoncesSautesAvantSinonExpr() {
+        return nbEnoncesSautesAvantSinonExpr;
+    }
+
+    public Expression<?> getNbEnoncesSiExpr() {
+        return nbEnoncesSiExpr;
+    }
+
+    public Expression<?> getNbEnoncesSinonExpr() {
+        return nbEnoncesSinonExpr;
+    }
+
     /**
      * M\u00E9thode d\u00E9crivant l'effet de la ligne de code
      *

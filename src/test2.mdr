@@ -2,3 +2,8 @@ Note à moi-même : Inclure le contenu du fichier « ./src/test.mdr » dans un m
 Inclure le contenu du fichier « ./src/test.mdr » tel quel.
 
 Imprimer le résultat de l'appel à Test avec l'argument 26.
+
+Imprimer Faux.
+
+Posons que A vaut un tableau vide.
+Imprimer A.

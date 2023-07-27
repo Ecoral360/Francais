@@ -4,6 +4,7 @@ package francaislang.parser;
 import francaislang.ast.FrancaisLangStatement;
 import francaislang.ast.expressions.*;
 import francaislang.ast.statements.*;
+import francaislang.erreurs.FrancaisLangErreurAccord;
 import francaislang.execution.FrancaisLangExecutorState;
 import francaislang.lexer.FrancaisLangJetoniseur;
 import francaislang.objects.*;
@@ -121,24 +122,13 @@ public class FrancaisLangGASA extends AstGenerator<FrancaisLangAstFrameKind> {
                     var conditionExpr = (Expression<?>) p.get(4);
 
                     var nbEnoncesSauteExpr = variant == 1 ? (Expression<?>) p.get(7) : nbEnoncesExpr;
+                    var enoncesSautes = variant == 1 ? (Token) p.get(8) : enonces;
 
                     // Si on connait le nombre d'énoncés au "compile time", on regarde si l'accord du mot est correct.
-                    if (nbEnoncesExpr instanceof ConstValueExpr constValueExpr) {
-                        var nbEnonces = ((FrancaisLangEntier) constValueExpr.value()).getValue().intValue();
-                        if ((nbEnonces > 1 && !enonces.value().endsWith("s"))
-                                || (nbEnonces < 1 && enonces.value().endsWith("s"))) {
-                            throw new ASCErrors.ErreurSyntaxe("Tu dois donc accorder le mot \"énoncé\" selon combien il y en a! Je suis très déçu de toi.");
-                        }
-                    }
+                    checkAccordEnonces(nbEnoncesExpr, enonces);
 
                     // Si on connait le nombre d'énoncés sautés au "compiler time", on regarde si l'accord du mot est correct.
-                    if (variant == 1 && nbEnoncesSauteExpr instanceof ConstValueExpr constValueExpr) {
-                        var nbEnonces = ((FrancaisLangEntier) constValueExpr.value()).getValue().intValue();
-                        if ((nbEnonces > 1 && !enonces.value().endsWith("s"))
-                                || (nbEnonces < 1 && enonces.value().endsWith("s"))) {
-                            throw new ASCErrors.ErreurSyntaxe("Tu dois donc accorder le mot \"énoncé\" selon combien il y en a! Je suis très déçu de toi.");
-                        }
-                    }
+                    checkAccordEnonces(nbEnoncesSauteExpr, enoncesSautes);
 
                     return new ExecuterTantQueStmt(nbEnoncesExpr, conditionExpr, nbEnoncesSauteExpr, executorInstance);
                 });
@@ -151,21 +141,45 @@ public class FrancaisLangGASA extends AstGenerator<FrancaisLangAstFrameKind> {
                         "EXECUTER expression ENONCES SI expression POINT_VIRGULE SINON SAUTER expression ENONCES PUIS EXECUTER expression ENONCES~" +
                         "EXECUTER expression ENONCES SI expression PUIS SAUTER expression ENONCES POINT_VIRGULE SINON SAUTER expression ENONCES PUIS EXECUTER expression ENONCES",
                 (p, variant) -> {
+                    var enonces = (Token) p.get(2);
                     var nbEnoncesSiExpr = (Expression<?>) p.get(1);
                     var conditionExpr = (Expression<?>) p.get(4);
+                    checkAccordEnonces(nbEnoncesSiExpr, enonces);
 
+                    // Si on connait le nombre d'énoncés au "compile time", on regarde si l'accord du mot est correct.
                     var nbEnoncesSauteApresSiExpr = variant == 1 || variant == 3 || variant == 5 ? (Expression<?>) p.get(7) : null;
+                    if (nbEnoncesSauteApresSiExpr != null) checkAccordEnonces(nbEnoncesSauteApresSiExpr, (Token) p.get(8));
 
                     Expression<?> nbEnoncesSinonExpr = switch (variant) {
-                        case 2 -> (Expression<?>) p.get(8);
-                        case 3, 4 -> (Expression<?>) p.get(12);
-                        case 5 -> (Expression<?>) p.get(16);
+                        case 2 -> {
+                            var temp = (Expression<?>) p.get(8);
+                            checkAccordEnonces(temp, (Token) p.get(9));
+                            yield temp;
+                        }
+                        case 3, 4 -> {
+                            var temp = (Expression<?>) p.get(12);
+                            checkAccordEnonces(temp, (Token) p.get(13));
+                            yield temp;
+                        }
+                        case 5 -> {
+                            var temp = (Expression<?>) p.get(16);
+                            checkAccordEnonces(temp, (Token) p.get(17));
+                            yield temp;
+                        }
                         default -> null;
                     };
 
                     var nbEnoncesSauteAvantSinonExpr = switch (variant) {
-                        case 4 -> (Expression<?>) p.get(8);
-                        case 5 -> (Expression<?>) p.get(12);
+                        case 4 -> {
+                            var temp = (Expression<?>) p.get(8);
+                            checkAccordEnonces(temp, (Token) p.get(9));
+                            yield temp;
+                        }
+                        case 5 -> {
+                            var temp = (Expression<?>) p.get(12);
+                            checkAccordEnonces(temp, (Token) p.get(13));
+                            yield temp;
+                        }
                         default -> null;
                     };
 
@@ -218,7 +232,7 @@ public class FrancaisLangGASA extends AstGenerator<FrancaisLangAstFrameKind> {
                                         var params = (Expression<?>) p.get(4);
                                         if ((variant == 0 && params instanceof EnumerationExpr) ||
                                                 (variant == 1 && (!(params instanceof EnumerationExpr)))) {
-                                            throw new ASCErrors.ErreurSyntaxe("Mauvais accord du mot `argument`. Je suis très déçu de toi.");
+                                            throw new FrancaisLangErreurAccord("Mauvais accord du mot `argument`. Je suis très déçu de toi.");
                                         }
 
                                         yield new AppelerFoncExpr(
@@ -319,7 +333,7 @@ public class FrancaisLangGASA extends AstGenerator<FrancaisLangAstFrameKind> {
                                 var params = (Expression<?>) p.get(4);
                                 if ((variant == 0 && params instanceof EnumerationExpr) ||
                                         (variant == 1 && (!(params instanceof EnumerationExpr)))) {
-                                    throw new ASCErrors.ErreurSyntaxe("Mauvais accord du mot `argument`. Je suis très déçu de toi.");
+                                    throw new FrancaisLangErreurAccord("Mauvais accord du mot `argument`. Je suis très déçu de toi.");
                                 }
 
                                 yield new AppelerFoncExpr(
@@ -347,5 +361,15 @@ public class FrancaisLangGASA extends AstGenerator<FrancaisLangAstFrameKind> {
         addExpression("expression {comp} expression",
                 p -> new CompExpr((Expression<?>) p.get(0), (Expression<?>) p.get(2), ((Token) p.get(1)).value())
         );
+    }
+
+    private void checkAccordEnonces(Expression<?> nbEnoncesExpr, Token enonces) {
+        if (nbEnoncesExpr instanceof ConstValueExpr constValueExpr) {
+            var nbEnonces = ((FrancaisLangEntier) constValueExpr.value()).getValue();
+            if ((nbEnonces > 1 && !enonces.value().endsWith("s"))
+                    || (nbEnonces < 1 && enonces.value().endsWith("s"))) {
+                throw new FrancaisLangErreurAccord("Tu dois donc accorder le mot \"énoncé\" selon combien il y en a! Je suis très déçu de toi.");
+            }
+        }
     }
 }

@@ -166,15 +166,8 @@ public class TranspilerTest {
             inputCode = code.toString();
         }
 
-        var executor = new ASCExecutorBuilder<FrancaisLangExecutorState>() // create an executor builder
-                .withLexer(new FrancaisLangJetoniseur("/francaislang/grammar_rules/Grammar.yaml")) // add the lexer to the builder
-                .withParser(FrancaisLangGASA::new) // add the parser to the builder
-                .withExecutorState(new FrancaisLangExecutorState()) // add the executor state to the builder
-                .withPrecompiler(new FrancaisLangPreCompiler()) // add the precompiler to the builder
-                .build(); // build the executor
-
-        Transpiler transpiler = new Transpiler(executor);
-        String result = transpiler.transpile(inputCode);
+        var transpiler = Transpiler.defaultTranspiler();
+        String result = Transpiler.getCodeDepart() + transpiler.transpile(inputCode);
         if (args.length > 1) {
             var outputFile = new File(args[1]);
             try (var writer = new FileWriter(outputFile)) {
